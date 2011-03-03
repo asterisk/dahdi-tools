@@ -1,0 +1,162 @@
+                                Release Summary
+
+                               dahdi-tools-2.4.1
+
+                                Date: 2011-03-03
+
+                           <asteriskteam@digium.com>
+
+   --------------------------------------------------------------------------
+
+                               Table of Contents
+
+    1. [1]Summary
+    2. [2]Contributors
+    3. [3]Closed Issues
+    4. [4]Other Changes
+    5. [5]Diffstat
+
+   --------------------------------------------------------------------------
+
+                                    Summary
+
+                                [6][Back to Top]
+
+   This release includes only bug fixes. The changes included were made only
+   to address problems that have been identified in this release series.
+   Users should be able to safely upgrade to this version if this release
+   series is already in use. Users considering upgrading from a previous
+   release series are strongly encouraged to review the UPGRADE.txt document
+   as well as the CHANGES document for information about upgrading to this
+   release series.
+
+   The data in this summary reflects changes that have been made since the
+   previous release, dahdi-tools-2.4.0.
+
+   --------------------------------------------------------------------------
+
+                                  Contributors
+
+                                [7][Back to Top]
+
+   This table lists the people who have submitted code, those that have
+   tested patches, as well as those that reported issues on the issue tracker
+   that were resolved in this release. For coders, the number is how many of
+   their patches (of any size) were committed into this release. For testers,
+   the number is the number of times their name was listed as assisting with
+   testing a patch. Finally, for reporters, the number is the number of
+   issues that they reported that were closed by commits that went into this
+   release.
+
+     Coders                   Testers                  Reporters             
+   11 tzafrir                                        1 abelbeck              
+   1 alfredtang                                      1 alfredtang            
+
+   --------------------------------------------------------------------------
+
+                                 Closed Issues
+
+                                [8][Back to Top]
+
+   This is a list of all issues from the issue tracker that were closed by
+   changes that went into this release.
+
+  Category: General
+
+   [9]#16783: [patch] DAHDI 2.2.1, XPP and astribank_is_starting.c uses
+   semtimedop() which is not supported in our uClibc.
+   Revision: [10]9736
+   Reporter: abelbeck
+   Coders: tzafrir
+
+  Category: NewFeature
+
+   [11]#17744: [patch] add macao to tone zone data
+   Revision: [12]9735
+   Reporter: alfredtang
+   Coders: alfredtang
+
+   --------------------------------------------------------------------------
+
+                      Commits Not Associated with an Issue
+
+                               [13][Back to Top]
+
+   This is a list of all changes that went into this release that did not
+   directly close an issue from the issue tracker. The commits may have been
+   marked as being related to an issue. If that is the case, the issue
+   numbers are listed here, as well.
+
+   +------------------------------------------------------------------------+
+   | Revision | Author  | Summary                              | Issues     |
+   |          |         |                                      | Referenced |
+   |----------+---------+--------------------------------------+------------|
+   | [14]9733 | tzafrir | Branch dahdi-tools 2.4               |            |
+   |----------+---------+--------------------------------------+------------|
+   | [15]9734 | tzafrir | svnmerge stuff                       |            |
+   |----------+---------+--------------------------------------+------------|
+   | [16]9737 | tzafrir | Dahdi::Hardware: Support beroNet     |            |
+   |          |         | BN4S0e PCI Express card              |            |
+   |----------+---------+--------------------------------------+------------|
+   | [17]9738 | tzafrir | Fixed up the loss of crc4-multiframe |            |
+   |          |         | alignment logic                      |            |
+   |----------+---------+--------------------------------------+------------|
+   | [18]9739 | tzafrir | dahdi_scan: Show CAS framing on the  |            |
+   |          |         | framing line.                        |            |
+   |----------+---------+--------------------------------------+------------|
+   | [19]9740 | tzafrir | xpp_fxloader: Don't try to load FPGA |            |
+   |          |         | firmware twice                       |            |
+   |----------+---------+--------------------------------------+------------|
+   |          |         | dahdi_genconf: Don't generate        |            |
+   | [20]9741 | tzafrir | configurations that use channel 16   |            |
+   |          |         | on E1 CAS                            |            |
+   |----------+---------+--------------------------------------+------------|
+   | [21]9742 | tzafrir | dahdi-perl: left-over $span->xpd     |            |
+   |----------+---------+--------------------------------------+------------|
+   | [22]9743 | tzafrir | dahdi-perl: fix xpp driver in        |            |
+   |          |         | dahdi_hardware                       |            |
+   |----------+---------+--------------------------------------+------------|
+   | [23]9744 | tzafrir | dahdi-perl: more left-over           |            |
+   |          |         | $span->xpd                           |            |
+   +------------------------------------------------------------------------+
+
+   --------------------------------------------------------------------------
+
+                                Diffstat Results
+
+                               [24][Back to Top]
+
+   This is a summary of the changes to the source code that went into this
+   release that was generated using the diffstat utility.
+
+ 0 files changed
+
+   --------------------------------------------------------------------------
+
+References
+
+   Visible links
+   1. file:///home/sruffell/repotools/dahdi-tools-2.4.1-summary.html#summary
+   2. file:///home/sruffell/repotools/dahdi-tools-2.4.1-summary.html#contributors
+   3. file:///home/sruffell/repotools/dahdi-tools-2.4.1-summary.html#issues
+   4. file:///home/sruffell/repotools/dahdi-tools-2.4.1-summary.html#commits
+   5. file:///home/sruffell/repotools/dahdi-tools-2.4.1-summary.html#diffstat
+   6. file:///home/sruffell/repotools/dahdi-tools-2.4.1-summary.html#top
+   7. file:///home/sruffell/repotools/dahdi-tools-2.4.1-summary.html#top
+   8. file:///home/sruffell/repotools/dahdi-tools-2.4.1-summary.html#top
+   9. https://issues.asterisk.org/view.php?id=16783
+  10. http://svn.digium.com/view/dahdi/tools/branches/2.4?view=revision&revision=9736
+  11. https://issues.asterisk.org/view.php?id=17744
+  12. http://svn.digium.com/view/dahdi/tools/branches/2.4?view=revision&revision=9735
+  13. file:///home/sruffell/repotools/dahdi-tools-2.4.1-summary.html#top
+  14. http://svn.digium.com/view/dahdi/tools/branches/2.4?view=revision&revision=9733
+  15. http://svn.digium.com/view/dahdi/tools/branches/2.4?view=revision&revision=9734
+  16. http://svn.digium.com/view/dahdi/tools/branches/2.4?view=revision&revision=9737
+  17. http://svn.digium.com/view/dahdi/tools/branches/2.4?view=revision&revision=9738
+  18. http://svn.digium.com/view/dahdi/tools/branches/2.4?view=revision&revision=9739
+  19. http://svn.digium.com/view/dahdi/tools/branches/2.4?view=revision&revision=9740
+  20. http://svn.digium.com/view/dahdi/tools/branches/2.4?view=revision&revision=9741
+  21. http://svn.digium.com/view/dahdi/tools/branches/2.4?view=revision&revision=9742
+  22. http://svn.digium.com/view/dahdi/tools/branches/2.4?view=revision&revision=9743
+  23. http://svn.digium.com/view/dahdi/tools/branches/2.4?view=revision&revision=9744
+  24. file:///home/sruffell/repotools/dahdi-tools-2.4.1-summary.html#top
