@@ -79,7 +79,6 @@ int main(int argc, char *argv[])
 
 	int doloopback = 0;
 	char *larg = NULL;
-	int sflag = 0;
 	int span = 1;
 	int iflag = 0;
 	char *iarg = NULL;
@@ -116,7 +115,6 @@ int main(int argc, char *argv[])
 				break;
 			case 's': /* specify a span */
 				span = atoi(optarg);
-				sflag = 1;
 				break;
 			case 'i': /* insert an error */
 				iarg = optarg;

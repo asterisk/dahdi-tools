@@ -258,11 +258,10 @@ static int parseargs(char *input, char *output[], int maxargs, char sep)
 int dspanconfig(char *keyword, char *args)
 {
 	static char *realargs[10];
-	int argc;
 	int res;
 	int chans;
 	int timing;
-	argc = res = parseargs(args, realargs, 4, ',');
+	res = parseargs(args, realargs, 4, ',');
 	if (res != 4) {
 		error("Incorrect number of arguments to 'dynamic' (should be <driver>,<address>,<num channels>, <timing>)\n");
 		return -1;
@@ -755,13 +754,12 @@ static int unimplemented(char *keyword, char *args)
 int ctcss(char *keyword, char *args)
 {
 	static char *realargs[10];
-	int argc;
 	int res;
 	int rxtone;
 	int rxtag;
 	int txtone;
 	int isdcs = 0;
-	argc = res = parseargs(args, realargs, 3, ',');
+	res = parseargs(args, realargs, 3, ',');
 	if (res != 3) {
 		error("Incorrect number of arguments to 'ctcss' (should be <rxtone>,<rxtag>,<txtone>)\n");
 		return -1;
@@ -808,10 +806,9 @@ int ctcss(char *keyword, char *args)
 int dcsrx(char *keyword, char *args)
 {
 	static char *realargs[10];
-	int argc;
 	int res;
 	int rxtone;
-	argc = res = parseargs(args, realargs, 1, ',');
+	res = parseargs(args, realargs, 1, ',');
 	if (res != 1) {
 		error("Incorrect number of arguments to 'dcsrx' (should be <rxtone>)\n");
 		return -1;
@@ -831,11 +828,10 @@ int dcsrx(char *keyword, char *args)
 int tx(char *keyword, char *args)
 {
 	static char *realargs[10];
-	int argc;
 	int res;
 	int txtone;
 	int isdcs = 0;
-	argc = res = parseargs(args, realargs, 1, ',');
+	res = parseargs(args, realargs, 1, ',');
 	if (res != 1) {
 		error("Incorrect number of arguments to 'tx' (should be <txtone>)\n");
 		return -1;
@@ -860,10 +856,9 @@ int tx(char *keyword, char *args)
 int debounce_time(char *keyword, char *args)
 {
 	static char *realargs[10];
-	int argc;
 	int res;
 	int val;
-	argc = res = parseargs(args, realargs, 1, ',');
+	res = parseargs(args, realargs, 1, ',');
 	if (res != 1) {
 		error("Incorrect number of arguments to 'debouncetime' (should be <value>)\n");
 		return -1;
@@ -883,10 +878,9 @@ int debounce_time(char *keyword, char *args)
 int burst_time(char *keyword, char *args)
 {
 	static char *realargs[10];
-	int argc;
 	int res;
 	int val;
-	argc = res = parseargs(args, realargs, 1, ',');
+	res = parseargs(args, realargs, 1, ',');
 	if (res != 1) {
 		error("Incorrect number of arguments to 'bursttime' (should be <value>)\n");
 		return -1;
@@ -906,10 +900,9 @@ int burst_time(char *keyword, char *args)
 int tx_gain(char *keyword, char *args)
 {
 	static char *realargs[10];
-	int argc;
 	int res;
 	int val;
-	argc = res = parseargs(args, realargs, 1, ',');
+	res = parseargs(args, realargs, 1, ',');
 	if (res != 1) {
 		error("Incorrect number of arguments to 'txgain' (should be <value>)\n");
 		return -1;
@@ -927,10 +920,9 @@ int tx_gain(char *keyword, char *args)
 int rx_gain(char *keyword, char *args)
 {
 	static char *realargs[10];
-	int argc;
 	int res;
 	int val;
-	argc = res = parseargs(args, realargs, 1, ',');
+	res = parseargs(args, realargs, 1, ',');
 	if (res != 1) {
 		error("Incorrect number of arguments to 'rxgain' (should be <value>)\n");
 		return -1;
@@ -948,10 +940,9 @@ int rx_gain(char *keyword, char *args)
 int de_emp(char *keyword, char *args)
 {
 	static char *realargs[10];
-	int argc;
 	int res;
 	int val;
-	argc = res = parseargs(args, realargs, 1, ',');
+	res = parseargs(args, realargs, 1, ',');
 	if (res != 1) {
 		error("Incorrect number of arguments to 'de-emp' (should be <value>)\n");
 		return -1;
@@ -971,10 +962,9 @@ int de_emp(char *keyword, char *args)
 int pre_emp(char *keyword, char *args)
 {
 	static char *realargs[10];
-	int argc;
 	int res;
 	int val;
-	argc = res = parseargs(args, realargs, 1, ',');
+	res = parseargs(args, realargs, 1, ',');
 	if (res != 1) {
 		error("Incorrect number of arguments to 'pre_emp' (should be <value>)\n");
 		return -1;
@@ -994,10 +984,9 @@ int pre_emp(char *keyword, char *args)
 int invert_cor(char *keyword, char *args)
 {
 	static char *realargs[10];
-	int argc;
 	int res;
 	int val;
-	argc = res = parseargs(args, realargs, 1, ',');
+	res = parseargs(args, realargs, 1, ',');
 	if (res != 1) {
 		error("Incorrect number of arguments to 'invertcor' (should be <value>)\n");
 		return -1;
@@ -1021,10 +1010,9 @@ int invert_cor(char *keyword, char *args)
 int ext_tone(char *keyword, char *args)
 {
 	static char *realargs[10];
-	int argc;
 	int res;
 	int val;
-	argc = res = parseargs(args, realargs, 1, ',');
+	res = parseargs(args, realargs, 1, ',');
 	if (res != 1) {
 		error("Incorrect number of arguments to 'exttone' (should be <value>)\n");
 		return -1;
@@ -1050,11 +1038,10 @@ int ext_tone(char *keyword, char *args)
 int cor_thresh(char *keyword, char *args)
 {
 	static char *realargs[10];
-	int argc;
 	int res;
 	int val;
 	int x = 0;
-	argc = res = parseargs(args, realargs, 1, ',');
+	res = parseargs(args, realargs, 1, ',');
 	if (res != 1) {
 		error("Incorrect number of arguments to 'corthresh' (should be <value>)\n");
 		return -1;
