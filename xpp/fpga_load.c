@@ -557,7 +557,6 @@ int match_usb_device_identity(const struct usb_config_descriptor *config_desc,
 
 const struct astribank_type *my_usb_device_identify(const char devpath[], struct my_usb_device *mydev)
 {
-	struct usb_device_descriptor	*dev_desc;
 	struct usb_config_descriptor	*config_desc;
 	int				i;
 
@@ -570,7 +569,6 @@ const struct astribank_type *my_usb_device_identify(const char devpath[], struct
 		ERR("Bailing out\n");
 		return 0;
 	}
-	dev_desc = &mydev->dev->descriptor;
 	config_desc = mydev->dev->config;
 	for(i = 0; i < sizeof(astribank_types)/sizeof(astribank_types[0]); i++) {
 		if(match_usb_device_identity(config_desc, &astribank_types[i])) {
@@ -592,7 +590,6 @@ int my_usb_device_init(const char devpath[], struct my_usb_device *mydev, const 
 	struct usb_interface		*interface;
 	struct usb_interface_descriptor	*iface_desc;
 	struct usb_endpoint_descriptor	*endpoint;
-	int				ret;
 	int				i;
 
 	assert(mydev != NULL);
@@ -638,10 +635,10 @@ int my_usb_device_init(const char devpath[], struct my_usb_device *mydev, const 
 	mydev->abtype = abtype;
 	mydev->my_ep_in = abtype->my_ep_in;
 	mydev->my_ep_out = abtype->my_ep_out;
-	ret = get_usb_string(mydev->iManufacturer, BUFSIZ, dev_desc->iManufacturer, mydev->handle);
-	ret = get_usb_string(mydev->iProduct, BUFSIZ, dev_desc->iProduct, mydev->handle);
-	ret = get_usb_string(mydev->iSerialNumber, BUFSIZ, dev_desc->iSerialNumber, mydev->handle);
-	ret = get_usb_string(mydev->iInterface, BUFSIZ, iface_desc->iInterface, mydev->handle);
+	get_usb_string(mydev->iManufacturer, BUFSIZ, dev_desc->iManufacturer, mydev->handle);
+	get_usb_string(mydev->iProduct, BUFSIZ, dev_desc->iProduct, mydev->handle);
+	get_usb_string(mydev->iSerialNumber, BUFSIZ, dev_desc->iSerialNumber, mydev->handle);
+	get_usb_string(mydev->iInterface, BUFSIZ, iface_desc->iInterface, mydev->handle);
 	INFO("ID=%04X:%04X Manufacturer=[%s] Product=[%s] SerialNumber=[%s] Interface=[%s]\n",
 		dev_desc->idVendor,
 		dev_desc->idProduct,
