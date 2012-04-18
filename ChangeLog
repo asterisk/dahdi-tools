@@ -1,0 +1,1958 @@
+2012-04-18  Shaun Ruffell <sruffell@digium.com>
+
+        * dahdi-tools version 2.6.1 released.
+
+2012-03-28  Shaun Ruffell <sruffell@digium.com>
+
+        * dahdi-tools version 2.6.1-rc1 released.
+
+2012-03-22 19:01 +0000 [r10596]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/astribank_hook: xpp: astribank_hook: wait for udev to settle
+	  When running the astribank_hook (only on Astribanks, in
+	  XPP_HOTPLUG_DAHDI mode), wait for all other Astribanks to create
+	  all the required device files. Signed-off-by: Oron Peled
+	  <oron.peled@xorcom.com> Acked-by: Tzafrir Cohen
+	  <tzafrir.cohen@xorcom.com> Origin:
+	  http://svnview.digium.com/svn/dahdi?view=rev&rev=10585
+
+2012-03-20 11:53 +0000 [r10547-10555]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/astribank_license.c: xpp: astribank_allow: useless debug on
+	  write Remove a useless debug message in the "write" operation.
+	  Signed-off-by: Tzafrir Cohen <tzafrir.cohen@xorcom.com> Origin:
+	  http://svnview.digium.com/svn/dahdi?view=rev&rev=10549
+
+	* xpp/astribank_license.c, xpp/echo_loader.c, xpp/xtalk/xtalk.c,
+	  xpp/astribank_allow.c, xpp/fpga_load.c: xpp: fix build warnings
+	  Unlike original: also fixed fpga_load. Signed-off-by: Tzafrir
+	  Cohen <tzafrir.cohen@xorcom.com> Origin:
+	  http://svnview.digium.com/svn/dahdi?view=rev&rev=10543
+
+	* xpp/oct612x/octdeviceapi/oct6100api/oct6100_miscellaneous_priv.h,
+	  xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_chip_open.c,
+	  xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_channel.c,
+	  xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_tsst.c,
+	  xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_interrupts.c,
+	  xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_conf_bridge.c:
+	  xpp: oct612x: fix build warnings Signed-off-by: Tzafrir Cohen
+	  <tzafrir.cohen@xorcom.com> Origin:
+	  http://svnview.digium.com/svn/dahdi?view=rev&rev=10542
+
+2012-03-15 21:49 +0000 [r10515-10523]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Hardware/USB.pm: xpp: Update product ID's
+	  in Dahdi::Hardware::USB Signed-off-by: Oron Peled
+	  <oron.peled@xorcom.com> Acked-by: Tzafrir Cohen
+	  <tzafrir.cohen@xorcom.com> Origin:
+	  http://svnview.digium.com/svn/dahdi?view=rev&rev=10505
+
+	* xpp/astribank_hexload.8: xpp: fix manpage of astribank_hexload *
+	  Fixed 'astribanks_tool' string Signed-off-by: Oron Peled
+	  <oron.peled@xorcom.com> Origin:
+	  http://svnview.digium.com/svn/dahdi?view=rev&rev=10503
+
+	* xpp/astribank_license.c (added), xpp/astribank_allow.8,
+	  xpp/astribank_license.h (added), xpp/Makefile,
+	  xpp/astribank_allow.c: xpp: Customizable license markers *
+	  License strings markers (BEGIN.../END...) can be customized * By
+	  default, generate a "generic" license markers * We accept any
+	  (paired) markers from the valid list Signed-off-by: Oron Peled
+	  <oron.peled@xorcom.com> Acked-by: Tzafrir Cohen
+	  <tzafrir.cohen@xorcom.com> Origin:
+	  http://svnview.digium.com/svn/dahdi?view=rev&rev=10502
+
+	* xpp/echo_loader.c: xpp: bugfix: handle echo_loader errors * I/O
+	  errors of the device were not propagated up by echo_loader * As a
+	  result, Octasic load failure did not prevented USB renumeration *
+	  Make consistent return values: - In our functions: ret < 0 is
+	  error - In Octasic functions (UINT32): return Octasic error codes
+	  * All error paths prints error messages (so we see how the error
+	  propagates) * Also changed error order testing in init_octasic():
+	  Return status should be tested before the values of by-reference
+	  parameters Signed-off-by: Oron Peled <oron.peled@xorcom.com>
+	  Acked-by: Tzafrir Cohen <tzafrir.cohen@xorcom.com> Origin:
+	  http://svnview.digium.com/svn/dahdi?view=rev&rev=10499
+
+	* xpp/echo_loader.c, xpp/astribank_usb.h: xpp: echo_loader.c: add
+	  AB id to messages * Define new macros AB_INFO(), AB_ERR() that
+	  prefix their message with the astribank information (usb device +
+	  serial number) * Replace all INFO()/ERR() messages in
+	  echo_loader.c with the new macros Signed-off-by: Oron Peled
+	  <oron.peled@xorcom.com> Acked-by: Tzafrir Cohen
+	  <tzafrir.cohen@xorcom.com> Origin:
+	  http://svnview.digium.com/svn/dahdi?view=rev&rev=10498
+
+	* build_tools/dump_sys_state: improve build_tools/dump_sys_state *
+	  Use the new dahdi_sysfs_copy script * Clean old/unused code * Add
+	  notification output * Now always creates a tarball - the gzipped
+	  copy is many times smaller. * Without arguments, tarball name is:
+	  sys_dump.<hostname>_<date>_<time>.tar.gz Signed-off-by: Oron
+	  Peled <oron.peled@xorcom.com> Acked-by: Tzafrir Cohen
+	  <tzafrir.cohen@xorcom.com> Origin:
+	  http://svnview.digium.com/svn/dahdi?view=rev&rev=10497
+
+	* build_tools/dahdi_sysfs_copy (added): new
+	  build_tools/dahdi_sysfs_copy Short perl script to copy dahdi
+	  related sysfs trees into a designated directory. Signed-off-by:
+	  Oron Peled <oron.peled@xorcom.com> Acked-by: Tzafrir Cohen
+	  <tzafrir.cohen@xorcom.com> Origin:
+	  http://svnview.digium.com/svn/dahdi?view=rev&rev=10496
+
+	* xpp/xpp_fxloader: xpp: xpp_fxloader: improve output * Replaced
+	  (almost) all $LOGGER to echo: - In interactive use -- that what
+	  we want anyway - When called from UDEV, the subprocess
+	  stdout/stderr is piped to $LOGGER anyway (at the end of the
+	  script) - No need for many $LOGGER instances (each with its own
+	  pid) Signed-off-by: Oron Peled <oron.peled@xorcom.com> Acked-by:
+	  Tzafrir Cohen <tzafrir.cohen@xorcom.com> Origin:
+	  http://svnview.digium.com/svn/dahdi?view=rev&rev=10495
+
+	* xpp/mpptalk_defs.h, xpp/mpp.h, xpp/mpptalk.c: xpp: clean
+	  'Extrainfo' EEPROM field * Extrainfo field contains junk data *
+	  Caused by: - The field is initialized to 0xFF values - There was
+	  no null termination (and no room to add it) * New code: - Ensure
+	  that show_extrainfo() have null termination even if EEPROM field
+	  is full. - Replace trailing 0xFF characters with '\0' when
+	  reading this field - Since our default burned EEPROM contain
+	  Extrainfo field full of 0xFF characters, this would make them
+	  look as null filled. Internal Issue-Id: #1341 Signed-off-by: Oron
+	  Peled <oron.peled@xorcom.com> Acked-by: Tzafrir Cohen
+	  <tzafrir.cohen@xorcom.com> Origin:
+	  http://svnview.digium.com/svn/dahdi?view=rev&rev=10491
+
+2012-01-04 22:20 +0000 [r10407]  Shaun Ruffell <sruffell@digium.com>
+
+	* / (added): Creating branch for 2.6
+
+2012-01-03  Shaun Ruffell <sruffell@digium.com>
+
+        * dahdi-tools version 2.6.0 released.
+
+2011-12-04 17:08 +0000 [r10366-10368]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/astribank_usb.c: xpp: two extra product IDs: 1112, 1164 Two
+	  extra USB product IDs used in some odd maintenance scenarios.
+	  Signed-off-by: Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/xpp_fxloader: xpp: xpp_fxloader: regressions from r10348 *
+	  Avoid a duplicated run of udev on some systems. * Fix usage of
+	  astribank_tool's output. Signed-off-by: Tzafrir Cohen
+	  <tzafrir.cohen@xorcom.com>
+
+2011-11-30 20:15 +0000 [r10348-10358]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Hardware/PCI.pm: DAHDI-perl: Fix PCI ID
+	  for Rhino R4T1 (0b0b:0305) (Closes issue DAHTOOL-56)
+	  Signed-off-by: Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/xpp_fxloader: xpp: recovery firmware in xpp_fxloader
+	  USB_RECOV.hex is an extra firmware that may be useful for
+	  recovering from certain Astribank hardware faults in some
+	  scenarios. This adds support for either loading it manually
+	  ('/usr/share/dahdi/xpp_fxloader recover-sb') or through udev,
+	  *if* the required udev rules were set on the system.
+	  Signed-off-by: Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/xpp_fxloader, xpp/xtalk/xusb.c: xpp: Serialized Parallel
+	  load; E-Main-3 firmware This introduces support for loading
+	  multiple firmwares in parallel also for the case of a manual
+	  load. This is anyway the case for an automatic load from udev. *
+	  libusb needs to scan the bus all too often. This causes
+	  occasional failures for opening devices. * Thus introduce a
+	  semaphore to serialize uses of libusb. E-Main-3 firmware differs
+	  by a different value of bcdDevice: * Read this from the sysfs
+	  devices tree. * Fall back to lsusb -v (much slower) is sysfs not
+	  available. Signed-off-by: Tzafrir Cohen
+	  <tzafrir.cohen@xorcom.com>
+
+2011-11-21 15:25 +0000 [r10343]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/astribank_hexload.c: xpp: astribank_hexload: we need more
+	  lines * Newer firmwares may have more lines. * While we're at it,
+	  add better debug printing. * Remove some unused debugging code.
+	  Signed-off-by: Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+2011-11-02  Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools version 2.6.0-rc1 released.
+
+2011-11-02 21:57 +0000 [r10311]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* dahdi_maint.c, dahdi_cfg.c: Fix GCC 4.6 "set but not used"
+	  warnings Signed-off-by: Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+2011-11-02 20:55 +0000 [r10308]  Shaun Ruffell <sruffell@digium.com>
+
+	* xpp/perl_modules/Dahdi/Span.pm: dahdi_genconf: Allow it to
+	  recognize the TE8xx 8-port cards. Signed-off-by: Shaun Ruffell
+	  <sruffell@digium.com>
+
+2011-11-02 20:10 +0000 [r10306]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* doc/dahdi_cfg.8, dahdi_cfg.c: dahdi_cfg: add '-S <spanno>' and
+	  '-C <chan-ranges>' * dahdi_cfg -S <num>: only apply changes to
+	  span <num>. * If span is analog (no 'span=<num>,<channels>,...'
+	  statement in system.conf), we need to set range: -C <channels> *
+	  With the <basechan> and <channels> attributes in sysfs we easily
+	  configure each device on the fly. Simply run: dahdi_cfg -S
+	  <spanno> -C <basechan>+<channels>-1 from udev script
+	  Signed-off-by: Oron Peled <oron.peled@xorcom.com> Acked-by:
+	  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+2011-11-01 18:10 +0000 [r10293]  Russ Meyerriecks <rmeyerreicks@digium.com>
+
+	* Makefile, dahdi_pcap.c (added): dahdi_pcap: Imported user space
+	  utility for managing pcap streams This utility will export packet
+	  captures for channels in dahdi. It requires CONFIG_DAHDI_MIRROR
+	  to be defined in dahdi-linux as it uses the unsupported
+	  DAHDI_MIRROR ioctl interface. Internal-Issue-ID: DAHTOOL-49 From:
+	  Torrey Searle <tsearle@gmail.com> Signed-off-by: Russ Meyerriecks
+	  <rmeyerriecks@digium.com> Acked-by: Shaun Ruffell
+	  <sruffell@digium.com>
+
+2011-10-23 14:43 +0000 [r10264-10267]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Hardware/PCI.pm: dahdi_perl: Use
+	  $Dahdi::sys_base for sysfs pathes Signed-off-by: Tzafrir Cohen
+	  <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Config/Gen/Xpporder.pm: xpp_order
+	  generator: ignore EC XPD The xpp_order configuration generator
+	  should only loop over telephony devices, not all spans.
+	  Signed-off-by: Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Config/Gen/Chandahdi.pm: chandahdi gen:
+	  extens can have any num of digits Don't force extens we generate
+	  to have exactly 4 digits (simple formatting limitation).
+	  Signed-off-by: Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/astribank_hexload.8, xpp/astribank_tool.8,
+	  xpp/astribank_allow.8: Typos in man pages: toolyou Signed-off-by:
+	  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+2011-09-29 17:00 +0000 [r10213-10216]  Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi_test.c: dahdi_test: Enforce range from 0.0% - 100.0% for
+	  accuracy. Also makes sure that the percentage output from the
+	  verbose and non-verbose modes of timer_test are the same and
+	  print a cumulative accuracy which smooths out the jitter for each
+	  pass. If the time it takes to read in 1 second worth of data is
+	  longer than 1 second accuracy will be 0%. (closes issue #18573)
+	  Reported by: smurfix Signed-off-by: Shaun Ruffell
+	  <sruffell@digium.com>
+
+	* dahdi_maint.c: dahdi_maint: Print 'unsupported' warning if
+	  framing errors is -1. Warn the user if attempting to monitor a
+	  statistic that the particular board driver does not appear to be
+	  collecting. The wcte12xp in r10212 in now fills in -1 for any
+	  statistic it does not collect and other digital cards can do the
+	  same. Signed-off-by: Shaun Ruffell <sruffell@digium.com>
+	  Acked-by: Russ Meyerriecks <rmeyerriecks@digium.com>
+
+	* xpp/perl_modules/Dahdi/Span.pm: dahdi_genconf: Use 'dahdi_scan'
+	  to determine span_type for B410P cards. The wcb4xxp driver does
+	  not put enough information in the proc filesystem to determine if
+	  the ports are in TE or NT mode. Previously the ports would always
+	  just setup the dahdi-channels.conf file in TE mode. After this
+	  change the dahdi_scan utility is used to detect if the ports are
+	  in TE or NT mode and setup dahdi-channels.conf appropriately.
+	  Internal-Issue-ID: DAHTOOL-54 Signed-off-by: Shaun Ruffell
+	  <sruffell@digium.com>
+
+	* xpp/perl_modules/Dahdi/Span.pm: dahdi_genconf: Assume spans with
+	  unknown term types are software selectable. Resolves a regression
+	  on the 2.5 branch that would result in: $ dahdi_genconf
+	  dahdi_genconf: missing default group (termtype=UNKNOWN) E1 / T1
+	  spans use software configuration to set CPE / NET mode. This
+	  patch will just assume that a termtype is software selectable if
+	  it was "UNKNOWN" when first scanning the span. Internal-Issue-ID:
+	  DAHTOOL-55 Signed-off-by: Shaun Ruffell <sruffell@digium.com>
+	  Tested-by: David Purdue <support@noojee.com.au>
+
+2011-09-09 13:45 +0000 [r10194-10198]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* dahdi_maint.c, doc/dahdi_maint.8 (added): Man page for
+	  dahdi_maint Fix dahdi_maint's usage message while we're at it.
+	  Signed-off-by: Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* doc/dahdi_monitor.8: Update the dahdi-monitor man page
+	  Signed-off-by: Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/dahdi_hardware, xpp/dahdi_genconf, xpp/lsdahdi: fix typos in
+	  some xpp utils Signed-off-by: Tzafrir Cohen
+	  <tzafrir.cohen@xorcom.com>
+
+2011-09-05 09:05 +0000 [r10177]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/waitfor_xpds: xpp: waitfor_xpds: higher and configurable
+	  timeout On several pathological cases we may need to wait more
+	  than 40 seconds. Make that timeout configurable.
+
+2011-08-25 10:32 +0000 [r10153]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Hardware/USB.pm: dahdi-perl: Also get USB
+	  loaded driver from usbfs Signed-off-by: Oron Peled
+	  <oron.peled@xorcom.com> Signed-off-by: Tzafrir Cohen
+	  <tzafrir.cohen@xorcom.com>
+
+2011-08-18 15:38 +0000 [r10142]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Config/Gen/Freepbxdb.pm (added):
+	  dahdi-perl: Freepbxdb config generator Use 'dahdi_genconf
+	  freepbxdb' to generate the required astdb entries for Asterisk to
+	  use the extensions generated by dahdi_genconf. Requires asterisk
+	  to be running. This module is intended for testing as it bypasses
+	  standard FreePBX functions only and hence may not work properly
+	  with Freepbx. Signed-off-by: Tzafrir Cohen
+	  <tzafrir.cohen@xorcom.com>
+
+2011-08-10 15:31 +0000 [r10104]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/README.Astribank: README.Astribank: HWEC and build
+	  instructions Signed-off-by: Tzafrir Cohen
+	  <tzafrir.cohen@xorcom.com>
+
+2011-08-09 13:11 +0000 [r10101]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Span.pm: xpp: pri_termtype: match complete
+	  SPAN patterns Match complete span patterns, to avoid pattern
+	  'SPAN/1' from matching e.g. span 12 (SPAN/12). Signed-off-by:
+	  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+2011-08-05  Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools version 2.5.0 released.
+
+2011-08-02 17:28 +0000 [r10085-10087]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* README: Extra README fixes: 'th' and ztcfg Signed-off-by: Tzafrir
+	  Cohen <tzafrir.cohen@xorcom.com>
+
+	* README: spelling: ocnfig.status and such Signed-off-by: Tzafrir
+	  Cohen <tzafrir.cohen@xorcom.com>
+
+2011-07-21  Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools version 2.5.0-rc2 released.
+
+2011-07-21 17:29 +0000 [r10071]  Russ Meyerriecks <rmeyerreicks@digium.com>
+
+	* patlooptest.c: patlooptest: Ignore the first buffered event Fixes
+	  the feature introduced in r9909 that allows patlooptest to
+	  monitor channel events. Patlooptest was reporting events that we
+	  don't care about, prior to reading from the channel. This fix
+	  ignore the first event read on a channel and reports all
+	  subsequent events properly. Signed-off-by: Russ Meyerriecks
+	  <rmeyerriecks@digium.com>
+
+2011-07-21 13:40 +0000 [r10068]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/astribank_hook: astribank_hook: startup lock and more *
+	  Silently exit right away if user did not set XPP_HOTPLUG_DAHDI. *
+	  Only one Astribank should be allowed to run the startup script: -
+	  Protect that section with a "lock" (symlinking a file). - Sadly
+	  we can't rely on /run and may have to wait for a r/w file-system.
+	  - And thus even this waiting needs to be run in the background as
+	  to not hold udev. Signed-off-by: Tzafrir Cohen
+	  <tzafrir.cohen@xorcom.com>
+
+2011-07-12  Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools version 2.5.0-rc1 released.
+
+2011-07-12 23:01 +0000 [r10040]  Shaun Ruffell <sruffell@digium.com>
+
+	* xpp/perl_modules/Dahdi/Span.pm: Span.pm: Process the
+	  /proc/dahdi/<x> files atomically. It is possible that the
+	  contents of the proc files can change while the perl modules are
+	  in the processing of processing them. Specifically, if lsdahdi is
+	  called on boot before the channels are configured, the channel
+	  will be "probed" to determine if it's an FXO or FXS channel and
+	  that can result in the output of proc changing. When the size of
+	  proc changes, the script can get confused about where the
+	  beginning of the next line is. This patch reads in the proc file
+	  completely into memory first, and then starts processing each of
+	  the lines. This resolves the "Unrecognized garbage 'INACTIVE)' in
+	  -" that is displayed on boot with the recent trunk of DAHDI.
+	  Signed-off-by: Shaun Ruffell <sruffell@digium.com> Signed-off-by:
+	  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+2011-07-11 18:02 +0000 [r10034]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/astribank_hexload.c: xpp: astribank_hexload: yes, we
+	  HAVE_OCTASIC Hardwire this for now, as this does not come from
+	  autoconf.
+
+2011-07-10 16:25 +0000 [r10030-10032]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/astribank_hexload.8, xpp/waitfor_xpds, xpp/README.Astribank,
+	  xpp/echo_loader.h (added), xpp/xpp_fxloader,
+	  xpp/astribank_tool.c, xpp/Makefile, xpp/astribank_allow.c, xpp,
+	  xpp/perl_modules/Dahdi/Xpp/Xpd.pm, xpp/astribank_hexload.c,
+	  xpp/dahdi_registration, xpp/echo_loader.c (added): xpp: support
+	  loading Octasic EC firmware Echo Cancellation firmware is loaded
+	  by xpp/stribank_hexload (Using the oct612x code). *
+	  astribank_hexload: options -O/-o/-A for handling the Octasic echo
+	  cancellation firmware. * astribank_tool: report that. *
+	  xpp_fxloader: Run astribank_hexload, if needed. * dahdi_perl: The
+	  EC module is an extra XPD, but not a "telephony device" and hence
+	  not a span. Deal with that. * waitfor_xpds: may need to wait a
+	  bit longer for firmware loading. Signed-off-by: Tzafrir Cohen
+	  <tzafrir.cohen@xorcom.com>
+
+	* xpp/oct612x (added): xpp: A copy of oct612x in dahdi-tools
+	  Include a copy of the oct612x Octasic echo canceller interface to
+	  be used by astribank_hexload to load the echo canceller firmware
+	  to a Xorcom Astribank.
+
+2011-07-05 20:13 +0000 [r10026]  Shaun Ruffell <sruffell@digium.com>
+
+	* system.conf.sample: system.conf.sample: Add note regarding cross
+	  connecting spans on B410P. There is an issue with the hardware on
+	  the B410P that makes it unreliable to connect one of the ports to
+	  another port for testing. Signed-off-by: Shaun Ruffell
+	  <sruffell@digium.com>
+
+2011-06-23 17:33 +0000 [r9986]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Xpp.pm: fix registration order for more
+	  than 9 Astribanks The sorting function for SORT_XPPORDER
+	  accidentally sorted the Astribank priorities from the xpp_order
+	  file (/etc/dahdi/xpp_order) lexicographically instead of
+	  numerically, that is: 10 before 2. Signed-off-by: Tzafrir Cohen
+	  <tzafrir.cohen@xorcom.com>
+
+2011-06-16 09:35 +0000 [r9979]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/dahdi_genconf, xpp/perl_modules/Dahdi/Span.pm: dahdi_genconf:
+	  apply termtype to Digium HA8 BRI Make the pri_termtype setting in
+	  genconf_parameters apply to any BRI/PRI carddeclared as "soft
+	  NT". ATM, this is only the Xorcom E1/T1 device and the Digium HA8
+	  (BRI) module of the TDM card. Signed-off-by: Tzafrir Cohen
+	  <tzafrir.cohen@xorcom.com> Acked-by: Shaun Ruffell
+	  <sruffell@digium.com>
+
+2011-06-07 19:44 +0000 [r9975]  Kinsey Moore <kmoore@digium.com>
+
+	* patgen.c, patlooptest.c, pattest.c: tools: Allow pattern tools to
+	  access channels above the device file limit pattest and patgen
+	  already had this capability, but there were cases in which they
+	  would act unexpectedly. Now, if the name specified is not a
+	  character device file, it will be treated as a channel number if
+	  possible. Acked-by: Shaun Ruffell <sruffell@digium.com>
+
+2011-06-07 10:28 +0000 [r9973]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/astribank_hexload.c: xpp: this is the right place for
+	  astribank_close()
+
+2011-05-24 15:14 +0000 [r9919-9920]  Shaun Ruffell <sruffell@digium.com>
+
+	* zonedata.c: zonedata: Add support for United Arab Emirates. This
+	  was provided for interop with analog lines provided by Etisilat.
+	  DAHDI-796. Signed-off-by: Shaun Ruffell <sruffell@digium.com>
+
+	* zonedata.c: zonedata: Add support for Costa Rica. Add in the
+	  costa Rica zonedata. (closes issue #19069) Reported by:
+	  desafiocostarica Signed-off-by: Shaun Ruffell
+	  <sruffell@digium.com>
+
+2011-04-18 21:20 +0000 [r9909]  Kinsey Moore <kmoore@digium.com>
+
+	* patlooptest.c: tools: Allow patlooptest to activate and handle
+	  buffer events The new buffer events code introduced in revision
+	  9905 gives userspace processes an interface to activate detection
+	  of buffer over and underflows. This change allows patlooptest to
+	  take advantage of that feature to better inform users of the
+	  cause of pattern errors. Acked-by: Shaun Ruffell
+	  <sruffell@digium.com> (original patch by Matt Fredrickson)
+
+2011-03-16 14:32 +0000 [r9830-9831]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/astribank_is_starting.c: astribank_is_starting.c: do have
+	  timeout (typo) Due to a typo the option for not using a timeout
+	  was always used. Regression since r9426.
+
+	* dahdi.init: dahdi.init: LSB short description
+
+2011-03-10 18:48 +0000 [r9825]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/xtalk/xtalk.c (added), xpp/astribank_hexload.8, xpp/mpptalk.c
+	  (added), xpp/xtalk/xusb.h (added), xpp/xtalk/debug.c (added),
+	  xpp/xpp_fxloader, xpp/xtalk/xtalk.h (added),
+	  xpp/astribank_tool.c, xpp/xtalk/xtalk_defs.h (added),
+	  xpp/astribank_allow.c, xpp/mpptalk.h (added), xpp/mpptalk_defs.h
+	  (added), xpp/xtalk/debug.h (added), xpp/astribank_hexload.c,
+	  xpp/xtalk/xlist.c (added), xpp/debug.c (removed),
+	  xpp/astribank_usb.c, xpp/mpp_funcs.c (removed), xpp/debug.h
+	  (removed), xpp/xtalk/xlist.h (added), xpp/Makefile,
+	  xpp/astribank_usb.h, xpp/mpp_funcs.h (removed),
+	  xpp/astribank_tool.8, xpp/astribank_allow.8, xpp/mpp.h,
+	  xpp/pic_loader.c, xpp/xtalk (added), xpp/xtalk/xusb.c (added):
+	  xpp: use 'xtalk' for the USB access code * Move most of the USB
+	  access code from xpp/ to xpp/xtalk/ . * astribank_tool and such
+	  tools can now use a shorter -D mmm/nnn rather than a full path.
+	  Signed-off-by: Oron Peled <oron.peled@xorcom.com> Acked-by:
+	  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+2011-03-03 Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools version 2.4.1 released.
+
+2011-02-08 14:42 +0000 [r9733-9744]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* /, xpp/perl_modules/Dahdi/Chans.pm,
+	  xpp/perl_modules/Dahdi/Config/Gen/System.pm: dahdi-perl: more
+	  left-over $span->xpd Replace the remaining $span->xpd with
+	  xpd_of_span(). Following up on r9648. Merged revisions 9731 via
+	  svnmerge from http://svn.digium.com/svn/dahdi/tools/trunk
+
+	* xpp/perl_modules/Dahdi/Hardware/USB.pm, /: dahdi-perl: fix xpp
+	  driver in dahdi_hardware Don't require 'dahdi_hardware -v' to
+	  show the driver for a USB device. Only works when the usbfs is
+	  not used (when /proc/bus/usb is not mounted). Signed-off-by:
+	  Tzafrir Cohen <tzafrir.cohen@xorcom.com> Merged revisions 9699
+	  via svnmerge from http://svn.digium.com/svn/dahdi/tools/trunk
+
+	* /, xpp/perl_modules/Dahdi/Span.pm: dahdi-perl: left-over
+	  $span->xpd Replace one remaining $span->{XPD} with xpd_of_span().
+	  Signed-off-by: Tzafrir Cohen <tzafrir.cohen@xorcom.com> Merged
+	  revisions 9648 via svnmerge from
+	  http://svn.digium.com/svn/dahdi/tools/trunk
+
+	* /, xpp/perl_modules/Dahdi/Config/Gen/System.pm: dahdi_genconf:
+	  Don't generate configurations that use channel 16 on E1 CAS
+	  Attempting to use channel 16 on E1 CAS is disallowed since that
+	  channel is reserved for RBS signaling. Configurations should not
+	  be generated that attempt to use it. Closes DAHDI-763. Patch by
+	  dmartinez. Merged revisions 9485 via svnmerge from
+	  http://svn.digium.com/svn/dahdi/tools/trunk
+
+	* /, xpp/xpp_fxloader: xpp_fxloader: Don't try to load FPGA
+	  firmware twice When called from udev to load the FPGA firmware,
+	  make sure that this is not the event generated for the first
+	  end-point of the existing two, as we need to talk with the second
+	  one. This is probably better done in the udev rules, but will be
+	  slightly more complicated to apply only to the FPGA loading and
+	  not to USB firmware loading. Merged revisions 9482 via svnmerge
+	  from http://svn.digium.com/svn/dahdi/tools/trunk
+
+	* dahdi_scan.c, /: dahdi_scan: Show CAS framing on the framing
+	  line. Also, always append "/CRC4" on any span where that was
+	  specified as an option. Signed-off-by: Shaun Ruffell
+	  <sruffell@digium.com> Acked-by: Kinsey Moore <kmoore@digium.com>
+	  Merged revisions 9473 via svnmerge from
+	  http://svn.digium.com/svn/dahdi/tools/trunk
+
+	* dahdi_scan.c, /: Fixed up the loss of crc4-multiframe alignment
+	  logic Loss of crc4-multiframe alignment on an E1 link is not a
+	  condition which brings the span down. The span will continue to
+	  run as long as it can maintain double frame alignment. Because of
+	  this, we cannot place the LMFA alarm in the usual spaninfo.alarms
+	  member, due to userspace programs using this as a catch-all for a
+	  span being up or down. We can detect the alarm by watching the
+	  frame error counter (fecount). If it continuously increments, the
+	  span is configured for crc4, and the span remains OK (alarms =
+	  0), then we are in loss of crc4-multiframe state. In order to
+	  test this alarm, you'll need to synthesize a loss of crc4
+	  alignment on the span. You can usually do this by configuring the
+	  local span to use crc4 and the remote end to not use crc4. I used
+	  the Fireberd 6000 in my lab to do this. dahdi-743 & dahdi-420
+	  Acked-by: Shaun Ruffell <sruffell@digium.com> Merged revisions
+	  9458 via svnmerge from
+	  http://svn.digium.com/svn/dahdi/tools/trunk
+
+	* xpp/perl_modules/Dahdi/Hardware/PCI.pm, /: Dahdi::Hardware:
+	  Support beroNet BN4S0e PCI Express card Add extra PCI IDs to
+	  support "beroNet BN4S0e PCI Express 4x S0 Karte". Origin:
+	  http://bugs.debian.org/600839 Merged revisions 9452 via svnmerge
+	  from http://svn.digium.com/svn/dahdi/tools/trunk
+
+	* autoconfig.h.in, xpp/astribank_is_starting.c, /, configure,
+	  configure.ac: astribank_is_starting: use semop if no semtimedop
+	  astribank_is_starting should use a timeout for the semaphore, but
+	  if the GNU-specific semtimedop() is not available, we'll just
+	  fall back to using semop with no time out. Not as good, but
+	  better than nothing. (closes issue #16783) Reported by: abelbeck
+	  Merged revisions 9426 via svnmerge from
+	  http://svn.digium.com/svn/dahdi/tools/trunk
+
+	* /, zonedata.c: tonezone: Add Macao,China to tone zone data Adding
+	  Macao tone zone data according to
+	  http://www.itu.int/ITU-T/inr/forms/files/tones-0203.pdf (closes
+	  issue #17744) Reported by: alfredtang Patches: zonedata.patch
+	  uploaded by alfredtang (license 1094) Merged revisions 9313 via
+	  svnmerge from http://svn.digium.com/svn/dahdi/tools/trunk
+
+2010-08-31 Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools version 2.4.0 released.
+
+2010-08-31 16:12 +0000 [r9220]  Kinsey Moore <kmoore@digium.com>
+
+	* ppp/dahdi.c: PPP: Fix an incorrect function call that was causing
+	  dahdi.so to fail to load
+
+2010-08-18 13:49 +0000 [r9159]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Config/Gen.pm: DAHDI-perl: Config (sort
+	  of) for dynamic channels Generate some sort of configuration for
+	  dynamic channels. Usable enough for testing.
+
+2010-08-18 Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools version 2.4.0-rc1 released.
+
+2010-08-13 18:40 +0000 [r9133]  Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi_scan.c: dahdi_scan: Use 'linecompat' to identify digital
+	  spans. This fixes the case where the BRI spans on the Hx8 cards
+	  were displayed as analog spans.
+
+2010-08-03 12:14 +0000 [r9079]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Hardware/PCI.pm,
+	  xpp/perl_modules/Dahdi/Chans.pm: dahdi-perl: also detect Aligera
+	  cards (closes issue #17783) Reported by: frawd Patches:
+	  dahdi-tools_aligera.patch uploaded by frawd (license 610)
+
+2010-08-01 22:39 +0000 [r9076]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* dahdi_scan.c, dahdi_maint.c: fix build of dahdi_scan and
+	  dahdi_maint with -linux 2.3 New functionality that was added in
+	  r8992 and r8993 uses new items defined only in dahdi-linux trunk
+	  (and eventually: 2.4). As in both cases it's a single place to
+	  check, we'll just ifdef it away.
+
+2010-07-30 15:28 +0000 [r9066-9067]  Kinsey Moore <kmoore@digium.com>
+
+	* dahdi_cfg.c: dahdi_cfg: Display more appropriate error messages
+	  when an invalid signaling is chosen along with suggestions on how
+	  to fix the problem.
+
+	* xpp/perl_modules/Dahdi/Chans.pm: perl: make sure the channel
+	  parser recognizes "Reserved" for unusable channels and fix a bug
+	  preventing E&M-E1 from being detected properly
+
+2010-07-28 12:30 +0000 [r9031]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/twinstar: twinstar: err on an invalid command.
+
+2010-07-26 18:56 +0000 [r8991-8994]  Russ Meyerriecks <rmeyerreicks@digium.com>
+
+	* dahdi_scan.c: Removed no longer existing alarm condition
+
+	* dahdi_scan.c: Modified dahdi_sync to report detailed alarms
+
+	* dahdi_maint.c: wip: dahdi_maint can now trip the alarm sim
+
+	* dahdi_maint.c: dahdi_maint: Fixed outdated usage text
+
+2010-07-22 11:41 +0000 [r8964]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/xpp_fxloader: increase maximal firmware delay to 15 seconds
+	  Hmm... how badly congested can the startup of Centos be?
+
+2010-07-21 08:47 +0000 [r8948-8954]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/astribank_hexload.8, xpp/astribank_tool.8,
+	  xpp/astribank_allow.8: More hyphen/minus fixes.
+
+	* xpp/xpp_fxloader: xpp_fxloader: replace a sleep with a sleep loop
+	  For newer kernels there's no need to sleep at all. For Centos5
+	  systems there seems to be a need for a large sleep for firmware
+	  load at boot time. So let's make it a loop.
+
+	* xpp/README.Astribank: README.Astribank: new VMWI settings
+
+2010-07-14 10:58 +0000 [r8923-8924]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Config/Gen.pm: dahdi_genconf: better error
+	  message for a bad generator module
+
+	* xpp/perl_modules/Dahdi/Span.pm, xpp/genconf_parameters: Allow
+	  using CONNECTOR/LABEL in genconf_parameters Allow using
+	  CONNECTOR/LABEL in addition to SPAN and NUM for pri_termtype in
+	  genconf_parameters
+
+2010-07-06 17:52 +0000 [r8854]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Hardware/PCI.pm: Extra PCI IDs for
+	  Junghanns PCI-E card (dahdi-perl)
+
+2010-06-29 15:21 +0000 [r8827]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* dahdi_tool.c: dahdi_tool: center span window as well. If your
+	  window was larger than 80X25, you got a main "window" in the
+	  center and the span one in the corner. This puts the span one in
+	  the center as well.
+
+2010-06-15 15:44 +0000 [r8777]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* dahdi_cfg.c: Convert all '%i' to '%d' in dahdi_cfg Various values
+	  in system.conf were parsed using %i. This means that a value with
+	  a leading 0x was considered hexadecimal and a value with a
+	  leading 0 would be considered octal ('030' == '24' == '0x1E').
+	  This was never documented and seems a potential cause for
+	  confusion in case a leading zero sneaks in. It is thus removed.
+
+2010-06-03 20:56 +0000 [r8746]  Doug Bailey <dbailey@digium.com>
+
+	* patlooptest.c: Add enhanced command line parsing and add more
+	  options into how errors are flagged and what is displayed. Still
+	  runs with the old usage: patlooptest <dahdi device> [<timeout>]
+
+2010-06-02 17:05 +0000 [r8741]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Hardware/PCI.pm: An extra PCI ID for an
+	  OpenVox card I ran into.
+
+2010-05-20 13:10 +0000 [r8670]  Sean Bright <sean@malleable.com>
+
+	* /, xpp: Add dahdi_maint and xpp/twinstar.8 to svn:ignore
+
+2010-05-17 13:26 +0000 [r8630-8638]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* /, xpp/waitfor_xpds, xpp/astribank_hook: Fix bashism (Raphael
+	  Geissert, checkbashism)
+
+	* xpp/perl_modules/Dahdi/Hardware/USB.pm: A more correct way to
+	  pass parameters
+
+2010-05-09 14:09 +0000 [r8615]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* dahdi_cfg.c: Remove duplicate code: rad_apply_channels
+	  rad_apply_channels() was the same as apply_channels()
+
+2010-05-04 15:33 +0000 [r8606]  Kevin P. Fleming <kpfleming@digium.com>
+
+	* dahdi_cfg.c: Report correct span number in dahdi_cfg verbose
+	  output. When the DAHDI configuration file does not configure
+	  every single span in the system, but leaves spans unconfigured,
+	  the verbose output from dahdi_cfg would show incorrect span
+	  numbers when reporting the line configuration, as it printed the
+	  index into the array of configured spans, instead of their actual
+	  span numbers.
+
+2010-05-03 13:54 +0000 [r8589]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/xpp_fxloader: xpp_fxloader: make sure 1163 is not missed.
+
+2010-04-29 15:06 +0000 [r8580]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/xpp_fxloader: Load xpp firmware in the background (udev) Move
+	  loading the the xpp firmwares (when called from udev) to a
+	  background sub-process. This helps with: * Don't block udev * It
+	  seems that with older systems (e.g. CentOS 5) we need to wait a
+	  bit for the device file to appear (in one of the upcoming udev
+	  events). If we keep blocking udev, we won't have the device file.
+	  The 'sleep' does not seem to be required for newer systems (e.g.
+	  Debian Lenny).
+
+2010-04-22 09:55 +0000 [r8547]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/Makefile: astribank_is_starting does not depend on libusb.
+
+2010-04-18 12:52 +0000 [r8529-8535]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* dahdi.init: Add proper dependencies to the 'stop' action as well.
+
+	* doc/pattest.8, xpp/dahdi_genconf, xpp/astribank_is_starting.8,
+	  doc/dahdi_cfg.8, doc/dahdi_test.8, doc/fxotune.8,
+	  doc/dahdi_diag.8, doc/dahdi_scan.8, doc/patgen.8,
+	  doc/dahdi_monitor.8: man pages: hyphen to minus Groff considers
+	  '-' a hyphen. If we want a minus (or a dash) we need to use '\-'.
+
+2010-04-14 14:55 +0000 [r8520]  Kinsey Moore <kmoore@digium.com>
+
+	* system.conf.sample: Add documentation for e&me1 (E&M over E1
+	  lines).
+
+2010-04-12 Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools version 2.3.0 released.
+
+2010-04-12 20:18 +0000 [r8503-8508]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Hardware/USB.pm: Also detect USB devices
+	  connected on a hub.
+
+	* xpp/perl_modules/Dahdi/Span.pm: Also detect type for Sangoma
+	  E1/T1 cards.
+
+2010-04-01 15:45 +0000 [r8451]  Shaun Ruffell <sruffell@digium.com>
+
+	* Makefile: dahdi_maint: install dahdi_maint on 'make install'
+
+2010-03-29 21:04 +0000 [r8444]  Kinsey Moore <kmoore@digium.com>
+
+	* dahdi_maint.c: Add a space between words and correct an error
+	  message.
+
+2010-03-25 15:29 +0000 [r8422-8430]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Hardware/PCI.pm: wcb4xxp - add Swyx 4xS0
+	  SX2 QuadBri PCI IDs to dahdi-perl (issue #16493) Reported by:
+	  nic_bellamy
+
+	* xpp/perl_modules/Dahdi/Hardware/PCI.pm: Some more wcb4xxp PCI IDs
+	  for Junghanns cards (issue #15446) (issue #16447) Reported by:
+	  lpistone Tested by: okrief
+
+2010-03-23 13:41 +0000 Russ Meyerriecks <rmeyerriecks@digium.com>
+
+	* dahdi-tools version 2.2.1.1 released.
+
+2010-03-10 17:37 +0000 Russ Meyerriecks <rmeyerriecks@digium.com>
+
+	* xpp/perl_modules/Dahdi/Hardware/PCI.pm: Added IDs for gen5 firmware
+
+2010-01-11 Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools version 2.2.1 released.
+
+2010-01-10 15:39 +0000 [r7793-7829]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* /, xpp/README.Astribank: Another round of updates to
+	  README.Astribank. zap->dahdi and others Merged revisions 7754 via
+	  svnmerge from http://svn.digium.com/svn/dahdi/tools/trunk
+
+	* xpp/perl_modules/Dahdi/Hardware/USB.pm, /: dahdi-perl: only get
+	  'serial' and 'devnum' attributes from Astribanks We can tell if a
+	  device is an Astribank by the vendorId and productId attribute.
+	  Get other attributed only after we give up on other devices.
+	  (closes issue #16552) Merged revisions 7558 via svnmerge from
+	  https://origsvn.digium.com/svn/dahdi/tools/trunk
+
+	* /, xpp/xpp_fxloader: xpp_fxloader: adapt to newer kernels This
+	  commit prepares xpp_fxloader to get hotplug envirnment from newer
+	  kernel versions: * DEVICE will eventually be replaced with
+	  DEVNAME. Accept both (and look at DEVNAME first). * If we get
+	  DEVICE, we'll probably get an invalid path based at /proc/bus/usb
+	  . Fix it to use /dev/bus/usb . * While we're at it, allow using
+	  PRODUCT from the envirnment instead of from the command-line.
+	  This should allow fixing udev rules but will also work with
+	  existing rules in DAHDI-linux from trunk (for systems where they
+	  are valid). Merged revisions 7752 via svnmerge from
+	  http://svn.digium.com/svn/dahdi/tools/trunk
+
+	* /, xpp/waitfor_xpds, xpp/twinstar_hook, xpp/xpp_fxloader: xpp:
+	  Comment-only changes: copyright, keywords Merged revisions 7463
+	  via svnmerge from http://svn.digium.com/svn/dahdi/tools/trunk
+
+	* /, xpp/twinstar: Add perldoc for twinstar. This also avoids a
+	  bogus, empty twinstar.8 man page. Merged revisions 7219,7263 via
+	  svnmerge from http://svn.digium.com/svn/dahdi/tools/trunk
+	  ........ r7219 | tzafrir | 2009-09-27 13:49:40 +0200 (Sun, 27 Sep
+	  2009) | 5 lines xpp: install twinstar by default; Add a man page
+	  Add a man page to twinstar (as perl POD) and get it installed by
+	  default. ........ r7263 | tzafrir | 2009-09-29 22:45:50 +0200
+	  (Tue, 29 Sep 2009) | 2 lines xpp: fix a typo in documentation
+	  ........
+
+	* README, /: Fix README for asciidoc 8.5.2 Tweak title a bit to
+	  avoid asciidoc consider it a header for a syntax block. Merged
+	  revisions 7792 via svnmerge from
+	  http://svn.digium.com/svn/dahdi/tools/trunk
+
+2009-12-15 Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools version 2.2.1-rc2 released.
+
+2009-12-01 13:14 +0000 [r7655]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/Makefile: Also install the twinstar tool on the system
+	  Originaly part of trunk r7219.
+
+2009-11-22 11:48 +0000 [r7621]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/astribank_hexload.c, xpp/perl_modules/Dahdi/Hardware/USB.pm,
+	  xpp/mpp_funcs.c, xpp/astribank_tool.c, xpp/astribank_usb.h,
+	  xpp/mpp_funcs.h, xpp/astribank_tool.8,
+	  xpp/perl_modules/Dahdi/Xpp/Mpp.pm, xpp/mpp.h: xpp: MPP protocol
+	  v.1.4 * New firmware loading protocol - Older one (1.3) is still
+	  supported for now * Support loading firmwares from Astribanks
+	  with a minimal firmware (1163) * astribank_tool -Q: always query,
+	  regardless of verbosity level xpp rev: up to 7559 Merged
+	  revisions 7609 via svnmerge from
+	  https://origsvn.digium.com/svn/dahdi/tools/trunk
+
+2009-11-19 23:11 +0000 [r7611]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/xpp_fxloader, xpp/astribank_tool.c: xpp: support loading
+	  USB firmware into 1163 devices as well Demote some messages to
+	  debug while we're at it. Merged revisions 7596 via svnmerge from
+	  http://svn.digium.com/svn/dahdi/tools/trunk
+
+2009-11-05 09:41 +0000 [r7466-7492]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/xpp_sync, xpp/perl_modules/Dahdi/Xpp/Xpd.pm: Use the
+	  timing_priority attribute, if available, to provide more corrent
+	  LED indiction and such. 
+
+	* xpp: use xpd sysfs attr. timing_priority to set NT/TE 
+
+	* dahdi.init, xpp/astribank_is_starting.c (added), 
+	  xpp/waitfor_xpds, xpp/astribank_is_starting.8 (added),
+	  xpp/twinstar_hook, xpp/xpp_fxloader, xpp/Makefile,
+	  xpp/astribank_hook, init.conf.sample: Add optional "hotplug mode"
+	  to init scripts The hotplug mode is only used in
+	  XPP_HOTPLUG_DAHDI=yes is set in /etc/dahdi/init.conf . If it is
+	  set and the system actually has Astribanks, most of the init
+	  script will actually be run from the context of a udev event.
+
+	* xpp: Add astribank_is_starting: astribank_is_running is used to
+	  tell when we may have an Astribank that is initializing (and may
+	  be re-enumerating and thus not listed as a device). It uses a
+	  semaphore as we can always write to one and we can't always write
+	  to a file. xpp: A man page for astribank_is_starting xpp rev: 7321 
+
+	* dahdi.init: move module loading to a separate function Move the
+	  module loading parts of the dahdi init script to a seperate
+	  function - load_modules. To be used by a later commit. There is
+	  not functional change here (but the diff is confusing). 
+
+	* Add XPP_HOTPLUG_DAHDI mode: cfg initiated mostly from hotplug If
+	  XPP_HOTPLUG_DAHDI=yes is set in /etc/dahdi/init.conf (which is
+	  not the default), the normal run of the 'start' operation of the
+	  dahdi init script will only be responsible for loading modules.
+	  The rest will be done (if there are indeed Astribanks on the
+	  system) by a second call to the init script once all of them have
+	  connected. The astribank_hook has also been mostly rewritten.
+	  Most of the functionality of twinstar_hook moved to it. The
+	  current twinstar_hook is a simple example script.
+	  XPP_HOTPLUG_DAHDI mode assumes that all Astribanks on the system
+	  are listed in /etc/dahdi/xpp_order (which can be generated using,
+	  e.g. 'dahdi_genconf xpporder') 
+
+	* Fix XPP_HOTPLUG_DAHDI: logic; end of init.d script 'Hotplug mode'
+	  was introduced in r7335. * The logic in the script was broken. -
+	  Negative logic is not such a grand idea to start with. *
+	  Interactive invocation of init.d ends when expected and not
+	  sooner. This change makes waitfor_xpds wait longer. Rather than
+	  waiting for all the Astribanks to load, it will now wait until
+	  the initialization of dahdi from the Astribanks hook script is
+	  run. This allows running e.g.: /etc/init.d/dahdi start;
+	  /etc/init.d/asterisk start It also means that
+	  'astribank_is_starting' is actually used as a semaphore and not
+	  only as stamp file. As before, those changes have no effect if
+	  hotplug mode is not explicitly enabled (setting
+	  'XPP_HOTPLUG_DAHDI=yes' in init.conf). 
+
+	* xpp: make astribank_is_starting build without warnings.
+	  autoconfig.h is needed as semtimedop() requires _GNU_SOURCE. xpp
+	  rev: 7471
+
+	* xpp/perl_modules/Dahdi/Config/Params.pm,
+	  xpp/perl_modules/Dahdi/Config/Gen.pm,
+	  xpp/perl_modules/Dahdi/Config/Gen/Chandahdi.pm,
+	  xpp/perl_modules/Dahdi/Config/Gen/System.pm,
+	  xpp/genconf_parameters: CAS DAHD/Asterisk configuration
+	  generation support Also support generating (open)R2 config in
+	  chan_dahdi.conf, while we're at it. Default configuration remains
+	  ISDN as before if no extra settings are given in
+	  genconf_parameters. 
+	  
+
+	* dahdi-perl: chan_dahdi.conf generator can generate openr2 conf If
+	  configured to use R2 ("pri_connection_type R2" in
+	  genconf_parameters), the chandahdi generator of dahdi_genconf
+	  will now generate configuration for the openr2 support in
+	  chan_dahdi. 
+
+	* xpp: Dahdi::Config::Gen.pm: improvements in preperation for
+	  T1-CAS: - New channo_range() method which returns range strings
+	  for any list of channel numbers (handle sorting, validation,
+	  etc.) - Reimplement bchan_range() as a small wrapper around
+	  channo_range(). - Another small wrapper is chan_range() that
+	  works on channel objects. - Also a parse_chan_range() does the
+	  reverse (from range string to a list of channel numbers). This
+	  isn't used at the moment. xpp rev: 7306 
+
+	* dahdi-perl: Add basic T1-CAS support for dahdi_genconf - Support
+	  added in generators of system.conf and of chan_dahdi.conf . -
+	  Some strange asumptions about being FXS/FXO depending on being
+	  timing provider/supplier. - New gen_cas() method for Chandahdi
+	  and System. - Now gen_digital() is a bit cleaner. - Call
+	  gen_cas(), gen_openr2(), gen_digital() according to the
+	  'pri_connection_type' config (CAS, R2, PRI/BRI). xpp rev: 7307
+	  
+
+	* dahdi_perl: improved config generation for T1 CAS A few extra
+	  options for a CAS span signalling. xpp rev: 7343, 7346, 7369 
+
+	* xpp: reduce the clutter of firmware loading Make the new XPP
+	  tools much less verbose: * demote messages to be debug * Convert
+	  multi-line messages to be single-line messages Making
+	  xpp_fxloader run in debug mode can be done by setting DEBUG=yes
+	  in /etc/dahdi/init.conf. 
+
+	* dahdi-perl fixes, mostly xpp-specific. * Fix pattern for PCI BRI
+	  cards * Fix recognizing xpp devices by @connector in xpp_order *
+	  Print more helpful comments in xpp_order * Remove most (if not
+	  all) need of /proc/bus/usb * Handle other similar "is_twinstar"
+	  errors.
+
+	* dahdi_genconf: xpp_order generator: Extra '#' after connector
+	  comment Add an extra '#' right after the connector string to make
+	  it simpler to use the connector string from the generated
+	  xpp_order. xpp rev: 7292 
+
+	* xpp: make /proc/bus/usb/devices optional Get the information we
+	  read from /proc/bus/usb/devices from /sys/bus/usb/devices .
+	  Tested on my Debian Unstable with 2.6.30 kernel. The default is
+	  still /proc/bus/usb and sysfs is only used if the procfs file is
+	  not found. Also fixes a case of using the sysfs attribute busnum,
+	  that does not exist in kernel 2.6.9 . Devise the bus number from
+	  the name of the node. 
+
+	* dahdi-perl: Avoid '"is_twinstar" on unblessed reference' Dpn't
+	  panic if a device is not found in the list of hardware. This is
+	  not only indication of a bug, but can also happen if a device
+	  appeared after the script was started. 
+
+	* zonedata.c: zonedata: Add tone definitions for Panama. (closes
+	  issue #14832) Reported by: jlduran Patch by: jldruan
+
+	* Pass correct channel number to DAHDI_GET_PARAMS when passing span
+	  numbers to dahdi_scan. When filtering, we weren't taking into
+	  account the number of channels in the spans that we were
+	  skipping. (closes issue #15553) Reported by: tony Patches:
+	  20090723_issue15553.patch uploaded by seanbright (license 71)
+	  Tested by: seanbright 
+
+	* xpp: cleanup gcc warnings and one real astribank_tool bug xpp
+	  rev: 7281 
+
+	* Add a missing trailing slash on the install-libs target (closes
+	  issue #15793) Reported by: pprindeville Patches:
+	  dahdi-tools-makefile.patch uploaded by pprindeville (license 347) 
+
+	* dahdi_genconf: Add the TC400P transcoder card to our hardware
+	  list (seanbright) 
+
+2009-06-08 17:02 +0000 [r6677-6678]  Sean Bright <sean.bright@gmail.com>
+
+	* dahdi-tools version 2.2.0 released.
+
+	* Makefile: Since this 'echo' is part of a larger statement, we
+	  don't need the @ symbol. Cleans up an error I am seeing on
+	  Ubuntu.
+
+	* Makefile: Get rid of parallel build warnings from GNU make.
+
+2009-05-28 14:04 +0000 [r6668]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/waitfor_xpds: xpp: if $dahdi_hardware is empty, don't use it
+	  in an error message
+
+2009-05-27 Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools version 2.2.0-rc3 released.
+
+2009-05-26 09:55 +0000 [r6655-6657]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* Makefile: Reword the message after 'make config' for the case no
+	  hardware found Check the output of dahdi_hardware and give a
+	  different message for the case it found no hardware. (closes
+	  issue #14792) Reported by: Dovid Patches:
+	  dahdi_hardware_nodev_make.diff uploaded by tzafrir (license 46)
+
+	* xpp/waitfor_xpds: Properly fix usage of waitfor_xpds in
+	  non-standard settings. From xpp rev. 7137.
+
+2009-05-19 16:46 +0000 [r6643-6647]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Config/Params.pm, xpp/dahdi_genconf,
+	  xpp/perl_modules/Dahdi/Config/Gen/Xpporder.pm,
+	  xpp/perl_modules/Dahdi/Config/Gen/System.pm,
+	  xpp/perl_modules/Dahdi/Xpp/Xpd.pm, xpp/genconf_parameters:
+	  dahdi-perl: make dahdi_genconf default to hardhdlc
+	  dahdi_genconf's 'bri_hardhdlc' parameter changes. Should
+	  generally work with no need for manual configuration unless you
+	  use a bristuffed driver (zaphfc, qozap). See notes in
+	  genconf_parameters.
+
+	* xpp/waitfor_xpds, dahdi.init: dahdi.init: moved test for
+	  astribanks into waitfor_xpds If the system starts with an
+	  Astribank with no firmware, the firmware loading may take a while
+	  and the Astribank only becomes ready some time after the DAHDI
+	  init script starts. This means that the test at the beginning of
+	  xpp_startup() in dahdi.init fails to find an Astribank, and the
+	  init script simply continues ignoring this. This changeset moves
+	  the testing inside the script waitfor_xpds. The script now: 1.
+	  Tests for an Astribank using dahdi_hardware and exists
+	  immediately if none found. 2. A loop (of maximum 10 seconds)
+	  waits for the first Astribank to be detected by the driver. 3.
+	  Waiting for the initialization of all the Astribanks to complete
+	  (The original waitfor_xpds) The support for the old procfs
+	  iinterface has been removed, as it has never been used with
+	  DAHDI.
+
+	* xpp/Makefile, xpp/astribank_tool.8, xpp/astribank_allow.8
+	  (added): xpp: install astribank_allow As we install it, we need a
+	  matching man page.
+
+2009-05-17 12:01 +0000 [r6630-6632]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Config/Gen/Users.pm: A closer-to-reality
+	  users.conf generation module
+
+	* xpp/perl_modules/Dahdi/Config/Gen/Xpporder.pm,
+	  xpp/perl_modules/Dahdi/Xpp/Mpp.pm, xpp/genconf_parameters: Fix
+	  typos in xpp documentation
+
+2009-05-14 14:02 +0000 [r6619]  Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi_cfg.c: dahdi_cfg: Default to the us tonezone if not
+	  specified in system.conf. If there are not "loadzone" and
+	  "defaultzone" lines in /etc/dahdi/system.conf, default to the us
+	  zone. This mimics the behavior of older zaptel releases.
+	  DAHDI-29.
+
+2009-05-13 20:18 +0000 [r6613-6617]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/mpp_funcs.c, xpp/astribank_tool.c: astribank_tool: Support
+	  'reset' of pre-MPP protocol as fallback As of USB firmware rev.
+	  6926, the Astribank control connection protocol has changed in an
+	  incompatible manner. If astribank_tool fails to open a device
+	  when running a reset command, try to reset the device with the
+	  command from the old (pre-MPP) protocol (A single 0x20 byte). No
+	  support whatsoever for any other feature of the old protocol.
+	  From xpp rev. 7067. (previous commit was xpp rev. 7066).
+
+	* xpp/mpp_funcs.c: xpp: better error reporting when failing to talk
+	  to a pre-MPP Astribank.
+
+	* xpp/perl_modules/Dahdi/Chans.pm, xpp/perl_modules/Dahdi/Span.pm:
+	  dahdi-perl: Patterns for Rhino E1/T1 cards.
+
+2009-05-12 07:50 +0000 [r6601-6603]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/README.Astribank: A few more chan_zap -> chan_dahdi in
+	  README.Astribank .
+
+	* xpp/perl_modules/Dahdi/Chans.pm: DAHDI-perl: Fix detection of
+	  empty slots in Rhino cards.
+
+2009-05-09 06:33 +0000 [r6579-6585]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/README.Astribank: Fix a broken link
+
+	* xpp/README.Astribank: documentation updates: xpp_order, new USB
+	  loading, and more
+
+	* xpp/perl_modules/Dahdi.pm: dahdi-perl: scan only "number" files
+	  under /proc . (In case someone, such as dahdi_dynamic_ethmf adds
+	  there some other entries)
+
+2009-04-29 Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools version 2.2.0-rc2 released.
+
+2009-04-27 19:45 +0000 [r6512]  Kevin P. Fleming <kpfleming@digium.com>
+
+	* configure, acinclude.m4: incorporate the autoconf 2.63 fixes here
+	  too
+
+2009-04-26 10:29 +0000 [r6492]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* Makefile, xpp/xpp_order (removed): Remove useless sample file The
+	  sample xpp_order will be generated anyway when running
+	  'dahdi_genconf xpporder' (see
+	  xpp/perl_modules/Dahdi/Config/Gen/Xpporder.pm) . No need to
+	  clutter the main DAHDI installation with it.
+
+2009-04-23 17:03 +0000 [r6476]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* Makefile, xpp/xpp_order: xpp: xpp_order is another config file
+	  that should go to /etc/dahdi Also slightly fix the sample config.
+
+2009-04-22 10:25 +0000 [r6427-6442]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* dahdi.init: make sure '/etc/init.d/dahdi stop' ends with a
+	  newline
+
+	* ppp/dahdi.c: Yet another left-over DAHDI_PARAMS. ppp almost
+	  builds
+
+	* xpp/perl_modules/Dahdi/Config/Gen/Xpporder.pm:
+	  Dahdi::Config::Gen::Xpporder: use number rather than object in
+	  warning
+
+2009-04-21 13:44 +0000 [r6419-6421]  Sean Bright <sean.bright@gmail.com>
+
+	* dahdi_monitor.c: Correct error check for fopen() calls in
+	  dahdi_monitor.c. dahdi_monitor.c was checking for an error
+	  calling fopen() by determining if the return value was less than
+	  0. fopen(), however, returns a FILE * and returns NULL on
+	  failure. (closes issue #14894) Reported by:
+	  gknispel_proformatique Patches:
+	  dahdi_monitor_fix_check_fopen_result.patch uploaded by gknispel
+	  (license 261)
+
+	* dahdi_monitor.c: Use correct return value type for getopt(). In
+	  dahdi_monitor.c, the return value of getopt() was being assigned
+	  to a char while the function actually returns an int. Fix
+	  suggested by reporter. (closes issue #14893) Reported by:
+	  gknispel_proformatique
+
+	* dahdi_monitor.c: Whitespace and coding guidelines changes
+
+2009-04-20 13:44 +0000 [r6417]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/dahdi_hardware, xpp/perl_modules/Dahdi/Xpp/Xbus.pm,
+	  xpp/test_parse.c, xpp/twinstar, xpp/twinstar_hook,
+	  xpp/twinstar_setup, xpp/perl_modules/Dahdi/Config/Gen/Xpporder.pm
+	  (added), xpp/perl_modules/Dahdi/Xpp/Mpp.pm: xpp: twinstar-related
+	  perl improvements * New generator Dahdi::Config::Gen::Xpporder
+	  can generate and xpp_order config for an existing setup. * Add
+	  more TwinStar related logic to Dahdi::Xpp::Mpp. Simplifies the
+	  twinstar utility accordingly. * twinstar_hook: for the multiple
+	  Astribanks case. * twinstar_setup: More logic tests. Now
+	  delegates configuration generation to dahdi_genconf (with new
+	  Xpporder generator). * dahdi_hardware: Show number of channels
+	  with -v
+
+2009-04-16 17:32 +0000 [r6375]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/xpp_fxloader: xpp_fxloader: exit properly when run with
+	  incorrect argument
+
+2009-04-10 09:53 +0000 [r6344]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/Makefile, xpp/astribank_hook (added): Move astribank_hook
+	  from linux to tools. Install it by default
+
+2009-04-07 08:13 +0000 [r6337]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/hexfile.c: hexfile.c was accidentally left out of r6313
+
+2009-04-02 20:56 +0000 [r6278-6313]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/pic_loader.h (added), xpp/astribank_hexload.8 (added),
+	  xpp/twinstar_setup (added), xpp/xpp_fxloader,
+	  xpp/astribank_tool.c (added), xpp/astribank_allow.c (added), xpp,
+	  xpp/xpp_sync, xpp/dahdi_genconf, xpp/twinstar (added),
+	  xpp/mpp_funcs.c (added), xpp/Makefile, xpp/mpp_funcs.h (added),
+	  xpp/astribank_tool.8 (added), xpp/perl_modules/Dahdi/Xpp/Mpp.pm
+	  (added), xpp/astribank_upgrade (added),
+	  xpp/perl_modules/Dahdi/Xpp.pm,
+	  xpp/perl_modules/Dahdi/Hardware/PCI.pm, xpp/dahdi_hardware,
+	  xpp/twinstar_hook (added), xpp/xpp_order (added),
+	  xpp/astribank_hexload.c (added), xpp/dahdi_registration,
+	  xpp/perl_modules/Dahdi/Hardware/USB.pm,
+	  xpp/perl_modules/Dahdi/Xpp/Xbus.pm, xpp/debug.c (added),
+	  xpp/dahdi_drivers, xpp/lsdahdi, xpp/astribank_usb.c (added),
+	  xpp/hexfile.h, xpp/perl_modules/Dahdi/Hardware.pm, xpp/debug.h
+	  (added), xpp/astribank_usb.h (added),
+	  xpp/perl_modules/Dahdi/Xpp/Xpd.pm, xpp/mpp.h (added),
+	  xpp/pic_loader.c (added): Support for Astribanks 116x: tools part
+	  * New USB firmware loading mechanism. - Incompatible with
+	  previous one: upgrade using fxload or hard reset -
+	  astribank_hexload is the new low-level loading tool - fpga_load
+	  remains for backward compatibility. - xpp/astribank_upgrade:
+	  automate upgrading using fxload * Much enhanced control protocol
+	  ("MPP") - astribank_tool is the low-level tool for that. *
+	  Support for the TwinStar (dual USB port) - Managed through
+	  astribank_tool - Wrapper perl modules and scripts provided *
+	  Allow explicit ordering of Astribanks - /etc/dahdi/xpp_order -
+	  explicit order of Astribanks on the system - The default sorter
+	  is now to use those and fall back to connectors (previous
+	  default). - An option to dahdi_registration to change sorting.
+
+	* hdlcstress.c: hdlcstress.c: add option -b not to stress BRI too
+	  much Aparantly the HFC chip can't stand the heat of this test.
+	  Let's give it an occasional rest. Also add getopts support.
+
+	* Makefile: Install genconf_parameters on 'make install' as well
+
+	* blacklist.sample: xpp_usb should not be blacklisted: it does not
+	  register automatically anyway.
+
+	* xpp/perl_modules/Dahdi/Config/Gen/Modules.pm (added): Implement
+	  'dahdi_genconf modules' (generate /etc/dahdi/modules)
+
+2009-03-29 18:53 +0000 [r6272]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Config/Gen.pm: dahdi_genconf: Set the
+	  context same as groups.
+
+2009-03-26 18:28 +0000 [r6261]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* doc/dahdi_scan.8: s/zap/dahdi/ again in dahd_scan.8
+
+2009-03-26 18:02 +0000 [r6259]  Kevin P. Fleming <kpfleming@digium.com>
+
+	* dahdi_cfg.c: when /etc/dahdi/system.conf does not have an echo
+	  canceller defined for a channel, but the channel previously had
+	  one assigned, running dahdi_cfg does not remove the assigned echo
+	  canceller from the channel as it should. this commit changes that
+	  behavior, so that every channel with a defined signaling mode is
+	  updated to have the proper (or no) echo canceller assigned.
+
+2009-03-22 10:31 +0000 [r6215]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Config/Gen/Users.pm,
+	  xpp/perl_modules/Dahdi/Config/Gen/Chandahdi.pm,
+	  xpp/perl_modules/Dahdi/Config/Gen/System.pm,
+	  xpp/perl_modules/Dahdi/Config/Gen/Unicall.pm: dahdi-perl: "allow"
+	  hand-editing of generated files Rework the text added by
+	  dahdi_genconf generators to say that you can hand-edit files. But
+	  just don't complain if they get mysteriously overriden when it is
+	  run again :-) (closes issue #14569) Reported by: jtodd
+
+2009-03-17 17:07 +0000 [r6189]  Jason Parker <jparker@digium.com>
+
+	* dahdi_monitor.c: Remove remnants of -p option, since it no longer
+	  exists.
+
+2009-03-17 13:52 +0000 [r6187]  Russell Bryant <russell@digium.com>
+
+	* zonedata.c: Add tone definitions for Turkey. (closes issue
+	  #10450) Reported by: msahinbas
+
+2009-03-17 09:10 +0000 [r6167-6185]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* Makefile: Use LIBS instead of LDFLAGS directly in tools Makefile
+	  The Makefile of dahdi-tools set the variable LDFLAGS directly,
+	  rather than adding to LIBS. This does not allow placing LIBS
+	  after all the linked objects. (closes issue #14638) Reported by:
+	  Chainsaw Patches: dahdi-tools-2.1.0.2-asneeded.patch uploaded by
+	  Chainsaw (license 723)
+
+	* xpp/README.Astribank, xpp/xpp_sync, dahdi.init: dahdi.init: call
+	  xpp_sync a bit later. xpp_sync needs to only be called after
+	  dahdi_cfg was run, because the application of system.conf may
+	  change the priority of a PRI module span (If it is a sync
+	  provider, "NT", priority is lower). Also some documentation-only
+	  changes for xpp_sync.
+
+2009-03-09 16:30 +0000 [r6110]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Chans.pm: Fix detection of channels of
+	  dynamic spans in Dahdi::Chans Fix the pattern detection of
+	  channels belonging to dynamic (dahdi_dynamic) spans in perl
+	  programs that use Dahdi::Chans (e.g.: lsdahdi) (closes issue
+	  #14630) Reported by: tamiel Patches:
+	  20090309-perl5-Dahdi-Chans.diff uploaded by tamiel (license 712)
+
+2009-03-07 00:10 +0000 [r6107]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Chans.pm,
+	  xpp/perl_modules/Dahdi/Hardware/USB.pm: Detect Sangoma USB FXO
+	  device; fix detection of Sangoma DAHDI channels (By Alessandro
+	  Zummo)
+
+2009-03-05 21:10 +0000 [r6095]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* dahdi.init: Fix a typo in shutting down dynamic spans in
+	  dahdi.init Fixes shutdown_dynamic() in the dahdi init.d script.
+	  Not enabling it by default just yet (the second half of the
+	  patch) until we get some further confirmation that such a
+	  shutdown is always good. (from issue #14603) Reported by: tamiel
+	  Patches: 20090304_dahdi.init.patch uploaded by tamiel (license
+	  712)
+
+2009-03-03 20:39 +0000 [r6071-6078]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* Makefile, README, /: Include sample genconf_parameters in
+	  dahdi-tools README.
+
+	* xpp/perl_modules/Dahdi/Config/Params.pm,
+	  xpp/perl_modules/Dahdi/Config/Gen.pm, xpp/genconf_parameters:
+	  genconf_parameters: Add option fxo_default_start; Document
+	  genconf_parameters * Add a dqahdi_genconf option
+	  fxo_default_start, equivalent of fxs_default_start. * Set all
+	  trunks in group 'group_lines' rather than hard-coded 0 (for TE)
+	  and 6 (for NT). * Document all parameters in genconf_parameters.
+
+	* xpp/perl_modules/Dahdi/Config/Params.pm (added),
+	  xpp/dahdi_genconf, xpp/perl_modules/Dahdi/Config/Gen.pm,
+	  xpp/perl_modules/Dahdi/Config/Gen/Users.pm,
+	  xpp/perl_modules/Dahdi/Config/Gen/Chandahdi.pm,
+	  xpp/perl_modules/Dahdi/Config/Gen/System.pm,
+	  xpp/perl_modules/Dahdi/Config/Gen/Unicall.pm: dahdi_genconf:
+	  configuration handling cleanup. * Parsing genconf_parameters is
+	  now in Dahdi::Config::Params All hard-coded defaults are there
+	  too (in the item() method). * Dahdi::Config::Genconf is gone
+	  (merged into Dahdi::Config::Gen) All semantic mapping is in the
+	  constructor. * dahdi_genconf is now lean and mean. * Add some
+	  implementation docs into these files.
+
+	* xpp/perl_modules/Dahdi/Config/Gen/System.pm: dahdi-perl: Do
+	  generate 'echocanceller' in system.conf Fixed a regression from
+	  r6013 .
+
+	* xpp/perl_modules/Dahdi/Config/GenconfDefaults.pm (removed):
+	  dahdi-perl: Remove an obsolete and unused module
+	  GenconfDefaults.pm
+
+	* xpp/README.Astribank: README.Astribank: Killed one remaining
+	  /sys/devices/xpp
+
+2009-03-01 14:29 +0000 [r6054-6058]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/README.Astribank: More README updates
+
+	* xpp/perl_modules/Dahdi/Xpp/Xbus.pm, xpp/dahdi_genconf,
+	  xpp/perl_modules/Dahdi/Config/Gen/Chandahdi.pm,
+	  xpp/perl_modules/Dahdi/Xpp/Xpd.pm: xpp-dahdi: freepbx code
+	  generation; better procfs compatibility * dahdi_genconf -F will
+	  generate chan_dahdi.conf for freepbx (like genzaptelconf -F) *
+	  Better procfs compatibility for xpp modules.
+
+	* xpp/dahdi_drivers,
+	  xpp/perl_modules/Dahdi/Config/GenconfDefaults.pm,
+	  xpp/perl_modules/Dahdi/Config/Gen.pm,
+	  xpp/perl_modules/Dahdi/Config/Gen/Users.pm: dahdi-perl: more
+	  defensive coding and some docs
+
+	* xpp/perl_modules/Dahdi.pm: Dahdi.pm: the sample code should
+	  actually work.
+
+	* xpp/fpga_load.c: fpga_load.c: Flush USB device buffer on startup.
+	  Fixes some firmware loading issues.
+
+2009-02-26 15:41 +0000 [r6041-6043]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Hardware/PCI.pm: Add PCI IDs of another
+	  HFC-S card that zaphfc can handle.
+
+	* xpp/perl_modules/Dahdi/Chans.pm: Fix a typo for detecting zaphfc.
+
+2009-02-18 21:20 +0000 [r6022]  Doug Bailey <dbailey@digium.com>
+
+	* fxstest.c: Remove 8 bit restriction on setting indirect registers
+	  (closes issue #14323) Reported by: alecdavis Patches:
+	  fxstest_setindirect.diff.txt uploaded by alecdavis (license 585)
+	  Tested by: alecdavis
+
+2009-02-13 21:09 +0000 [r6013]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/dahdi_genconf, xpp/perl_modules/Dahdi/Config/Gen.pm (added),
+	  xpp/perl_modules/Dahdi/Config/Gen/Users.pm (added),
+	  xpp/perl_modules/Dahdi/Config/Gen/Chandahdi.pm (added),
+	  xpp/perl_modules/Dahdi/Config/Gen/System.pm (added),
+	  xpp/perl_modules/Dahdi/Config/Gen (added),
+	  xpp/perl_modules/Dahdi/Config/Gen/Unicall.pm (added): Rework
+	  dahdi_genconf to have separate configuration generation modules.
+	  'dahdi_genconf foo bar' will use the modules
+	  Dahdi::Config::Gen::Foo and Dahdi::Config::Gen::Bar to generate
+	  configuraion files. Extra formats can thus be added without
+	  modifying dahdi_genconf and independently of DAHDI.
+
+2009-02-08 11:04 +0000 [r5984]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/dahdi_genconf: dahdi_genconf: do reset default files list
+	  when command-line has files This fixes a regression that was
+	  added whwn handling of R2 was added. Originally: Xorcom rev 6683.
+
+2009-01-28 18:49 +0000 [r5886]  Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi.init: Use the dahdihpec_enable tool instead of the
+	  zaphpec_enable. Issue: DAHDI-233 patch by: cmoye
+
+2009-01-27 15:14 +0000 [r5827]  Doug Bailey <dbailey@digium.com>
+
+	* fxstest.c: Break VMWI ioctl calls into two separate calls to
+	  maintain old revision compatibility (issue #14104) Reported by:
+	  alecdavis Tested by: dbailey
+
+2009-01-25 00:50 +0000 [r5808-5809]  Sean Bright <sean.bright@gmail.com>
+
+	* dahdi.init: Use the debian commands on Gentoo. (closes issue
+	  #14277) Reported by: darren1713 Patches: dahdi.init.txt uploaded
+	  by darren1713 (license 116)
+
+2009-01-22 15:45 +0000 [r5800]  Doug Bailey <dbailey@digium.com>
+
+	* fxstest.c: Alec Davis change to modify vmwi test to use new ioctl
+	  call structure and enhance functionality (issue #14104) Reported
+	  by: alecdavis Patches: mwiioctl_structure_fxstest.diff.txt
+	  uploaded by dbailey (license ) Tested by: alecdavis, dbailey
+
+2009-01-20 18:54 +0000 [r5768]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/dahdi_genconf: dahdi_genconf: Finally set $fxs_default_start
+	  = 'ks' rather than 'ls'
+
+2009-01-19 15:19 +0000 [r5728]  Doug Bailey <dbailey@digium.com>
+
+	* fxstest.c: Add test to excercise VMWI Enhance polarity test by
+	  making sure the line is in an active state before testing (issue
+	  #14104) Reported by: alecdavis Patches: dahditools-14104.diff.txt
+	  uploaded by dbailey (license ) Tested by: alecdavis
+
+2009-01-19 12:46 +0000 [r5705-5707]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* Makefile: dahdi-tools: Delete test binaries on 'make clean'
+
+	* xpp/perl_modules/Dahdi/Xpp/Xpd.pm, xpp/xpp_sync: xpp_sync xpd
+	  order fix.
+
+	* xpp/perl_modules/Dahdi/Span.pm: Dahdi-perl: Do detect Astribank
+	  PRI modules.
+
+2009-01-18 10:22 +0000 [r5671]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Xpp/Xbus.pm,
+	  xpp/perl_modules/Dahdi/Chans.pm,
+	  xpp/perl_modules/Dahdi/Xpp/Line.pm,
+	  xpp/perl_modules/Dahdi/Span.pm,
+	  xpp/perl_modules/Dahdi/Xpp/Xpd.pm, xpp/xpp_sync,
+	  xpp/perl_modules/Dahdi/Xpp.pm: XPP tool updates to match r5663:
+	  sysfs migration.
+
+2009-01-16 14:18 +0000 [r5662]  Sean Bright <sean.bright@gmail.com>
+
+	* configure, configure.ac: Properly detect GENERIC_HDLC_VERSION on
+	  various kernel versions. (closes issue #14150) Reported by:
+	  ccesario Patches: 20090115__bug14150.diff.txt uploaded by
+	  seanbright (license 71) Tested by: ccesario
+
+2009-01-15 12:47 +0000 [r5661]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/dahdi_genconf: Add an extra output format, 'asterisk': make
+	  the configuration readable for an Asterisk configuration parser.
+
+2009-01-14 20:06 +0000 [r5656-5660]  Sean Bright <sean.bright@gmail.com>
+
+	* hdlctest.c: Whitespace and coding guidelines changes only.
+
+	* hdlctest.c: Fix some uninitialized variable warnings that were
+	  causing hdlctest to not compile. Tested the program as well and
+	  it appears to work correctly. (closes issue #13906) Reported by:
+	  tzafrir
+
+	* dahdi_monitor.c: This commit deserves no comment.
+
+	* dahdi_monitor.c: The problem with using dahdi_copy_string here is
+	  that it is guaranteed to NULL terminate the destination string,
+	  which in this case was not correct. So revert back to using
+	  strncpy and also decrease the buffer by 1 since it was reserving
+	  an extra byte behind NULL for some reason. Fix suggested by
+	  reporter. (closes issue #14103) Reported by: gork
+
+2009-01-06 08:09 +0000 [r5643]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Hardware/PCI.pm: d00d must be in small
+	  caps
+
+2009-01-03 21:14 +0000 [r5626]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Span.pm: Dahdi::Span: Remove an
+	  over-general span header "pri" pattern. Should fix #14061 .
+
+2008-12-16 17:02 +0000 [r5555]  Doug Bailey <dbailey@digium.com>
+
+	* fxotune.c: Add ability to use sine tables for systems that don't
+	  have efficient floating point Add the ability to print out the
+	  best results found during tuning Some format cleanup
+
+2008-12-15 Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools version 2.1.0.2 released.
+
+2008-12-15 20:19 +0000 [r5533]  Shaun Ruffell <sruffell@digium.com>
+
+	* Makefile: Overwrite the libtonezone.so.1.0 and libtonezone.so.1
+	  links and libraries in order to maintain binary compatibility
+	  with applications linked with dahdi-tools 2.0.0.
+
+2008-12-15 11:19 +0000 [r5530-5532]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/README.Astribank: README.Astribank: minor formatting fix.
+
+	* xpp/README.Astribank: Document patching the xpp BRI driver for
+	  now.
+
+	* dahdi_cfg.c: Allow the span timing to be up to 255. The test for
+	  15 was ineffective anyway. Some drivers can use higher values.
+	  See issue #13954 .
+
+2008-12-11 Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools version 2.1.0.1 released.
+
+2008-12-11 22:45 +0000 [r5514]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* dahdi.init: Drop the "redhat" action at the 'stop' case for now:
+	  RHEL4's 'action' only works with programs and not with functions.
+
+2008-12-09 Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools version 2.1.0 released.
+
+2008-12-09 19:41 +0000 [r5461]  Shaun Ruffell <sruffell@digium.com>
+
+	* modules.sample: Adding the wctc4xxp driver to the modules.sample.
+
+2008-12-08 14:02 +0000 [r5452]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Span.pm: Fix detection of the B410P card.
+	  All ports will be reported as TE. Tested by write_erase on
+	  #asterisk-dev.
+
+2008-12-05 00:24 +0000 [r5432-5440]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/dahdi_genconf: dahdi_genconf: add output type 'modules'
+	  (/etc/dahdi/modules) Also improved documentation.
+
+	* xpp/README.Astribank: A minor formatting fix.
+
+2008-12-01 18:41 +0000 [r5409-5426]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/README.Astribank: Next README.Astribank revision: Devices are
+	  not under the bun. (And various other fixes)
+
+	* xpp/README.Astribank: README.Astribank catching up with sysfs,
+	  dahdi and all. Many more entries in the table of contents. Most
+	  of sysfs is documented.
+
+2008-11-27 10:01 +0000 [r5402-5404]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* Makefile, /: dahdi-tools: Re-add README.Astribank.html
+	  generation.
+
+	* xpp/README.Astribank (added): Moving README.Astribank to
+	  dahdi-tools .
+
+2008-11-25 Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools version 2.1.0-rc5 released.
+
+2008-11-24 20:42 +0000 [r5379-5381]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* dahdi_cfg.c: dahdi_cfg: {} as per coding guidelines.
+
+	* dahdi_cfg.c: dahdi_cfg: Make the message about echo canceller
+	  selection verbose.
+
+	* xpp/waitfor_xpds, xpp/test_parse.c, xpp/xpp_fxloader,
+	  xpp/fpga_load.c: Add some missing copyright statements in the
+	  xpp/ directory as well.
+
+2008-11-21 23:26 +0000 [r5365-5366]  Kevin P. Fleming <kpfleming@digium.com>
+
+	* dahdi_diag.c, hdlcstress.c, patgen.c, patlooptest.c,
+	  hdlcverify.c, fxstest.c, timertest.c, hdlcgen.c, pattest.c,
+	  dahdi_test.c, dahdi_speed.c, hdlctest.c: add copyright headers to
+	  all the files that don't have them
+
+	* dahdi_monitor.c, fxotune.c: minor fixes to accommodate compilers
+	  who check return result usage
+
+2008-11-19 21:16 +0000 [r5334]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* dahdi.init: LSB init script comments.
+
+2008-11-17 Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools version 2.1.0-rc4 released.
+
+2008-11-16 17:55 +0000 [r5308-5309]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* hdlcverify.c: Fix a compilation warning about signedness
+
+	* hdlcstress.c, patgen.c, patlooptest.c, pattest.c, hdlctest.c: Fix
+	  usage strings and eliminate all traces of tor
+
+2008-11-10 Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools 2.1.0-rc3 released.
+
+2008-11-06 22:38 +0000 [r5266]  Doug Bailey <dbailey@digium.com>
+
+	* zonedata.c: set DTMF twist levels for listed EU countries to meet
+	  TBR-21 standard of -9/-11 dB
+
+2008-11-05 Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools 2.1.0-rc2 released.
+
+2008-11-05 19:17 +0000 [r5231]  Shaun Ruffell <sruffell@digium.com>
+
+	* system.conf.sample: Update system.conf.sample to clarify BRI
+	  configuration.
+
+2008-11-04 15:58 +0000 [r5228]  Shaun Ruffell <sruffell@digium.com>
+
+	* hdlcstress.c, hdlcverify.c, hdlcgen.c, hdlctest.c: Fix
+	  compilation issues with the hdlc tests.
+
+2008-11-03 20:14 +0000 [r5226]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* Makefile: Bump SONAME of libtonezone to 2.0: API and ABI have not
+	  changed from Zaptel, but the library behaves differently.
+
+2008-11-03 Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools 2.1.0-rc1 released.
+
+2008-10-28 20:42 +0000 [r5160]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Chans.pm: Get wcb4xxp listed in lsdahdi .
+
+2008-10-28 18:34 +0000 [r5155]  Shaun Ruffell <sruffell@digium.com>
+
+	* xpp/perl_modules/Dahdi/Hardware/PCI.pm, blacklist.sample,
+	  modules.sample: Adding support for the wcb4xxp module.
+
+2008-10-27 16:07 +0000 [r5134]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Xpp/Line.pm,
+	  xpp/perl_modules/Dahdi/Xpp.pm: perl xpp: Support for FXO batter
+	  attribute from sysfs (from r5133). Still falls back to reading
+	  the battery status from procfs. Also fixes error message.
+
+2008-10-16 18:03 +0000 [r5098-5099]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/waitfor_xpds (added), xpp/perl_modules/Dahdi/Xpp/Line.pm,
+	  xpp/Makefile, xpp/perl_modules/Dahdi/Xpp/Xpd.pm, dahdi.init,
+	  xpp/perl_modules/Dahdi/Xpp.pm: xpp: userspace support for sysfx
+	  migration. The userspace side of dahdi-linux r5097. * Perl
+	  modules default to using xpp sysfs but will fallback (with
+	  warning) to procfs interface. * An additional
+	  /usr/share/dahdi/waitfor_xpds to replace the line in the init.d
+	  script.
+
+	* xpp/dahdi_genconf: dahdi_genconf: report channel number in case
+	  of error.
+
+2008-10-15 17:11 +0000 [r5094]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Chans.pm: Dahdi-perl: Fix detection of
+	  empty slots in Rhino analog cards. Closes issue #13685
+
+2008-10-12 23:09 +0000 [r5088]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/dahdi.cgi (added): A CGI script to give some information
+	  about Zaptel through the Dahdi perl interface. A simple demo. Not
+	  installed automatically.
+
+2008-10-10 18:29 +0000 [r5079-5082]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* Makefile: Fix 'make config' for distros with no chkconfig and no
+	  update-rc.d . This would cause the error on 'make config' for
+	  "unknown command dahdi", and 'make -n config' would show that it
+	  tries to run "dahdi defaults 15 30"
+
+	* dahdi_test.c: revert r5077 as r5078 fixes this better: now we can
+	  use 8 entries in a line.
+
+	* dahdi_test.c: make dahdi_test's prints fit in one line. It makes
+	  them slightly less "accurate", but we already use it in the
+	  verbose messages, and dahdi_test is not really accurate.
+
+2008-10-10 16:15 +0000 [r5072-5077]  Sean Bright <sean.bright@gmail.com>
+
+	* dahdi_test.c: Wrap at 6 instead of 8 so we are sure to fit on an
+	  80 column terminal.
+
+	* dahdi.init: Return the appropriate values to indicate if the
+	  modules are loaded or not.
+
+	* dahdi.init: Add a status command to the DAHDI init script.
+	  (closes issue #13655) Reported by: jcollie Patches:
+	  0001-Add-a-trivial-status-command-to-the-init-script.patch
+	  uploaded by jcollie (license 412) (Slight modification by me to
+	  update the usage text)
+
+2008-10-03 19:37 +0000 [r5044]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Config/GenconfDefaults.pm: When the config
+	  file is not found: return "empty" data and don't die. Closes
+	  issues #13615 .
+
+2008-10-03 19:03 +0000 [r5038-5042]  Sean Bright <sean.bright@gmail.com>
+
+	* dahdi_test.c: Whitespace and formatting only.
+
+	* dahdi_test.c: The first line was getting wrapped after 7 instead
+	  of 8.
+
+	* xpp/genzaptelconf (removed), xpp/genzaptelconf.8 (removed):
+	  Remove some leftovers.
+
+	* dahdi_scan.c, doc/dahdi_scan.8: Fix the dahdi_scan manpage
+	  (s/dahdi_span/dahdi_scan/) and make dahdi_scan do what it is
+	  advertised to do. Namely take span numbers on the command line.
+	  (closes issue #13614) Reported by: jfinstrom
+
+2008-09-29 Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi-tools 2.0.0 released.
+
+2008-09-25 15:47 +0000 [r4984]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* dahdi.init: dahdi_init: Fix a typo in xpp initialization (Stephen
+	  Farrell)
+
+2008-09-24 19:54 +0000 [r4977]  Sean Bright <sean.bright@gmail.com>
+
+	* build_tools/menuselect-deps.in, configure, configure.ac,
+	  dahdi.xml: Re-enable sethdlc by default in menuselect. Add
+	  configure checks to properly discover the linux/hdlc.h
+	  dependency.
+
+2008-09-24 17:35 +0000 [r4975]  Jason Parker <jparker@digium.com>
+
+	* dahdi.xml: Disable sethdlc in menuselect by default. This is how
+	  it was in Zaptel, and it's causing issues. Ideally, this would
+	  eventually be checked in the configure script.
+
+2008-09-23 04:56 +0000 [r4969]  Shaun Ruffell <sruffell@digium.com>
+
+	* README: Removing the note about running install_prereq since from
+	  the README since that script is not present currently.
+
+2008-09-16 18:26 +0000 [r4913-4915]  Shaun Ruffell <sruffell@digium.com>
+
+	* dahdi.init: Remove the extra space printed after each line when a
+	  module is loaded.
+
+	* dahdi_cfg.c: Close the /dev/dahdi/channel file handle if we're
+	  unable to associate it with a particular channel.
+
+	* dahdi_cfg.c: Provide system error information if open on
+	  /dev/dahdi/channel fails.
+
+2008-09-12 18:06 +0000 [r4904]  Sean Bright <sean.bright@gmail.com>
+
+	* Makefile, /, configure, configure.ac, makeopts.in: A few changes:
+	  1) Start using menuselect trunk 2) Bring in changes similar to
+	  those in asterisk trunk so that 'make menuselect' works as it
+	  should from the dahdi-tools directory. 3) Stop looking for
+	  curses/ncurses in the top level configure since nothing uses it
+	  (except menuselect which will find it on it's own).
+
+2008-09-11 20:52 +0000 [r4894]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/Makefile, xpp/xpp.rules (removed): Move udev rules xpp.rules
+	  from dahdi-tools to dahdi-linux .
+
+2008-09-11 15:45 +0000 [r4891-4893]  Jason Parker <jparker@digium.com>
+
+	* Makefile: Fix installation of ifup-hdlc and init script when
+	  using DESTDIR. (Step 2 of cleanup) (closes issue #13430) Reported
+	  by: jcollie Patches:
+	  0001-Fix-install-of-ifup-hdlc-when-installing-into-an-alt.patch
+	  uploaded by jcollie (license 412) Tested by: qwell Note: Patch
+	  from #13430 was extended to modify init script installation as
+	  well.
+
+	* build_tools/genmodconf (removed), dahdi.rules (removed),
+	  build_tools/genudevrules (removed): Remove files that aren't used
+	  or are duplicated from dahdi-linux. Step 1 of cleanup.
+
+2008-09-09 18:21 +0000 [r4882-4883]  Jason Parker <jparker@digium.com>
+
+	* Makefile: Fix a few typos
+
+	* dahdi.init: Fix location of fxotune (closes issue #13428)
+	  Reported by: eeman
+
+2008-09-04 16:37 +0000 [r4860]  Shaun Ruffell <sruffell@digium.com>
+
+	* Makefile, UPGRADE.txt: * Updates the instructions presented after
+	  'make config' about where to set which modules are loaded. *
+	  Update UPGRADE.txt to indicate where to set which modules are
+	  loaded and where the module parameters are set. Issue# DAHDI-187
+
+2008-09-03 19:38 +0000 [r4859]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* Makefile, README, UPGRADE.txt: Slightly reformat UPDATES.txt for
+	  asciidoc . Include it in README.html . See e.g.
+	  http://docs.tzafrir.org.il/dahdi-tools/README.html#_upgrade_notes
+	  Also fix some links in the README.
+
+2008-08-28 21:40 +0000 [r4853-4855]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* dahdi.init: Simplify reading list of modules from
+	  /etc/dahdi/modules .
+
+	* doc, xpp: Ignore generated HTML files.
+
+	* xpp/Makefile: Don't install genzaptelconf: deprecated, and
+	  collides with Zaptel.
+
+2008-08-27 17:13 +0000 [r4845-4850]  Kevin P. Fleming <kpfleming@digium.com>
+
+	* modules.sample, dahdi.init: remove some silly echo statement
+	  constructions in the init script clean up the modules.sample file
+	  to have proper lists of cards supported by each module and remove
+	  reference to dahdi_dummy since the init script takes care of
+	  loading that module
+
+	* makeopts.in, fxotune.c: actually implement the rest of
+	  --enable-dev-mode, and fix up more problems it found
+
+	* Makefile, configure, configure.ac, sethdlc.c, makeopts.in,
+	  dahdi_cfg.c: add --enable-dev-mode support, and fix up a couple
+	  of warnings found using it (only two, surprisingly)
+
+2008-08-26 14:35 +0000 [r4833-4844]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* Makefile, README, system.conf.sample: * Add a "docs" target to
+	  generate documentation. * Demote/promote some headers. * Fix URL
+	  for on-line copy of the README.
+
+	* xpp/perl_modules/Dahdi/Chans.pm: Fix default path of dahdi_cfg
+	  (used for probing type of wctdm channels)
+
+2008-08-25 16:12 +0000 [r4826-4827]  Jason Parker <jparker@digium.com>
+
+	* dahdi_cfg.c: Fix more crazy formatting
+
+	* dahdi_cfg.c: Reverse some incorrect logic, and cleanup some very
+	  ugly formatting in passing.
+
+2008-08-24 10:53 +0000 [r4821-4822]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* dahdi_cfg.c: We've got a new "zap" string to zap.
+
+	* dahdi_cfg.c: dahdi_cfg.c: Reduce nesting in main() .
+
+2008-08-24 05:54 +0000 [r4818]  Matthew Fredrickson <creslin@digium.com>
+
+	* dahdi_cfg.c: Add support for 56 KB HDLC as well as selectable
+	  rate in system.conf
+
+2008-08-20 Kevin P. Fleming <kpfleming@digium.com>
+
+	* dahdi-tools version 2.0.0-rc2 released.
+
+2008-08-17 15:50 +0000 [r4787]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Chans.pm: Dahdi::Chans: fix leftovers from
+	  r4767 (handling of spaces) While r4767 solved some parsing
+	  problems of channels with "strange" encoding names, it introduced
+	  a new problem (e.g.: "RED" after "(In use)" which is fixed here.
+
+2008-08-12 12:59 +0000 [r4764-4767]  Tzafrir Cohen <tzafrir.cohen@xorcom.com>
+
+	* xpp/perl_modules/Dahdi/Chans.pm: Dahdi-perl: More robust parsing
+	  of channel signalling types. Use a list of signalling types
+	  rather than a regular experssion of a "word".
+
+	* xpp/dahdi_genconf, xpp/genconf_parameters: MFC/R2 configuration
+	  generation support If optional setting 'pri_connection_type' is
+	  set to R2, configure E1 spans as CAS and generate a unicall.conf
+	  snippet (unicall-channels.conf).
+
+	* xpp/perl_modules/Dahdi/Hardware/PCI.pm, xpp/xpp_fxloader: *
+	  xpp_fxloader: shows USB firmware version. * Update PCI IDs
+	  database.
+
+	* xpp/lsdahdi, xpp/perl_modules/Dahdi/Chans.pm: Dahdi-perl: Add
+	  alarms() method for channels. Use it in lsdahdi. * Better paring
+	  of the /proc/dahdi/N channel lines for alarms * Provide it as a
+	  separate alarms() method.
+
+2008-08-06 Kevin P. Fleming <kpfleming@digium.com>
+
+	* dahdi-tools version 2.0.0-rc1 released.
+
+
