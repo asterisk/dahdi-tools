@@ -145,7 +145,7 @@ my @pri_strings = (
 		'Wildcard TE121',                  # wcte12xp
 		'Wildcard TE122',                  # wcte12xp
 		'T[248]XXP \(PCI\) Card ',          # wct4xxp
-		'R[24]T1 \(PCI\) Card',            # rxt1
+		'R[24]T1( \(PCI\))? Card',         # rxt1
 		'Rhino R1T1 (E1)/PRA Card',        # r1t1
 		'Rhino R1T1 (T1)/PRI Card',        # r1t1
 		'WP(E1|T1)/.* "wanpipe',           # Sangoma E1/T1
