@@ -72,6 +72,10 @@ waitfor_ab_initialization() {
 		fi
 		test "$oldab" != "$ab"
 	do
+		if [ "$ab" = '' ]; then
+			echo >&2 "Astribanks disappeared"
+			break
+		fi
 		oldab="$ab"
 		cat $ab
 		#echo -n 1>&2 "_"
