@@ -71,7 +71,7 @@ add)
 		fi
 	fi
 
-	if [ $(cat /sys/module/dahdi/parameters/auto_assign_spans) -eq 1 ]; then
+	if [ $(cat /sys/module/dahdi/parameters/auto_assign_spans) -ne 0 ]; then
 		$LOGGER "auto_assign_spans=1. Skip $DEVPATH"
 		exit 0
 	fi

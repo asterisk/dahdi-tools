@@ -35,7 +35,7 @@ my %opts;
 getopts('vRs:', \%opts) || usage;
 
 my $dahdi_autoreg = check_param('/sys/module/xpp/parameters/dahdi_autoreg') eq 'Y';
-my $auto_assign_spans = check_param('/sys/module/dahdi/parameters/auto_assign_spans') eq '1';
+my $auto_assign_spans = check_param('/sys/module/dahdi/parameters/auto_assign_spans') ne '0';
 my $assigned_spans_config = $ENV{'ASSIGNED_SPANS_CONF_FILE'} || '/etc/dahdi/assigned-spans.conf';
 my $span_types_config = $ENV{'SPAN_TYPES_CONF_FILE'} || '/etc/dahdi/span-types.conf';
 my $have_assigned_spans_config = -f $assigned_spans_config || 0;

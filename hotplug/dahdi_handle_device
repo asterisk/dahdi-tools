@@ -68,7 +68,7 @@ add)
 		echo "Old driver (no auto_assign_spans parameter). Skip $DEVPATH" | $LOGGER
 		exit 0
 	fi
-	if [ `cat /sys/module/dahdi/parameters/auto_assign_spans` -eq 1 ]; then
+	if [ `cat /sys/module/dahdi/parameters/auto_assign_spans` -ne 0 ]; then
 		echo "auto_assign_spans=1. Skip $DEVPATH" | $LOGGER
 		exit 0
 	fi
