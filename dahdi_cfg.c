@@ -1672,13 +1672,13 @@ finish:
 
 	lock = sem_open(SEM_NAME, O_CREAT, O_RDWR, 1);
 	if (SEM_FAILED == lock) {
-		error("Unable to create 'dahdi_cfg' mutex.\n");
+		perror("Unable to create 'dahdi_cfg' mutex");
 		exit_code = 1;
 		goto release_sem;
 	}
 
 	if (-1 == sem_wait(lock)) {
-		error("Failed to wait for dahdi_cfg mutex.\n");
+		perror("Failed to wait for 'dahdi_cfg' mutex");
 		exit_code = 1;
 		goto unlink_sem;
 	}
@@ -1730,7 +1730,7 @@ finish:
 		}
 
 		if (-1 == sem_wait(lock)) {
-			error("Failed to wait for dahdi_cfg mutex after creating dynamic spans.\n");
+			perror("Failed to wait for 'dahdi_cfg' mutex after creating dynamic spans");
 			exit_code = 1;
 			goto unlink_sem;
 		}
