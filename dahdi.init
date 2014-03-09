@@ -148,11 +148,6 @@ xpp_startup() {
 	if ! /usr/share/dahdi/waitfor_xpds; then return 0; fi
 
 	hotplug_exit_after_load
-
-	# overriding locales for the above two, as perl can be noisy
-	# when locales are missing.
-	# No register all the devices if they didn't auto-register:
-	LC_ALL=C dahdi_registration on
 }
 
 
@@ -262,6 +257,9 @@ case "$1" in
 	done
 
 	xpp_startup
+
+	# Assign all spans that weren't handled via udev + /etc/dahdi/assigned-spans.conf
+	/usr/share/dahdi/dahdi_auto_assign_compat
 
 	if [ $system = debian ]; then
 	    echo -n "Running dahdi_cfg: "

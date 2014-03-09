@@ -1,0 +1,25 @@
+#! /bin/sh
+
+devdir='/sys/bus/dahdi_devices/devices'
+
+# DAHDI is loaded?
+if [ ! -d "$devdir" ]; then
+	exit 0
+fi
+
+devices_by_registration_time() {
+	grep -H '' $devdir/*/registration_time 2>/dev/null | \
+		sed 's,/registration_time:,\t,' | \
+		sort -k 2,2
+}
+
+# First assign non-Astribank devices
+devices_by_registration_time | \
+	grep -v '/astribanks:' | \
+	while read devpath time; do
+		echo >&2 "D: auto '$devpath'"
+		dahdi_span_assignments auto "$devpath"
+	done
+
+# Now handle Astribanks
+LC_ALL=C dahdi_registration -Rv on

@@ -7,9 +7,9 @@ add)
 	exit 0
 esac
 
+# For now, handle only spans in assigned-spans.conf
+# We leave other cases to /etc/init.d/dahdi, so
+# legacy ordering can be preserved.
 if [ -r "$DAHDICONFDIR/assigned-spans.conf" ]; then
 	dahdi_span_assignments add "/sys$DEVPATH"
-else
-	# No configuration. No order guaranteed
-	dahdi_span_assignments auto "/sys$DEVPATH"
 fi
