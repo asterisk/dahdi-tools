@@ -77,8 +77,9 @@ add)
 	run_parts 2>&1 < /dev/null | $LOGGER &
 	;;
 remove)
-	# Nothing to do yet...
 	echo "$ACTION: $DEVPATH" | $LOGGER
+	# Background run -- don't block udev
+	run_parts 2>&1 < /dev/null | $LOGGER &
 	;;
 *)
 	echo "UNHANDLED: $ACTION: $DEVPATH" | $LOGGER

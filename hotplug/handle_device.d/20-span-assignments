@@ -1,5 +1,12 @@
 #! /bin/sh
 
+case "$ACTION" in
+add)
+	;;
+*)
+	exit 0
+esac
+
 if [ -r "$DAHDICONFDIR/assigned-spans.conf" ]; then
 	dahdi_span_assignments add "/sys$DEVPATH"
 else
