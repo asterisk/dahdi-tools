@@ -41,6 +41,11 @@ my $span_types_config = $ENV{'SPAN_TYPES_CONF_FILE'} || '/etc/dahdi/span-types.c
 my $have_assigned_spans_config = -f $assigned_spans_config || 0;
 my $have_span_types_config = -f $span_types_config || 0;
 
+# Spans will be auto-assigned by default if either:
+# - Driver $auto_assign_spans them or
+# - Udev script see that we $have_span_types_config and it "add" them
+my $default_auto_assign = $auto_assign_spans || $have_assigned_spans_config;
+
 my $sorter;
 my $sort_order = $opts{'s'};
 if(defined $sort_order) {
@@ -100,11 +105,14 @@ foreach my $xbus (Dahdi::Xpp::xbuses($sorter)) {
 		}
 		myprintf "%3s ==> %3s\n", state2str($prev), state2str($on);
 	}
-	if (defined($on) && $on && ! $have_assigned_spans_config && ! $auto_assign_spans) {
+	next unless defined($on) && $on;
+	# Only assign if no default assignment, or forced by '-R' option
+	if ($opts{'R'} || ! $default_auto_assign) {
 		# Emulate /etc/dahdi/assigned-spans.conf:
 		#   - We iterate over $xbus according to /etc/dahdi/xpp_order
 		#   - We "auto" assign all spans of current $xbus
 		my $devpath = sprintf "/sys/bus/dahdi_devices/devices/astribanks:xbus-%02d", $xbus->num;
+		myprintf "auto-assign $devpath\n";
 		my @cmd = ('dahdi_span_assignments', 'auto', $devpath);
 		system @cmd;
 		warn "Failed '@cmd' (status=$?)\n" if $?;
