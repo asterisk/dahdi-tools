@@ -41,18 +41,25 @@ ab_list() {
 }
 
 ab_serial_nums() {
-	ab_list | \
-		sed 's,$,/serial,' | \
-		xargs grep -H '' 2>/dev/null | \
-		sed 's,.*/serial:,,' | \
-		sed 's/^$/NO-SERIAL/' | \
-		sort -u
+	for i in `ab_list`; do
+		s=`cat "$i/serial" 2>/dev/null` || :
+		if [ "$s" = '' ]; then
+			echo "NO-SERIAL"
+		else
+			echo "$s"
+		fi
+	done | sort -u || :
 }
 
 detected_serial_nums() {
-	cat /sys/bus/astribanks/devices/*/transport/serial 2> /dev/null | \
-		sed 's/^$/NO-SERIAL/' | \
-		sort -u || :
+	for i in /sys/bus/astribanks/devices/*/transport; do
+		s=`cat "$i/serial" 2>/dev/null` || :
+		if [ "$s" = '' ]; then
+			echo "NO-SERIAL"
+		else
+			echo "$s"
+		fi
+	done | sort -u || :
 }
 
 calc_union() {
@@ -97,6 +104,14 @@ fi
 if ! astribank_is_starting; then
 	exit 0
 fi
+
+# Sanity check
+for i in `ab_list`; do
+	s=`cat "$i/serial" 2>/dev/null` || :
+	if [ "$s" = '' ]; then
+		echo >&2 "WARNING! Astribank without serial number: $i"
+	fi
+done
 
 serial_nums=`ab_serial_nums`
 
