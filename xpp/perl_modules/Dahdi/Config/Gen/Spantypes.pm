@@ -30,16 +30,21 @@ sub generate($$$) {
 	return if $?;
 
 	my $line_mode = $genopts->{'line-mode'};
-	$line_mode = 'E1' unless defined $line_mode;
-	$line_mode =~ /^[ETJ]1$/ or die "Bad line-mode='$line_mode'\n";
-	warn "Empty configuration -- no spans\n" unless @spans;
+	my $cmd;
+	if (defined $line_mode) {
+		$line_mode =~ /^[ETJ]1$/ or die "Bad line-mode='$line_mode'\n";
+		$cmd = "dahdi_span_types --line-mode=$line_mode dumpconfig > $file";
+		printf("Generating $file (with default line-mode %s)\n", $line_mode)
+			if $genopts->{verbose};
+	} else {
+		$cmd = "dahdi_span_types dumpconfig > $file";
+		printf("Generating $file (no --line-mode override)\n")
+			if $genopts->{verbose};
+	}
 	rename "$file", "$file.bak"
 		or $! == 2	# ENOENT (No dependency on Errno.pm)
 		or die "Failed to backup old config: $!\n";
 	#$gconfig->dump;
-	printf("Generating $file (with default line-mode %s)\n", $line_mode)
-		if $genopts->{verbose};
-	my $cmd = "dahdi_span_types --line-mode=$line_mode dumpconfig > $file";
 	system $cmd;
 	die "Command failed (status=$?): '$cmd'" if $?;
 }
