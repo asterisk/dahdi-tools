@@ -74,8 +74,6 @@ if(defined($on)) {	# Translate to booleans
 	$should_output = 0 unless $verbose;
 }
 
-undef $on if $dahdi_autoreg and not $opts{'R'};
-
 sub state2str($) {
 	return (shift)?"on":"off";
 }
@@ -84,38 +82,41 @@ sub myprintf {
 	printf @_ if $should_output;
 }
 
-my @spans = Dahdi::spans;
-
 foreach my $xbus (Dahdi::Xpp::xbuses($sorter)) {
-	myprintf "%-10s\t%3s-%s\t%s\n",
-		$xbus->name, $xbus->xpporder, $xbus->label, $xbus->connector;
-	next unless $xbus->status eq 'CONNECTED';
-	foreach my $xpd (Dahdi::Xpp::Xpd::telephony_devs($xbus->xpds())) {
-		my $prev = $xpd->dahdi_registration($on);
-		if(!defined($prev)) {			# Failure
-			printf "%s: Failed %s\n", $xpd->fqn, $!;
-			next;
-		}
-		myprintf "\t%-10s: ", $xpd->fqn;
-		if(!defined($on)) {			# Query only
-			my ($span) = grep { $_->name eq $xpd->fqn } @spans;
-			my $spanstr = ($span) ? ("Span " . $span->num) : "";
-			myprintf "%s %s\n", state2str($prev), $spanstr ;
-			next;
-		}
-		myprintf "%3s ==> %3s\n", state2str($prev), state2str($on);
+	my $prev = $xbus->dahdi_registration($on);
+	if(!defined($prev)) {			# Failure
+		printf STDERR "%s: Failed %s\n", $xbus->name, $!;
+		next;
 	}
-	next unless defined($on) && $on;
+	my $reg_str;
+	if (defined $on) {
+		$reg_str = ($on) ? "registering" : "unregistering";
+	} else {
+		$reg_str = ($prev) ? "registered" : "unregistered";
+	}
+	myprintf "%-10s\t%3s-%s\t%s (%s)\n",
+		$xbus->name, $xbus->xpporder, $xbus->label, $xbus->connector,
+		$reg_str;
+	next unless $xbus->status eq 'CONNECTED';
 	# Only assign if no default assignment, or forced by '-R' option
-	if ($opts{'R'} || ! $default_auto_assign) {
-		# Emulate /etc/dahdi/assigned-spans.conf:
-		#   - We iterate over $xbus according to /etc/dahdi/xpp_order
-		#   - We "auto" assign all spans of current $xbus
-		my $devpath = sprintf "/sys/bus/dahdi_devices/devices/astribanks:xbus-%02d", $xbus->num;
-		myprintf "auto-assign $devpath\n";
-		my @cmd = ('dahdi_span_assignments', 'auto', $devpath);
-		system @cmd;
-		warn "Failed '@cmd' (status=$?)\n" if $?;
+	if (defined($on) && $on) {
+		if ($opts{'R'} || ! $default_auto_assign) {
+			# Emulate /etc/dahdi/assigned-spans.conf:
+			#   - We iterate over $xbus according to /etc/dahdi/xpp_order
+			#   - We "auto" assign all spans of current $xbus
+			my $devpath = sprintf "/sys/bus/dahdi_devices/devices/astribanks:xbus-%02d", $xbus->num;
+			my @cmd = ('dahdi_span_assignments', 'auto', $devpath);
+			system @cmd;
+			warn "Failed '@cmd' (status=$?)\n" if $?;
+		}
+		# wait for UDEV to do its stuff
+		system "dahdi_waitfor_span_assignments assigned";
+	}
+	foreach my $xpd (Dahdi::Xpp::Xpd::telephony_devs($xbus->xpds())) {
+		my $spanno = $xpd->xpd_getattr('span');
+		myprintf "\t%-10s: ", $xpd->fqn;
+		my $spanstr = ($spanno) ? ("Span " . $spanno) : "unassigned";
+		myprintf "%s\n", $spanstr ;
 	}
 }
 myprintf "# Sorted: $sort_order\n" if defined $sort_order;

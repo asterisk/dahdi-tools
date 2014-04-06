@@ -146,6 +146,40 @@ sub new($$) {
 	return $self;
 }
 
+sub dahdi_registration($$) {
+	my $xbus = shift;
+	my $on = shift;
+	my $result;
+	my $file = sprintf("%s/dahdi_registration", $xbus->sysfs_dir);
+	# Handle old drivers without dahdi_registration xbus attribute
+	if (! -f $file) {
+		warn "Old xpp driver without dahdi_registration support. Emulating it using xpd/span support\n";
+		my @xpds = sort { $a->id <=> $b->id } $xbus->xpds();
+		my $prev;
+		foreach my $xpd (@xpds) {
+			$prev = $xpd->dahdi_registration($on);
+		}
+		return $prev;
+	}
+	# First query
+	open(F, "$file") or die "Failed to open $file for reading: $!";
+	$result = <F>;
+	chomp $result;
+	close F;
+	if(defined($on) and $on ne $result) {		# Now change
+		open(F, ">$file") or die "Failed to open $file for writing: $!";
+		print F ($on)?"1":"0";
+		if(!close(F)) {
+			if($! == 17) {	# EEXISTS
+				# good
+			} else {
+				undef $result;
+			}
+		}
+	}
+	return $result;
+}
+
 sub pretty_xpds($) {
 		my $xbus = shift;
 		my @xpds = sort { $a->id <=> $b->id } $xbus->xpds();
