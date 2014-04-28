@@ -21,6 +21,11 @@ output="$destdir$tarball_name"
 mkdir -p "$tmp_version_dir"
 git archive --format tar HEAD | tar xf - -C "$tmp_version_dir"
 echo "$version" > "$tmp_version_dir/.version"
+extra_dist='
+        autoconfig.h.in
+        configure
+        '
+find $extra_dist | cpio -pudmv "$tmp_version_dir"
 tar czf "$output" -C "$tmp_work_dir" "$tarball_prefix"
 rm -rf "$tmp_work_dir"
 echo "I: tarball is ready: '$output'"
