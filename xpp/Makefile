@@ -54,7 +54,8 @@ OCT_DEFINES	= \
 	-DcOCT6100_MAX_ECHO_CHANNELS=672		\
 	-DcOCT6100_MAX_MIXER_EVENTS=1344
 
-ECHO_LOADER	= echo_loader.o
+ECHO_LOADER_SRC	= echo_loader.c
+ECHO_LOADER	= $(ECHO_LOADER_SRC:.c=.o)
 endif
 
 %.8: %
@@ -71,12 +72,33 @@ PERL_SCRIPTS	=	\
 
 PERL_MANS	= $(PERL_SCRIPTS:%=%.8)
 
-XTALK_OBJS		= xtalk/xtalk.o xtalk/xusb.o xtalk/xlist.o xtalk/debug.o
-ASTRIBANK_OBJS		= astribank_usb.o mpptalk.o $(XTALK_OBJS)
+# List all our sources
+XUSB_SRCS		= xtalk/xusb.c xtalk/xlist.c xtalk/debug.c
+XTALK_SRCS		= xtalk/xtalk.c
+MPPTALK_SRCS		= mpptalk.c
+ASTRIBANK_SRCS		= astribank_usb.c
+ABHEXLOAD_SRCS		= astribank_hexload.c hexfile.c pic_loader.c
+ABTOOL_SRCS		= astribank_tool.c
+ABALLOW_SRCS		= astribank_allow.c astribank_license.c
 
-ABHEXLOAD_OBJS		= astribank_hexload.o hexfile.o pic_loader.o $(ECHO_LOADER) $(ASTRIBANK_OBJS) $(OCT_HERE_OBJS)
-ABTOOL_OBJS		= astribank_tool.o $(ASTRIBANK_OBJS)
-ABALLOW_OBJS		= astribank_allow.o astribank_license.o $(ASTRIBANK_OBJS)
+SRCS	= \
+	$(XUSB_SRCS)	\
+	$(XTALK_SRCS)	\
+	$(MPPTALK_SRCS)	\
+	$(ASTRIBANK_SRCS)	\
+	$(ABHEXLOAD_SRCS)	\
+	$(ABTOOL_SRCS)	\
+	$(ABALLOW_SRCS)	\
+	$(ECHO_LOADER_SRC)
+
+# Derive object files from source list
+XUSB_OBJS		= $(XUSB_SRCS:.c=.o)
+XTALK_OBJS		= $(XTALK_SRCS:.c=.o) $(XUSB_OBJS)
+MPPTALK_OBJS		= $(MPPTALK_SRCS:.c=.o) $(XTALK_OBJS)
+ASTRIBANK_OBJS		= $(ASTRIBANK_SRCS:.c=.o) $(MPPTALK_OBJS)
+ABHEXLOAD_OBJS		= $(ABHEXLOAD_SRCS:.c=.o) $(ASTRIBANK_OBJS) $(ECHO_LOADER) $(OCT_HERE_OBJS)
+ABTOOL_OBJS		= $(ABTOOL_SRCS:.c=.o) $(ASTRIBANK_OBJS)
+ABALLOW_OBJS		= $(ABALLOW_SRCS:.c=.o) $(ASTRIBANK_OBJS)
 
 TARGETS	= .perlcheck astribank_is_starting
 PROG_INSTALL	= astribank_is_starting
@@ -124,7 +146,7 @@ ifneq	(,$(PERLLIBDIR))
 	done
 endif
 
-CFLAGS		+= -I. -Ixtalk
+CFLAGS		+= -I. -Ixtalk -Wall -Werror
 
 astribank_hexload: $(ABHEXLOAD_OBJS)
 astribank_hexload: LIBS+=$(EXTRA_LIBS) $(USB_LIB)
@@ -171,7 +193,8 @@ clean:
 
 .PHONY: depend
 depend: .depend
-.depend: *.c *.h xtalk/*.c xtalk/*.h
-	@$(CC) $(CFLAGS) -MM *.c xtalk/*.c > $@ || rm -f $@
+.depend: *.c *.h xtalk/*.c
+	@echo "Calculating dependencies"
+	@if ! $(CC) $(CFLAGS) $(OCT_CFLAGS) -MM $(SRCS) > $@; then $(RM) $@; exit 1; fi
 
 include .depend
