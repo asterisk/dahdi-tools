@@ -111,17 +111,6 @@
 #   Channel(s) are signalled using FXO Groundstart protocol.
 # fxoks:: 
 #   Channel(s) are signalled using FXO Koolstart protocol.
-# sf:: 
-#   Channel(s) are signalled using in-band single freq tone. 
-#   Syntax as follows: 
-#    
-#     channel# => sf:<rxfreq>,<rxbw>,<rxflag>,<txfreq>,<txlevel>,<txflag>
-#   
-#   rxfreq is rx tone freq in Hz, rxbw is rx notch (and decode)
-#   bandwith in hz (typically 10.0), rxflag is either 'normal' or
-#   'inverted', txfreq is tx tone freq in hz, txlevel is tx tone 
-#   level in dbm, txflag is either 'normal' or 'inverted'. Set 
-#   rxfreq or txfreq to 0.0 if that tone is not desired.
 #
 # unused:: 
 #   No signalling is performed, each channel in the list remains idle
