@@ -362,7 +362,7 @@ int load_file(char *filename, unsigned char **ppBuf, UINT32 *pLen)
 	DBG("Loading %s file...\n", filename);
 	pFile = fopen(filename, "rb");
 	if (pFile == NULL) {
-		ERR("fopen\n");
+		ERR("fopen: %s\n", strerror(errno));
 		return -ENODEV;
 	}
 
@@ -378,7 +378,11 @@ int load_file(char *filename, unsigned char **ppBuf, UINT32 *pLen)
 	} else {
 		DBG("allocated mem for pbyFileData\n");
 	}
-	fread(pbyFileData, 1, *pLen, pFile);
+	if (fread(pbyFileData, 1, *pLen, pFile) != *pLen) {
+		fclose(pFile);
+		ERR("fread: %s\n", strerror(errno));
+		return -ENODEV;
+	}
 	fclose(pFile);
 	DBG("Successful loading %s file into memory "
 		"(size = %d, DUMP: first = %02X %02X, last = %02X %02X)\n",
