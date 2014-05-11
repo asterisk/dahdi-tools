@@ -61,6 +61,21 @@ struct xusb {
 
 static void xusb_init();
 
+/*
+ * XTALK_OPTIONS:
+ *     A white-space separated list of options, read from the environment
+ *     variable of that name. Existing options:
+ *
+ *     - "use-clear-halt" -- force USB "clear_halt" operation during
+ *                           device initialization
+ *     - "no-lock" -- prevent using global sempahore to serialize libusb
+ *                    initialization. Previously done via "XUSB_NOLOCK"
+ *                    environment variable.
+ */
+int xtalk_parse_options(void);
+int xtalk_option_use_clear_halt(void);
+int xtalk_option_no_lock(void);
+
 void xusb_init_spec(struct xusb_spec *spec, char *name,
 		uint16_t vendor_id, uint16_t product_id,
 		int nifaces, int iface, int nep, int ep_out, int ep_in)
@@ -257,13 +272,16 @@ int xusb_claim_interface(struct xusb *xusb)
 		xusb->iProduct,
 		xusb->iSerialNumber,
 		xusb->iInterface);
-	if (usb_clear_halt(xusb->handle, EP_OUT(xusb)) != 0) {
-		ERR("Clearing output endpoint: %s\n", usb_strerror());
-		return 0;
-	}
-	if (usb_clear_halt(xusb->handle, EP_IN(xusb)) != 0) {
-		ERR("Clearing input endpoint: %s\n", usb_strerror());
-		return 0;
+	if (xtalk_option_use_clear_halt()) {
+		DBG("Using clear_halt()\n");
+		if (usb_clear_halt(xusb->handle, EP_OUT(xusb)) != 0) {
+			ERR("Clearing output endpoint: %s\n", usb_strerror());
+			return 0;
+		}
+		if (usb_clear_halt(xusb->handle, EP_IN(xusb)) != 0) {
+			ERR("Clearing input endpoint: %s\n", usb_strerror());
+			return 0;
+		}
 	}
 	ret = xusb_flushread(xusb);
 	if (ret < 0) {
@@ -857,13 +875,63 @@ static int		initizalized;
 static void xusb_init()
 {
 	if (!initizalized) {
-		if (!getenv("XUSB_NOLOCK"))
+		xtalk_parse_options();
+		if (!xtalk_option_no_lock())
 			xusb_lock_usb();
 		usb_init();
 		usb_find_busses();
 		usb_find_devices();
 		initizalized = 1;
-		if (!getenv("XUSB_NOLOCK"))
+		if (!xtalk_option_no_lock())
 			xusb_unlock_usb();
 	}
 }
+
+/* XTALK option handling */
+static int use_clear_halt = 0;
+static int libusb_no_lock = 0;
+
+static int xtalk_one_option(const char *option_string)
+{
+	if (strcmp(option_string, "use-clear-halt") == 0) {
+		use_clear_halt = 1;
+		return 0;
+	}
+	if (strcmp(option_string, "no-lock") == 0) {
+		libusb_no_lock = 1;
+		return 0;
+	}
+	ERR("Unknown XTALK_OPTIONS content: '%s'\n", option_string);
+	return -EINVAL;
+}
+
+int xtalk_option_use_clear_halt(void)
+{
+	return use_clear_halt;
+}
+
+int xtalk_option_no_lock(void)
+{
+	return libusb_no_lock;
+}
+
+int xtalk_parse_options(void)
+{
+	char *xtalk_options;
+	char *saveptr;
+	char *token;
+	int ret;
+
+	xtalk_options = getenv("XTALK_OPTIONS");
+	if (!xtalk_options)
+		return 0;
+	token = strtok_r(xtalk_options, " \t", &saveptr);
+	while (token) {
+		ret = xtalk_one_option(token);
+		if (ret < 0)
+			return ret;
+		token = strtok_r(NULL, " \t", &saveptr);
+	}
+	return 0;
+}
+
