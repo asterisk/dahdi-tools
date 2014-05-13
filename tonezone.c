@@ -89,18 +89,19 @@ static int build_tone(void *data, size_t size, struct tone_zone_sound *t, int *c
 	int firstnobang = -1;
 	int freq1, freq2, time;
 	int modulate = 0;
-	float gain;
+	float db, gain;
 	int used = 0;
 	dup = strdup(t->data);
 	s = strtok(dup, ",");
 	while(s && strlen(s)) {
 		/* Handle optional ! which signifies don't start here*/
-		if (s[0] == '!') 
+		if (s[0] == '!') {
 			s++;
-		else if (firstnobang < 0) {
+		} else if (firstnobang < 0) {
 			PRINT_DEBUG("First no bang: %s\n", s);
 			firstnobang = *count;
 		}
+
 		if (sscanf(s, "%d+%d/%d", &freq1, &freq2, &time) == 3) {
 			/* f1+f2/time format */
 			PRINT_DEBUG("f1+f2/time format: %d, %d, %d\n", freq1, freq2, time);
@@ -111,18 +112,31 @@ static int build_tone(void *data, size_t size, struct tone_zone_sound *t, int *c
 		} else if (sscanf(s, "%d+%d", &freq1, &freq2) == 2) {
 			PRINT_DEBUG("f1+f2 format: %d, %d\n", freq1, freq2);
 			time = 0;
+			db = 1.0;
 		} else if (sscanf(s, "%d*%d", &freq1, &freq2) == 2) {
 			PRINT_DEBUG("f1+f2 format: %d, %d\n", freq1, freq2);
 			modulate = 1;
 			time = 0;
+			db = 1.0;
 		} else if (sscanf(s, "%d/%d", &freq1, &time) == 2) {
 			PRINT_DEBUG("f1/time format: %d, %d\n", freq1, time);
+			freq2 = 0;
+			db = 1.0;
+		} else if (sscanf(s, "%d@/%d", &freq1, &time) == 2) {
+			/* The "@" character has been added to enable an
+ 			 * approximately -20db tone generation of any frequency This has been done
+ 			 * primarily to generate the Australian congestion tone.
+			 * Example: "425/375,0/375,425@/375,0/375" 
+			 */
+			PRINT_DEBUG("f1 reduced amplitude/time format: %d, %d\n", freq1,time);
+			db = 0.3;
 			freq2 = 0;
 		} else if (sscanf(s, "%d", &freq1) == 1) {
 			PRINT_DEBUG("f1 format: %d\n", freq1);
 			firstnobang = *count;
 			freq2 = 0;
 			time = 0;
+			db = 1.0;
 		} else {
 			fprintf(stderr, "tone component '%s' of '%s' is a syntax error\n", s,t->data);
 			return -1;
@@ -137,7 +151,7 @@ static int build_tone(void *data, size_t size, struct tone_zone_sound *t, int *c
 		td = data;
 
 		/* Bring it down -8 dbm */
-		gain = pow(10.0, (LEVEL - 3.14) / 20.0) * 65536.0 / 2.0;
+		gain = db*(pow(10.0, (LEVEL - 3.14) / 20.0) * 65536.0 / 2.0);
 
 		td->fac1 = 2.0 * cos(2.0 * M_PI * (freq1 / 8000.0)) * 32768.0;
 		td->init_v2_1 = sin(-4.0 * M_PI * (freq1 / 8000.0)) * gain;

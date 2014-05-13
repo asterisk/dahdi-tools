@@ -59,11 +59,18 @@ struct tone_zone builtin_zones[] =
 	  .description = "Australia",
 	  .ringcadence = {  400, 200, 400, 2000 },
 	  .tones = {
-			{ DAHDI_TONE_DIALTONE, "413+438" },
+				  
+			{ DAHDI_TONE_DIALTONE, "415+440" },
 			{ DAHDI_TONE_BUSY, "425/375,0/375" },
 			{ DAHDI_TONE_RINGTONE, "413+438/400,0/200,413+438/400,0/2000" },
-			/* XXX Congestion: Should reduce by 10 db every other cadence XXX */
-			{ DAHDI_TONE_CONGESTION, "425/375,0/375,420/375,0/375" },
+			/* The Australian congestion tone is 425Hz, 375ms On, 375ms Off, with the
+			 * second cadence being half the amplitude of the first; so the first cadence
+			 * is approximately -10dB with the second one being -20dB.  Using the update
+			 * ToneZone.c file, this can be accomplished by adding the "@" symbol in front
+			 * of the frequency to reduce amplification, as in the following entry for
+			 * Congestion:
+			 */
+			{ DAHDI_TONE_CONGESTION, "425/375,0/375,425@/375,0/375" },
 			{ DAHDI_TONE_CALLWAIT, "425/100,0/200,425/200,0/4400" },
 			{ DAHDI_TONE_DIALRECALL, "413+428" },
 			{ DAHDI_TONE_RECORDTONE, "!425/1000,!0/15000,425/360,0/15000" },
