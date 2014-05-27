@@ -68,6 +68,7 @@ FIRMWARE_DIR="${FIRMWARE_DIR:-/usr/share/dahdi}"
 ASTRIBANK_HEXLOAD=${ASTRIBANK_HEXLOAD:-/usr/sbin/astribank_hexload}
 ASTRIBANK_TOOL=${ASTRIBANK_TOOL:-/usr/sbin/astribank_tool}
 XPP_CONFIG="${XPP_CONFIG:-/etc/dahdi/xpp.conf}"
+SPAN_TYPES_CONFIG="${SPAN_TYPES_CONFIG:-/etc/dahdi/span-types.conf}"
 XPP_UDEV_SLEEP_TIME="${XPP_UDEV_SLEEP_TIME:-15}"
 
 USB_RECOV="${USB_RECOV:-USB_RECOV.hex}"
@@ -270,6 +271,13 @@ usb_firmware_all_devices() {
 	wait_renumeration $numdevs 'e4e4/11[3456]1/*' "usb_firmware_all_devices"
 }
 
+filter_span_types() {
+	#sed -n -e 's/#.*//' -e 's/[ \t]*$//' -e 's/^[ \t]*//' -e 's/^\*[ \t]\+\*://p' /etc/dahdi/span-types.conf
+	sed < "$SPAN_TYPES_CONFIG" 2>/dev/null \
+		-e 's/#.*//'	\
+		-e 's/[ \t]*$//'
+}
+
 load_fw_device() {
 	dev="$1"
 	fw="$2"
@@ -290,8 +298,35 @@ load_fw_device() {
 			3) 	law="-A";;
 			4)
 				pri_protocol=''
-				if [ -r "$XPP_CONFIG" ]; then
+				dev_short=`echo "$dev" | sed -e 's,.*/usb/*,,' -e 's,/,:,'`
+				# Try modern configuration
+				if [ -r "$SPAN_TYPES_CONFIG" ]; then
+					# Try exact match by label
+					label=`lsusb -s "$dev_short" -v 2>/dev/null | awk '$1 == "iSerial" && $2 == 3 { print $3 }'`
+					if [ "$label" != '' ]; then
+						label="usb:$label"
+						debug "ECHO: checking device $dev_short [$label]"
+						pri_protocol=`filter_span_types | sed -n "s/^${label}[ \t]\+[0-9*]://p"`
+						if [ "$pri_protocol" != '' ]; then
+							debug "ECHO: device $dev_short [$label] will be set to $pri_protocol"
+						fi
+					else
+						debug "ECHO: Device $dev_short without a label"
+					fi
+					# Fallback to wildcard match
+					if [ "$pri_protocol" = '' ]; then
+						pri_protocol=`filter_span_types | sed -n 's/^\*[ \t]\+\*://p'`
+						if [ "$pri_protocol" != '' ]; then
+							debug "ECHO: device $dev_short will be set to $pri_protocol (wildcard match)"
+						fi
+					fi
+				fi
+				# Fallback to legacy xpp.conf
+				if [ "$pri_protocol" = '' -a -r "$XPP_CONFIG" ]; then
 					pri_protocol=`awk '/^pri_protocol/ {print $2}' $XPP_CONFIG`
+					if [ "$pri_protocol" != '' ]; then
+						debug "ECHO: device $dev_short will be set to $pri_protocol (legacy xpp.conf setting)"
+					fi
 				fi
 				# "E1" or empty (implied E1) means aLaw
 				if [ "$pri_protocol" != 'T1' ]; then
