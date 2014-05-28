@@ -7,7 +7,7 @@ astribank_hexload \- Xorcom Astribank (xpp) firmware loader
 
 .B astribank_hexload \-D \fIdevice-path\fR \-p [\fIoptions\fR] \fIhexfile1 .. hexfile4\fR
 
-.B astribank_hexload \-D \fIdevice-path\fR \-O [-A] [\fIoptions\fR] \fIimagefile\fR
+.B astribank_hexload \-D \fIdevice-path\fR \-O [-A] [-S \fIspan-specs\fR] [\fIoptions\fR] \fIimagefile\fR
 
 .B astribank_hexload \-D \fIdevice-path\fR \-o [\fIoptions\fR]
 
@@ -29,7 +29,7 @@ It can be used to load either an FPGA firmware or a PIC
 firmware. It is normally run by the script xpp_fxloader.
 
 .SH OPTIONS
-.B \-D 
+.B \-D
 .I device-path
 .RS
 Required. The device to read from/write to. This is
@@ -95,13 +95,38 @@ use for BRI and E1. If not set, the default mu-Law (G.711u), which is
 what you'd normally use for FXS, FXO and T1.
 .RE
 
+.B \-S \fIspan-specs\fR
+.RS
+This option should only be used when loading Octasic echo canceller firmware
+and only if the first Astribank module is PRI.
+
+Its goal is to allow specifying different \fIline-mode\fR (E1/T1/J1) in different
+ports of the PRI module. \fBastribank_hexload\fR use the \fIspan-specs\fR argument
+to select aLaw/uLaw for each of the PRI ports in the module.
+
+The \fIspan-specs\fR is a list of items separated by whitespace or commas.
+Each item is composed of a port selector, colon and a \fIline-mode\fR specifier.
+This syntax follows the syntax of specifiers in \fB/etc/dahdi/span-types.conf\fR.
+
+Examples:
+.RS
+3:E1 \- The 3'rd port is E1.
+
+*:T1 \- Any unspecified port is T1 (wildcard match).
+
+1:T1,2:T1,*:E1 \- First and second ports are T1, the rest are E1.
+.RE
+
+If the \fB\-S\fR is not given, the PRI default is determined by the existance of the \fB\-A-fR option.
+.RE
+
 .SH SEE ALSO
 fxload(8), lsusb(8), astribank_tool(8)
 
 .SH AUTHOR
 This manual page was written by Tzafrir Cohen <tzafrir.cohen@xorcom.com> .
 Permission is granted to copy, distribute and/or modify this document under
-the terms of the GNU General Public License, Version 2 any 
+the terms of the GNU General Public License, Version 2 any
 later version published by the Free Software Foundation.
 
 On Debian systems, the complete text of the GNU General Public

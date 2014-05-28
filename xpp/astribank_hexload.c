@@ -50,6 +50,7 @@ static void usage()
 #if HAVE_OCTASIC
 	fprintf(stderr, "\t\t[-O]               # Load Octasic firmware\n");
 	fprintf(stderr, "\t\t[-o]               # Show Octasic version\n");
+	fprintf(stderr, "\t\t[-S <pri-spec>]    # Set PRI type specification string\n");
 #endif
 	fprintf(stderr, "\t\t[-F]               # Load FPGA firmware\n");
 	fprintf(stderr, "\t\t[-p]               # Load PIC firmware\n");
@@ -164,11 +165,12 @@ int main(int argc, char *argv[])
 	int			opt_ecver = 0;
 #if HAVE_OCTASIC
 	int			opt_alaw = 0;
+	const char		*span_spec = NULL;
 #endif
 	int			opt_dest = 0;
 	int			opt_sum = 0;
 	enum dev_dest		dest = DEST_NONE;
-	const char		options[] = "vd:D:EFOopA";
+	const char		options[] = "vd:D:EFOopAS:";
 	int			iface_num;
 	int			ret;
 
@@ -209,6 +211,9 @@ int main(int argc, char *argv[])
 				break;
 			case 'A':
 				opt_alaw = 1;
+				break;
+			case 'S':
+				span_spec = optarg;
 				break;
 #endif
 			case 'p':
@@ -290,7 +295,7 @@ int main(int argc, char *argv[])
 			}
 #if HAVE_OCTASIC
 		} else if (opt_echo) {
-			if((ret = load_echo(astribank, argv[optind], opt_alaw)) < 0) {
+			if((ret = load_echo(astribank, argv[optind], opt_alaw, span_spec)) < 0) {
 				ERR("%s: Loading ECHO's failed\n", devpath);
 				return 1;
 			}

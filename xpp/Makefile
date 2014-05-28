@@ -54,7 +54,7 @@ OCT_DEFINES	= \
 	-DcOCT6100_MAX_ECHO_CHANNELS=672		\
 	-DcOCT6100_MAX_MIXER_EVENTS=1344
 
-ECHO_LOADER_SRC	= echo_loader.c
+ECHO_LOADER_SRC	= echo_loader.c parse_span_specs.c
 ECHO_LOADER	= $(ECHO_LOADER_SRC:.c=.o)
 endif
 

@@ -31,6 +31,7 @@
 #include "echo_loader.h"
 #include "debug.h"
 #include <oct6100api/oct6100_api.h>
+#include "parse_span_specs.h"
 
 #define DBG_MASK        	0x03
 #define	TIMEOUT			1000
@@ -560,7 +561,7 @@ inline int get_ver(struct astribank_device *astribank)
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-UINT32 init_octasic(char *filename, struct astribank_device *astribank, int is_alaw)
+UINT32 init_octasic(char *filename, struct astribank_device *astribank, struct span_specs *span_specs)
 {
 	int							cpld_ver;
 	struct echo_mod						*echo_mod;
@@ -580,6 +581,8 @@ UINT32 init_octasic(char *filename, struct astribank_device *astribank, int is_a
 	/* Channel resources.*/
 	tOCT6100_CHANNEL_OPEN					ChannelOpen;
 	UINT32							ulChanHndl;
+	enum tdm_codec tdm_codec;
+	int spanno;
 
 	if (test_send(astribank) < 0)
 		return cOCT6100_ERR_FATAL;
@@ -729,7 +732,17 @@ UINT32 init_octasic(char *filename, struct astribank_device *astribank, int is_a
 		/* Set the channel to work at the echo cancellation mode.*/
 		ChannelOpen.ulEchoOperationMode 	= cOCT6100_ECHO_OP_MODE_NORMAL;
 
-		pcmLaw						= (is_alaw ? cOCT6100_PCM_A_LAW: cOCT6100_PCM_U_LAW);
+		spanno = nChan % 4;
+		assert(spanno >= 0 && spanno < MAX_SPANNO);
+		tdm_codec = span_specs->span_is_alaw[spanno];
+		if (tdm_codec == TDM_CODEC_UNKNOWN) {
+			AB_ERR(astribank, "Calculated bad alaw/ulaw on channel %d\n", nChan);
+			return cOCT6100_ERR_FATAL;
+		}
+		if (nChan < 4)
+			AB_INFO(astribank, "ECHO PRI port %d = %s\n", spanno+1, (tdm_codec == TDM_CODEC_ALAW) ? "alaw" : "ulaw");
+
+		pcmLaw						= ((tdm_codec == TDM_CODEC_ALAW) ? cOCT6100_PCM_A_LAW: cOCT6100_PCM_U_LAW);
 
 		/* Configure the TDM interface.*/
 		ChannelOpen.TdmConfig.ulRinPcmLaw		= pcmLaw;
@@ -825,15 +838,22 @@ UINT32 init_octasic(char *filename, struct astribank_device *astribank, int is_a
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-int load_echo(struct astribank_device *astribank, char *filename, int is_alaw)
+int load_echo(struct astribank_device *astribank, char *filename, int default_is_alaw, const char *span_spec)
 {
 	int		ret;
 	UINT32		octasic_status;
+	struct span_specs *span_specs;
 
-	AB_INFO(astribank, "Loading ECHOCAN Firmware: %s (%s)\n",
-		filename, (is_alaw) ? "alaw" : "ulaw");
+	span_specs = parse_span_specifications(span_spec, default_is_alaw);
+	if (!span_specs) {
+		AB_ERR(astribank, "ECHO parsing span specs failed\n");
+		return -EFAULT;
+	}
+	AB_INFO(astribank, "Loading ECHOCAN Firmware: %s (default %s)\n",
+		filename, (default_is_alaw) ? "alaw" : "ulaw");
 	usb_buffer_init(astribank, &usb_buffer);
-	octasic_status = init_octasic(filename, astribank, is_alaw);
+	octasic_status = init_octasic(filename, astribank, span_specs);
+	free_span_specifications(span_specs);
 	if (octasic_status != cOCT6100_ERR_OK) {
 		AB_ERR(astribank, "ECHO %s burning failed (%08X)\n",
 			filename, octasic_status);

@@ -272,10 +272,12 @@ usb_firmware_all_devices() {
 }
 
 filter_span_types() {
-	#sed -n -e 's/#.*//' -e 's/[ \t]*$//' -e 's/^[ \t]*//' -e 's/^\*[ \t]\+\*://p' /etc/dahdi/span-types.conf
+	l="$1"
 	sed < "$SPAN_TYPES_CONFIG" 2>/dev/null \
 		-e 's/#.*//'	\
-		-e 's/[ \t]*$//'
+		-e 's/[ \t]*$//' \
+		-e 's/^[ \t]*//' \
+		-e '/^$/d' | awk -vlabel="$l" '$1 == label { print $2 }' | tr -s ', \t\n' ','
 }
 
 load_fw_device() {
@@ -287,60 +289,61 @@ load_fw_device() {
 	FPGA_1161*.hex)
 	        echo_file="$FIRMWARE_DIR/OCT6104E-256D.ima"
 		law=''
-		law_str='uLaw'
+		dev_short=`echo "$dev" | sed -e 's,.*/usb/*,,'`
 		abtool_output=`$ASTRIBANK_TOOL -D "$dev" -Q 2>&1`
 		ec_card_type=`echo "$abtool_output" | grep 'CARD 4' | sed -e 's/.*type=//' -e 's/\..*//'`
 		caps_num=`echo "$abtool_output" | grep 'ECHO ports' | sed -e 's/.*: *//'`
 		if [ "$ec_card_type" = '5' ]; then
-			debug "ECHO burning into $dev: $echo_file"
+			debug "ECHO($dev_short): Firmware $echo_file"
 			card_type=`echo "$abtool_output" | grep 'CARD 0' | sed -e 's/.*type=//' -e 's/\..*//'`
 			case "$card_type" in
 			3) 	law="-A";;
 			4)
-				pri_protocol=''
-				dev_short=`echo "$dev" | sed -e 's,.*/usb/*,,' -e 's,/,:,'`
+				dev_lsusb=`echo "$dev_short" | tr '/' ':'`
 				# Try modern configuration
 				if [ -r "$SPAN_TYPES_CONFIG" ]; then
 					# Try exact match by label
-					label=`lsusb -s "$dev_short" -v 2>/dev/null | awk '$1 == "iSerial" && $2 == 3 { print $3 }'`
+					label=`lsusb -s "$dev_lsusb" -v 2>/dev/null | awk '$1 == "iSerial" && $2 == 3 { print $3 }'`
 					if [ "$label" != '' ]; then
 						label="usb:$label"
-						debug "ECHO: checking device $dev_short [$label]"
-						pri_protocol=`filter_span_types | sed -n "s/^${label}[ \t]\+[0-9*]://p"`
-						if [ "$pri_protocol" != '' ]; then
-							debug "ECHO: device $dev_short [$label] will be set to $pri_protocol"
+						debug "ECHO($dev_short): Search span-types.conf for [$label]"
+						pri_spec=`filter_span_types "${label}"`
+						if [ "$pri_spec" != '' ]; then
+							debug "ECHO($dev_short): Found definitions for [$label] -- '$pri_spec'"
 						fi
 					else
-						debug "ECHO: Device $dev_short without a label"
+						debug "ECHO($dev_short): Device without a label"
 					fi
-					# Fallback to wildcard match
-					if [ "$pri_protocol" = '' ]; then
-						pri_protocol=`filter_span_types | sed -n 's/^\*[ \t]\+\*://p'`
-						if [ "$pri_protocol" != '' ]; then
-							debug "ECHO: device $dev_short will be set to $pri_protocol (wildcard match)"
-						fi
+					# Check wildcard match
+					pri_spec_wildcard=`filter_span_types '*'`
+					if [ "$pri_spec_wildcard" != '' ]; then
+						debug "ECHO($dev_short): Found definitions for wildcard -- $pri_spec_wildcard"
+					fi
+					pri_spec=`echo "$pri_spec_wildcard $pri_spec" | tr -s ' \t\n' ','`
+					if [ "$pri_spec" != '' ]; then
+						pri_spec_params="-S $pri_spec"
+						debug "ECHO($dev_short): pri_spec_params='$pri_spec_params'"
 					fi
 				fi
 				# Fallback to legacy xpp.conf
-				if [ "$pri_protocol" = '' -a -r "$XPP_CONFIG" ]; then
-					pri_protocol=`awk '/^pri_protocol/ {print $2}' $XPP_CONFIG`
-					if [ "$pri_protocol" != '' ]; then
-						debug "ECHO: device $dev_short will be set to $pri_protocol (legacy xpp.conf setting)"
+				default_pri_protocol=''
+				default_law=''
+				if [ -r "$XPP_CONFIG" ]; then
+					default_pri_protocol=`awk '/^pri_protocol/ {print $2}' $XPP_CONFIG`
+					if [ "$default_pri_protocol" != '' ]; then
+						debug "ECHO($dev_short): Found legacy xpp.conf setting -- $default_pri_protocol"
+						# "E1" or empty (implied E1) means aLaw
+						if [ "$default_pri_protocol" != 'T1' ]; then
+							default_law='-A'
+						fi
 					fi
-				fi
-				# "E1" or empty (implied E1) means aLaw
-				if [ "$pri_protocol" != 'T1' ]; then
-					law='-A'
 				fi
 				;;
 			esac
-			if [ "$law" = '-A' ]; then
-				law_str="aLaw"
-			fi
 			caps_num=`echo "$abtool_output" | grep 'ECHO ports' | sed -e 's/.*: *//'`
-			debug "ECHO: 1st module is $law_str, $caps_num channels allowed."
+			debug "ECHO($dev_short): $caps_num channels allowed."
 			if [ "$caps_num" != '0' ]; then
-				run_astribank_hexload -D "$dev" -O $law "$echo_file"
+				run_astribank_hexload -D "$dev" -O $default_law $pri_spec_params "$echo_file"
 			else
 				echo "WARNING: ECHO burning was skipped (no capabilities)"
 			fi

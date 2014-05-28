@@ -1,8 +1,9 @@
-#ifndef	ECHO_LOADER_H
-#define	ECHO_LOADER_H
+#ifndef	PARSE_SPAN_SPECS_H
+#define	PARSE_SPAN_SPECS_H
+
 /*
  * Written by Oron Peled <oron@actcom.co.il>
- * Copyright (C) 2008, Xorcom
+ * Copyright (C) 2014, Xorcom
  *
  * All rights reserved.
  *
@@ -22,11 +23,21 @@
  *
  */
 
-#include <stdint.h>
-#include "astribank_usb.h"
+#define	MAX_SPANNO	4	/* E1/T1 spans -- always in first unit. 1-based */
 
-int spi_send(struct astribank_device *astribank, uint16_t addr, uint16_t data, int recv_answer, int ver);
-int load_echo(struct astribank_device *astribank, char *filename, int is_alaw, const char *span_spec);
-int echo_ver(struct astribank_device *astribank);
+enum tdm_codec {
+	TDM_CODEC_UNKNOWN,
+	TDM_CODEC_ULAW,
+	TDM_CODEC_ALAW,
+};
 
-#endif	/* ECHO_LOADER_H */
+struct span_specs {
+	char *buf;
+	enum tdm_codec span_is_alaw[MAX_SPANNO];
+};
+
+struct span_specs *parse_span_specifications(const char *spec_string, int default_is_alaw);
+void free_span_specifications(struct span_specs *span_specs);
+void print_span_specifications(struct span_specs *span_specs, FILE *output);
+
+#endif	/* PARSE_SPAN_SPECS_H */
