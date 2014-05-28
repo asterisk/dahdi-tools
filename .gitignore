@@ -4,6 +4,7 @@
 *.asciidoc
 *.html
 build_tools/menuselect-deps
+autoconfig.h
 config.log
 config.status
 dahdi_cfg
