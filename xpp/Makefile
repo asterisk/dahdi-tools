@@ -192,9 +192,11 @@ clean:
 	$(RM) .depend .octasic.depend *.o xtalk/*.o $(OCT_HERE_OBJS) $(TARGETS)
 
 .PHONY: depend
+ifeq	(1,$(PBX_USB))
 depend: .depend
 .depend: *.c *.h xtalk/*.c
 	@echo "Calculating dependencies"
 	@if ! $(CC) $(CFLAGS) $(OCT_CFLAGS) -MM $(SRCS) > $@; then $(RM) $@; exit 1; fi
 
 include .depend
+endif
