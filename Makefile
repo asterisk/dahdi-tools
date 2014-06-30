@@ -213,7 +213,7 @@ README.html: README system.conf.asciidoc init.conf.asciidoc tonezones.txt \
 README.Astribank.html: xpp/README.Astribank
 	$(ASCIIDOC) -o $@ -n -a toc -a toclevels=4 $<
 
-# on Debian: this requires the full groof, not just groff-base.
+# on Debian: this requires the full groff, not just groff-base.
 %.8.html: %.8
 	man -Thtml $^ >$@
 
