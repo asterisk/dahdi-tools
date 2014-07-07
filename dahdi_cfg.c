@@ -29,6 +29,7 @@
 
 #include <stdio.h> 
 #include <getopt.h>
+#include <signal.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -1540,15 +1541,27 @@ static int span_restrict(char *str)
 	return 1;
 }
 
+static const char *SEM_NAME = "dahdi_cfg";
+static sem_t *lock = SEM_FAILED;
+
+static void signal_handler(int signal)
+{
+	if (SEM_FAILED != lock) {
+		sem_unlink(SEM_NAME);
+	}
+	/* The default handler should have been restored before this handler was
+	 * called, so we can let the "normal" processing finish the cleanup. */
+	raise(signal);
+}
+
 int main(int argc, char *argv[])
 {
 	int c;
 	char *buf;
 	char *key, *value;
 	int x,found;
-	sem_t *lock = SEM_FAILED;
-	const char *SEM_NAME = "dahdi_cfg";
 	int exit_code = 0;
+	struct sigaction act;
 
 	while((c = getopt(argc, argv, "fthc:vsd::C:S:")) != -1) {
 		switch(c) {
@@ -1668,6 +1681,19 @@ finish:
 	if (debug & DEBUG_APPLY) {
 		printf("About to open Master device\n");
 		fflush(stdout);
+	}
+
+	sigemptyset(&act.sa_mask);
+	act.sa_handler = signal_handler;
+	act.sa_flags = SA_RESETHAND;
+
+	if (sigaction(SIGTERM, &act, NULL) == -1) {
+		perror("Failed to install SIGTERM handler.");
+		exit(1);
+	}
+	if (sigaction(SIGINT, &act, NULL) == -1) {
+		perror("Failed to install SIGINT handler.");
+		exit(1);
 	}
 
 	lock = sem_open(SEM_NAME, O_CREAT, O_RDWR, 1);
