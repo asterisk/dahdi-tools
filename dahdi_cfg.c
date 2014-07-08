@@ -762,7 +762,16 @@ static int chanconfig(char *keyword, char *args)
 			} else {
 				fprintf(stderr, "Huh? (%s)\n", keyword);
 			}
-			if (is_digital)
+
+			if (cc[x].sigtype != DAHDI_SIG_CAS &&
+			    cc[x].sigtype != DAHDI_SIG_DACS &&
+			    cc[x].sigtype != DAHDI_SIG_DACS_RBS) {
+				if (NULL != idle) {
+					fprintf(stderr, "WARNING: idlebits are not valid on %s channels.\n", sig[x]);
+				}
+			}
+
+			if (is_digital) 
 				chan2span[x] = current_span;
 			else
 				current_span = 0;
