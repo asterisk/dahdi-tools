@@ -109,7 +109,7 @@ static int fiftysixkhdlc[DAHDI_MAX_CHANNELS];
 
 static int spans=0;
 
-static int fo_real = 1;
+static int dry_run = 0;
 
 static int verbose = 0;
 
@@ -1590,7 +1590,7 @@ int main(int argc, char *argv[])
 			force++;
 			break;
 		case 't':
-			fo_real = 0;
+			dry_run = 1;
 			break;
 		case 's':
 			stopmode = 1;
@@ -1683,9 +1683,9 @@ finish:
 	if (verbose) {
 		printconfig(fd);
 	}
-	if (!fo_real) 
-		exit(0);
 
+	if (dry_run)
+		exit(0);
 	
 	if (debug & DEBUG_APPLY) {
 		printf("About to open Master device\n");
