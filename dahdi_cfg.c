@@ -826,8 +826,9 @@ static int apply_fiftysix(void)
 	int chanfd;
 
 	for (x = 1; x < DAHDI_MAX_CHANNELS; x++) {
-		if (skip_channel(x))
+		if (skip_channel(x) || !cc[x].sigtype)
 			continue;
+
 		chanfd = open("/dev/dahdi/channel", O_RDWR);
 		if (chanfd == -1) {
 			fprintf(stderr, 
