@@ -327,14 +327,14 @@ load_fw_device() {
 				fi
 				# Fallback to legacy xpp.conf
 				default_pri_protocol=''
-				default_law=''
+				law=''
 				if [ -r "$XPP_CONFIG" ]; then
 					default_pri_protocol=`awk '/^pri_protocol/ {print $2}' $XPP_CONFIG`
 					if [ "$default_pri_protocol" != '' ]; then
 						debug "ECHO($dev_short): Found legacy xpp.conf setting -- $default_pri_protocol"
 						# "E1" or empty (implied E1) means aLaw
 						if [ "$default_pri_protocol" != 'T1' ]; then
-							default_law='-A'
+							law='-A'
 						fi
 					fi
 				fi
@@ -343,7 +343,7 @@ load_fw_device() {
 			caps_num=`echo "$abtool_output" | grep 'ECHO ports' | sed -e 's/.*: *//'`
 			debug "ECHO($dev_short): $caps_num channels allowed."
 			if [ "$caps_num" != '0' ]; then
-				run_astribank_hexload -D "$dev" -O $default_law $pri_spec_params "$echo_file"
+				run_astribank_hexload -D "$dev" -O $law $pri_spec_params "$echo_file"
 			else
 				echo "WARNING: ECHO burning was skipped (no capabilities)"
 			fi
