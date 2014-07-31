@@ -39,6 +39,7 @@
 #define	DBG_MASK	0x80
 #define	MAX_HEX_LINES	64000
 #define HAVE_OCTASIC	1
+#define DEF_SPAN_SPEC_FORMAT	"*:%c1" /* %c: 'E' or 'T' */
 
 static char	*progname;
 
@@ -166,6 +167,7 @@ int main(int argc, char *argv[])
 #if HAVE_OCTASIC
 	int			opt_alaw = 0;
 	const char		*span_spec = NULL;
+	char			def_span_spec[sizeof(DEF_SPAN_SPEC_FORMAT)];
 #endif
 	int			opt_dest = 0;
 	int			opt_sum = 0;
@@ -252,6 +254,13 @@ int main(int argc, char *argv[])
 		ERR("Missing device path.\n");
 		usage();
 	}
+# ifdef HAVE_OCTASIC
+	if (!span_spec) {
+		snprintf(def_span_spec, sizeof(def_span_spec),
+				DEF_SPAN_SPEC_FORMAT, opt_alaw? 'E' : 'T');
+		span_spec = def_span_spec;
+	}
+#endif
 	if(opt_dest) {
 		/*
 		 * MPP Interface
