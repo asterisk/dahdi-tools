@@ -67,6 +67,8 @@ static void xusb_init();
  *     variable of that name. Existing options:
  *
  *     - "use-clear-halt" -- force USB "clear_halt" operation during
+ *                           device initialization (this is the default)
+ *     - "no-use-clear-halt" -- force no USB "clear_halt" operation during
  *                           device initialization
  *     - "no-lock" -- prevent using global sempahore to serialize libusb
  *                    initialization. Previously done via "XUSB_NOLOCK"
@@ -888,13 +890,17 @@ static void xusb_init()
 }
 
 /* XTALK option handling */
-static int use_clear_halt = 0;
+static int use_clear_halt = 1;
 static int libusb_no_lock = 0;
 
 static int xtalk_one_option(const char *option_string)
 {
 	if (strcmp(option_string, "use-clear-halt") == 0) {
 		use_clear_halt = 1;
+		return 0;
+	}
+	if (strcmp(option_string, "no-use-clear-halt") == 0) {
+		use_clear_halt = 0;
 		return 0;
 	}
 	if (strcmp(option_string, "no-lock") == 0) {
