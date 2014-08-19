@@ -89,7 +89,8 @@ static int build_tone(void *data, size_t size, struct tone_zone_sound *t, int *c
 	int firstnobang = -1;
 	int freq1, freq2, time;
 	int modulate = 0;
-	float db, gain;
+	float db = 1.0;
+	float gain;
 	int used = 0;
 	dup = strdup(t->data);
 	s = strtok(dup, ",");
@@ -112,16 +113,13 @@ static int build_tone(void *data, size_t size, struct tone_zone_sound *t, int *c
 		} else if (sscanf(s, "%d+%d", &freq1, &freq2) == 2) {
 			PRINT_DEBUG("f1+f2 format: %d, %d\n", freq1, freq2);
 			time = 0;
-			db = 1.0;
 		} else if (sscanf(s, "%d*%d", &freq1, &freq2) == 2) {
 			PRINT_DEBUG("f1+f2 format: %d, %d\n", freq1, freq2);
 			modulate = 1;
 			time = 0;
-			db = 1.0;
 		} else if (sscanf(s, "%d/%d", &freq1, &time) == 2) {
 			PRINT_DEBUG("f1/time format: %d, %d\n", freq1, time);
 			freq2 = 0;
-			db = 1.0;
 		} else if (sscanf(s, "%d@/%d", &freq1, &time) == 2) {
 			/* The "@" character has been added to enable an
  			 * approximately -20db tone generation of any frequency This has been done
@@ -136,7 +134,6 @@ static int build_tone(void *data, size_t size, struct tone_zone_sound *t, int *c
 			firstnobang = *count;
 			freq2 = 0;
 			time = 0;
-			db = 1.0;
 		} else {
 			fprintf(stderr, "tone component '%s' of '%s' is a syntax error\n", s,t->data);
 			return -1;
