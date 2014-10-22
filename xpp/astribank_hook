@@ -16,6 +16,8 @@ PATH="$dir:/usr/sbin:/sbin:/usr/bin:/bin"
 
 set -e
 
+LOCK="/var/lock/twinstar_startup"
+
 [ -r /etc/dahdi/init.conf ] && . /etc/dahdi/init.conf
 
 # For lab testing
@@ -32,16 +34,37 @@ if [ "$XPP_HOTPLUG_DAHDI" != yes ]; then
 fi
 
 export XPPORDER_CONF="$dahdi_conf/xpp_order"
-if [ ! -r "$XPPORDER_CONF" ]; then
-	(
-		echo "Skip($ACTION): No '$XPPORDER_CONF'"
-		echo "Removing uneeded startup semaphore"
-		astribank_is_starting -v -r 2>&1
-	) 2>&1 | $LOGGER
-	exit 0
-fi
 export DAHDI_CFG_CMD="dahdi_cfg -c $dahdi_conf/system.conf"
 export CALLED_FROM_ATRIBANK_HOOK=yes
+
+can_full_async() {
+	# Can we work aynchronously:
+	#    - Need modern Asterisk that accept hotplug DAHDI devices.
+	#    - Need DAHDI with "auto_assign_spans" == 0
+	if [ "$ASTERISK_SUPPORTS_DAHDI_HOTPLUG" = yes ]; then
+		aas_param='/sys/module/dahdi/parameters/auto_assign_spans'
+		aas=`cat "$aas_param" 2>/dev/null`
+		if [ "$aas" = 0 ]; then
+			return 0
+		else
+			$LOGGER "No async operation ($aas_param != 0)"
+		fi
+	else
+		$LOGGER "No async operation (ASTERISK_SUPPORTS_DAHDI_HOTPLUG!=yes)"
+	fi
+	return 1
+}
+
+check_xpporder_conf() {
+	if [ ! -r "$XPPORDER_CONF" ]; then
+		(
+			echo "Skip($ACTION): No '$XPPORDER_CONF'"
+			echo "Removing uneeded startup semaphore"
+			astribank_is_starting -v -r 2>&1
+		) 2>&1 | $LOGGER
+		exit 0
+	fi
+}
 
 clean_lines() {
 	sed -e 's/#.*//' -e 'y/\t/ /' -e 's/^ *//' -e 's/ *$//' -e '$s/$/\n/' "$XPPORDER_CONF"
@@ -63,10 +86,6 @@ matched_devices() {
 		fi
 	done
 }
-
-NUM_WANTED=`clean_lines | sed '/^$/d' | wc -l`
-NUM_GOOD=`matched_devices | wc -l`
-LOCK="/var/lock/twinstar_startup"
 
 # Wait until udev finished processing our requests
 # so we know the device files were actually created
@@ -110,13 +129,9 @@ start_dahdi() {
 	rm -f "$LOCK"
 }
 
-#echo "$0: $ACTION($XBUS_NAME)" | $LOGGER
-case "$ACTION" in
-add)
-	;;
-remove)
-	;;
-online)
+old_synchronous_start() {
+	NUM_GOOD=`matched_devices | wc -l`
+	NUM_WANTED=`clean_lines | sed '/^$/d' | wc -l`
 	echo "$ACTION($XBUS_NAME): $NUM_GOOD/$NUM_WANTED from $XPPORDER_CONF" | $LOGGER
 	if [ "$NUM_GOOD" -eq "$NUM_WANTED" ]; then
 		(
@@ -142,8 +157,11 @@ online)
 			fi
 		) < /dev/null 2>&1 | $LOGGER &
 	fi
-	;;
-offline)
+}
+
+old_synchronous_stop() {
+	NUM_GOOD=`matched_devices | wc -l`
+	NUM_WANTED=`clean_lines | sed '/^$/d' | wc -l`
 	echo "$ACTION($XBUS_NAME): $NUM_GOOD/$NUM_WANTED from $XPPORDER_CONF" | $LOGGER
 	if [ "$NUM_GOOD" -eq 0 ]; then
 		echo "All Astribanks offline" | $LOGGER
@@ -151,6 +169,47 @@ offline)
 			"$dir/twinstar_hook" || :
 		fi
 		rm -f "$LOCK"
+	fi
+}
+
+tws_watchdog_enable() {
+	devdir="/sys$DEVPATH"
+	label=`cat "$devdir/label"`
+	connector=`cat "$devdir/connector"`
+	xbus=`echo "$devdir" | sed 's,.*/,,'`
+	prefix="${xbus}: [${label}] @${connector}"
+	TWS_NOAUTOJUMPFILE="$TWS_DIR/twinstar_no_autojump"
+	if [ -e "$TWS_NOAUTOJUMPFILE" ]; then
+		$LOGGER "$prefix: ignore wd (found $TWS_NOAUTOJUMPFILE)"
+	else
+		# Re-arm Astribank watchdog
+		transportdir="$devdir/transport"
+		busnum=`cat "$transportdir/busnum" 2>/dev/null || :`
+		devnum=`cat "$transportdir/devnum" 2>/dev/null || :`
+		devaddr=`printf "%03d/%03d" "$busnum" "$devnum"`
+		$LOGGER "$prefix: enabling twinstar watchdog"
+		astribank_tool -D "$devaddr" -w 1 2>&1 | $LOGGER
+	fi
+}
+
+#echo "$0: $ACTION($XBUS_NAME)" | $LOGGER
+case "$ACTION" in
+add)
+	;;
+remove)
+	;;
+online)
+	if can_full_async; then
+		tws_watchdog_enable
+	else
+		old_synchronous_start
+	fi
+	;;
+offline)
+	if can_full_async; then
+		:	# Nothing to do
+	else
+		old_synchronous_stop
 	fi
 	;;
 *)
