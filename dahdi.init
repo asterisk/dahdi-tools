@@ -144,6 +144,14 @@ hotplug_exit_after_load() {
 
 # Initialize the Xorcom Astribank (xpp/) using perl utiliites:
 xpp_startup() {
+	if [ "$ASTERISK_SUPPORTS_DAHDI_HOTPLUG" = yes ]; then
+		aas_param='/sys/module/dahdi/parameters/auto_assign_spans'
+		aas=`cat "$aas_param" 2>/dev/null`
+		if [ "$aas" = 0 ]; then
+			echo 1>&2 "Don't wait for Astribanks (use Asterisk hotplug-support)"
+			return 0
+		fi
+	fi
 	# do nothing if there are no astribank devices:
 	if ! /usr/share/dahdi/waitfor_xpds; then return 0; fi
 
