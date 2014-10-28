@@ -154,7 +154,6 @@ if [ "$XPP_HOTPLUG_DAHDI" = yes ]; then
 		echo -n 1>&2 "Other DAHDI initializations... "
 		astribank_is_starting -v -w 1>&2
 	fi
-else
-	# Non-hotplug -- Sequential initialization, remove semaphore
-	astribank_is_starting -v -r 1>&2
 fi
+# All Astribanks initialized -- remove semaphore
+astribank_is_starting -v -r 1>&2
