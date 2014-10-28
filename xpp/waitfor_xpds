@@ -94,10 +94,7 @@ if ! dahdi_hardware="`which dahdi_hardware 2>/dev/null`"; then
 	echo >&2 "$0: Missing dahdi_hardware"
 	exit 0
 fi
-if ! astribank_is_starting="`which astribank_is_starting 2>/dev/null`"; then
-	echo >&2 "$0: Missing astribank_is_starting"
-	exit 0
-fi
+
 if [ "`$dahdi_hardware | grep xpp_usb`" != "" ]; then
 	astribank_is_starting -v -a
 fi
