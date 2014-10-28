@@ -52,7 +52,7 @@ ab_serial_nums() {
 }
 
 detected_serial_nums() {
-	for i in /sys/bus/astribanks/devices/*/transport; do
+	for i in `ls -1d /sys/bus/astribanks/devices/*/transport 2>/dev/null`; do
 		s=`cat "$i/serial" 2>/dev/null` || :
 		if [ "$s" = '' ]; then
 			echo "NO-SERIAL"
