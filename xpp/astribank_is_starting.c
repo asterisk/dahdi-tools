@@ -125,6 +125,8 @@ static int absem_detected(void)
 	if((absem = absem_get(0)) < 0) {
 		if(debug)
 			fprintf(stderr, "%s: absem does not exist\n", progname);
+		if(verbose)
+			printf("No Astribanks are initializing\n");
 		return absem;
 	}
 	if(debug)
