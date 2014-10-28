@@ -172,6 +172,13 @@ old_synchronous_stop() {
 	fi
 }
 
+ab_list() {
+	find /sys/devices -name idVendor 2>/dev/null | \
+		xargs grep -H  'e4e4' 2>/dev/null | \
+		sed -e 's/idVendor.*/idProduct/' | xargs grep -H '11[3456]' | \
+		sed 's,/[^/]*$,,' || :
+}
+
 tws_watchdog_enable() {
 	devdir="/sys$DEVPATH"
 	label=`cat "$devdir/label"`
@@ -197,6 +204,11 @@ case "$ACTION" in
 add)
 	;;
 remove)
+	ab=`ab_list | wc -l`
+	if [ "$ab" -eq 0 ]; then
+		$LOGGER "$prefix: No more Astribanks -- remove astribank_is_starting semaphore"
+		astribank_is_starting -v -r 2>&1 | $LOGGER
+	fi
 	;;
 online)
 	if can_full_async; then
