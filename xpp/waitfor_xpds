@@ -95,10 +95,12 @@ if ! dahdi_hardware="`which dahdi_hardware 2>/dev/null`"; then
 	exit 0
 fi
 
+# Just make sure
 if [ "`$dahdi_hardware | grep xpp_usb`" != "" ]; then
 	astribank_is_starting -v -a
 fi
 if ! astribank_is_starting; then
+	# No Astribanks ever seen -- nothing to do
 	exit 0
 fi
 
