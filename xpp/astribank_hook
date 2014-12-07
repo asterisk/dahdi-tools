@@ -96,10 +96,10 @@ wait_for_udev() {
 	echo "Waiting for udev to settle down..."
 	if [ -x /sbin/udevsettle ]; then
 		# Old system, stand-alone udevsettle command
-		time /sbin/udevsettle --timeout="$UDEV_SETTLE_MAX_TIME"
+		/sbin/udevsettle --timeout="$UDEV_SETTLE_MAX_TIME"
 	elif [ -x /sbin/udevadm ]; then
 		# Assume modern system, udevadm has settle parameter
-		if ! time /sbin/udevadm settle --timeout="$UDEV_SETTLE_MAX_TIME"
+		if ! /sbin/udevadm settle --timeout="$UDEV_SETTLE_MAX_TIME"
 		then
 			echo "udevadm failed ($?)."
 			echo "Fallback to sleep $UDEV_SETTLE_MAX_TIME seconds."
