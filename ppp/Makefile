@@ -2,7 +2,7 @@
 
 -include ../makeopts
 
-CFLAGS		+= $(COPTS) -fPIC
+CFLAGS		+= $(COPTS) -fPIC $(DAHDI_INCLUDE)
 LDFLAGS		+= -shared
 
 INCLUDE_DIR	= $(includedir)/pppd
