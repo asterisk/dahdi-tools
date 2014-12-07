@@ -30,10 +30,20 @@ extra_dist='
 	ppp/Makefile.in
 	Makefile.in
 	xpp/Makefile.in
+	xpp/oct612x/Makefile.in
+	auxdir/compile
+	auxdir/config.guess
+	auxdir/config.sub
+	auxdir/depcomp
 	auxdir/install-sh
+	auxdir/ltmain.sh
 	auxdir/missing
+	m4/libtool.m4
+	m4/ltoptions.m4
+	m4/ltsugar.m4
+	m4/ltversion.m4
+	m4/lt~obsolete.m4
 	'
-
 find $extra_dist | cpio -pudmv "$tmp_version_dir"
 tar czf "$output" -C "$tmp_work_dir" "$tarball_prefix"
 rm -rf "$tmp_work_dir"

@@ -1,9 +1,16 @@
 *~
 *.o
+*.lo
+*.a
+*.so
+*.la
 .*.o.d
 .*.lo.d
 *.asciidoc
 *.html
+.deps
+.libs
+.dirstamp
 Makefile
 Makefile.in
 auxdir/
@@ -32,8 +39,8 @@ hdlcgen
 hdlcstress
 hdlctest
 hdlcverify
-libtonezone.a
-libtonezone.so
+libtool
+m4/
 makeopts
 patgen
 patlooptest
