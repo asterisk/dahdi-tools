@@ -29,7 +29,6 @@ INSTALL_DATA	= $(INSTALL) -m 644
 SBINDIR		= $(prefix)/sbin
 DATADIR		= $(datadir)/dahdi
 MANDIR		= $(mandir)/man8
-HOTPLUG_USB_DIR	= $(sysconfdir)/hotplug/usb
 PERLLIBDIR	:= $(shell eval `perl -V:sitelib`; echo "$$sitelib")
 PERL_DIRS	:= $(shell cd perl_modules; find * -name '[A-Z]*' -type d| xargs)
 PERL_MODS_PAT	:= *.pm $(PERL_DIRS:%=%/*.pm)
@@ -130,10 +129,6 @@ install: all
 	$(INSTALL_DATA) xpp.rules $(DESTDIR)$(udevrulesdir)/
 	$(INSTALL) -d $(DESTDIR)$(MANDIR)
 	$(INSTALL_DATA) $(MAN_INSTALL) $(DESTDIR)$(MANDIR)/
-	$(INSTALL) -d $(DESTDIR)$(HOTPLUG_USB_DIR)
-	$(INSTALL_DATA) xpp_fxloader.usermap $(DESTDIR)$(HOTPLUG_USB_DIR)/
-	# for backward compatibility and for hotplug users:
-	ln -sf $(DATADIR)/xpp_fxloader $(DESTDIR)$(HOTPLUG_USB_DIR)/
 ifneq	(,$(PERLLIBDIR))
 	$(INSTALL) -d $(DESTDIR)$(PERLLIBDIR)
 	for i in $(PERL_DIRS); \
