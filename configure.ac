@@ -2,11 +2,11 @@
 
 AC_PREREQ(2.59)
  
-m4_define([TOOLSVERSION],
+m4_define([short_version],
           m4_bpatsubst(m4_esyscmd([build_tools/make_version . dahdi/tools]),
                        [\([0-9.]*\)\(\w\|\W\)*],
                        [\1]))
-AC_INIT(dahdi, TOOLSVERSION, www.asterisk.org)
+AC_INIT(dahdi, short_version, www.asterisk.org)
 
 # check existence of the package
 AC_CONFIG_SRCDIR([dahdi_cfg.c])
@@ -211,7 +211,12 @@ fi
 
 AC_SUBST(PPPD_VERSION)
 
-AC_CONFIG_FILES([makeopts])
+AC_SUBST([TOOLSVERSION], m4_esyscmd([build_tools/make_version . dahdi/tools]))
+
+AC_CONFIG_FILES([
+	makeopts
+	version.c
+	])
 AC_OUTPUT
 
 AC_MSG_NOTICE(*** dahdi-tools build successfully configured ***)

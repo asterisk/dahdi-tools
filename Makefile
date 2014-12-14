@@ -143,13 +143,6 @@ programs: libs utils
 
 utils: $(BINS) utils-subdirs
 
-version.c: FORCE
-	@TOOLSVERSION="${TOOLSVERSION}" build_tools/make_version_c > $@.tmp
-	@if cmp -s $@.tmp $@ ; then :; else \
-		mv $@.tmp $@ ; \
-	fi
-	@rm -f $@.tmp
-
 tests: $(TEST_BINS)
 
 $(UTILS): %: %.o
