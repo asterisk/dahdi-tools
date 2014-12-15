@@ -66,6 +66,18 @@ if	PBX_USB
 
 SUBDIRS		+= oct612x
 
+if	LIBUSBX
+USB_CFLAGS		= $(LIBUSBX_CFLAGS)
+USB_LIBS		= $(LIBUSBX_LIBS)
+USB_NAME		= libusbx
+else
+if	LIBUSB
+USB_CFLAGS		= $(LIBUSB_CFLAGS)
+USB_LIBS		= $(LIBUSB_LIBS)
+USB_NAME		= libusb
+endif
+endif
+
 noinst_LTLIBRARIES	= libastribank.la libecholoader.la libhexfile.la
 
 libastribank_la_SOURCES	= \
@@ -115,7 +127,7 @@ test_parse_LDADD	= libhexfile.la
 
 astribank_tool_SOURCES		= astribank_tool.c
 astribank_tool_CFLAGS		= $(GLOBAL_CFLAGS)
-astribank_tool_LDFLAGS		= $(USB_LIB)
+astribank_tool_LDFLAGS		= $(USB_LIBS)
 astribank_tool_LDADD		= libastribank.la
 
 astribank_hexload_SOURCES	= \
@@ -125,7 +137,7 @@ astribank_hexload_SOURCES	= \
 			#
 
 astribank_hexload_CFLAGS	= $(GLOBAL_CFLAGS) $(OCTASIC_CFLAGS)
-astribank_hexload_LDFLAGS	= $(USB_LIB)
+astribank_hexload_LDFLAGS	= $(USB_LIBS)
 astribank_hexload_LDADD		= \
 		libhexfile.la	\
 		libastribank.la	\
@@ -140,7 +152,7 @@ astribank_allow_SOURCES		= \
 			#
 
 astribank_allow_CFLAGS		= $(GLOBAL_CFLAGS)
-astribank_allow_LDFLAGS		= $(USB_LIB)
+astribank_allow_LDFLAGS		= $(USB_LIBS)
 astribank_allow_LDADD		= libastribank.la
 
 man_pages	= \

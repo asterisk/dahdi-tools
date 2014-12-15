@@ -182,6 +182,66 @@ AM_CONDITIONAL([PBX_PCAP], [test "$PBX_PCAP" = "1" -a "$DAHDI_TXMIRROR" = "1"])
 
 AC_CHECK_FUNCS([semtimedop])
 
+# What the user asked for? libusb/libusbx
+AC_ARG_WITH([libusbx],
+	[AS_HELP_STRING([--without-libusbx], [Disable libusbx @<:@default=check@:>@])],
+	[],
+	[with_libusbx=check])
+AC_ARG_WITH([libusb],
+	[AS_HELP_STRING([--without-libusb], [Disable libusb-0.1 @<:@default=check@:>@])],
+	[],
+	[with_libusb=check])
+
+# LIBUSBX tests
+have_libusbx=
+AS_IF([test "$with_libusbx" = "yes"],
+	[PKG_CHECK_MODULES([LIBUSBX], [libusb-1.0],
+		[AC_CHECK_LIB([usb-1.0], [libusb_error_name],
+			[
+				have_libusbx="yes"
+				AC_SUBST([PKG_CONFIG_LIBUSB], [libusb-1.0])
+				AC_DEFINE([HAVE_LIBUSBX], [1], [Define to 1 if you have <libusb.h>.])
+				AC_SUBST([PBX_USB], [1])
+			], [
+				if test "$with_libusbx" != "yes"; then
+					AC_MSG_NOTICE([Ignoring old libusb-1.0, trying fallback to old libusb])
+				fi
+			])
+		], [:])
+	], [])
+
+AS_IF([test "$with_libusbx" = "yes" -a "$have_libusbx" = ""],
+	[AC_MSG_ERROR([No libusbx found (--with-libusbx was given)])])
+
+# LIBUSB tests
+have_libusb=
+AS_IF([test "$with_libusb" != "no"],
+	[AS_IF([test "$have_libusbx" != ""],
+		[
+			AS_IF([test "$with_libusbx" = "check"], [
+				AC_MSG_NOTICE([Skipping LIBUSB tests (have good LIBUSBX)])
+				])
+		], [
+			PKG_CHECK_MODULES([LIBUSB], [libusb],
+				[
+					have_libusb="yes"
+					AC_SUBST([PKG_CONFIG_LIBUSB], [libusb])
+					AC_SUBST([PBX_USB], [1])
+				]
+				[AC_DEFINE([HAVE_LIBUSB], [1], [Define to 1 if you have <usb.h>.])],
+				[:]
+				)
+		])
+	], [])
+
+AS_IF([test "$with_libusb" = "yes" -a "$have_libusb" = ""],
+	[AC_MSG_ERROR([No libusb found (--with-libusb was given)])])
+
+AM_CONDITIONAL([LIBUSBX], [test "$have_libusbx" != ""])
+AM_CONDITIONAL([LIBUSB], [test "$have_libusb" != ""])
+AM_CONDITIONAL([PBX_USB], [test "$PBX_USB" = "1"])
+
+
 PBX_HDLC=0
 AC_MSG_CHECKING([for GENERIC_HDLC_VERSION version 4 in linux/hdlc.h])
 AC_COMPILE_IFELSE(
@@ -295,8 +355,6 @@ if test "x${PBX_DAHDI23}" != "x1"; then
 fi
 
 AC_SUBST(PPPD_VERSION)
-
-AM_CONDITIONAL([PBX_USB], [test "$PBX_USB" = "1"])
 
 # Taken from octasic-helper
 AC_SUBST([USE_OCTASIC], [yes])
