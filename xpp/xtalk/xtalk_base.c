@@ -117,25 +117,17 @@ int xtalk_set_protocol(struct xtalk_base *xtalk_base,
 
 		stat_msg = (xproto) ? xproto->ack_statuses[i] : NULL;
 		if (stat_msg) {
-			if (!IS_PRIVATE_OP(i)) {
-				ERR("Bad status=0x%X "
-					"(should be in the range [0x%X-0x%X]\n",
-					i, PRIVATE_OP_FIRST, PRIVATE_OP_LAST);
-				return -EINVAL;
-			}
 			xtalk_base->xproto.ack_statuses[i] = stat_msg;
 			DBG("private: status=0x%X (%s)\n", i, stat_msg);
 		} else {
-			if (!IS_PRIVATE_OP(i)) {
-				const char	*stat_msg;
+			const char	*global_msg;
 
-				xtalk_base->xproto.ack_statuses[i] =
-					xproto_base->ack_statuses[i];
-				stat_msg = xtalk_base->xproto.ack_statuses[i];
-				if (stat_msg)
-					DBG("global: status=0x%X (%s)\n",
-						i, stat_msg);
-			}
+			xtalk_base->xproto.ack_statuses[i] =
+				xproto_base->ack_statuses[i];
+			global_msg = xtalk_base->xproto.ack_statuses[i];
+			if (global_msg)
+				DBG("global: status=0x%X (%s)\n",
+						i, global_msg);
 		}
 	}
 	xtalk_base->xproto.name = protoname;
