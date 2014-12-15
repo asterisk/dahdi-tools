@@ -339,7 +339,7 @@ int xusb_flushread(struct xusb_iface *iface)
 	return 0;
 }
 
-static int use_clear_halt = 1;
+static int use_clear_halt = 0;
 
 static int xtalk_one_option(const char *option_string)
 {
