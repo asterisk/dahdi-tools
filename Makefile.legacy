@@ -5,10 +5,10 @@
 #
 #
 
-ifeq ($(strip $(foreach var,clean distclean dist-clean,$(findstring $(var),$(MAKECMDGOALS)))),)
+ifeq ($(strip $(foreach var,clean,$(findstring $(var),$(MAKECMDGOALS)))),)
 endif
 
-ifeq ($(strip $(foreach var,clean distclean dist-clean,$(findstring $(var),$(MAKECMDGOALS)))),)
+ifeq ($(strip $(foreach var,clean,$(findstring $(var),$(MAKECMDGOALS)))),)
  ifneq ($(wildcard makeopts),)
   include makeopts
  endif
@@ -68,39 +68,15 @@ endif
 
 TOOLSVERSION=$(shell build_tools/make_version . dahdi/tools)
 
-LTZ_A:=libtonezone.a
-LTZ_A_OBJS:=zonedata.o tonezone.o version.o
-LTZ_SO:=libtonezone.so
-LTZ_SO_OBJS:=zonedata.lo tonezone.lo version.o
-LTZ_SO_MAJOR_VER:=2
-LTZ_SO_MINOR_VER:=0
-
 # sbindir, libdir, includedir and mandir are defined in makeopts
 # (from configure).
-BIN_DIR:=$(sbindir)
 LIB_DIR:=$(libdir)
-INC_DIR:=$(includedir)/dahdi
 DATA_DIR:=${datadir}/dahdi
 CONFIG_DIR:=$(sysconfdir)/dahdi
 CONFIG_FILE:=$(CONFIG_DIR)/system.conf
 UDEVRULES_DIR:=$(sysconfdir)/udev/rules.d
 
-# Utilities we build with a standard build procedure:
-UTILS		= dahdi_tool dahdi_test dahdi_monitor dahdi_speed sethdlc dahdi_cfg \
-		  fxstest fxotune dahdi_diag dahdi_scan
 
-# some tests:
-UTILS		+= patgen pattest patlooptest hdlcstress hdlctest hdlcgen \
-		   hdlcverify timertest dahdi_maint
-
-
-BINS:=fxotune dahdi_cfg dahdi_monitor dahdi_speed dahdi_test dahdi_scan dahdi_maint
-ifeq	(1,$(PBX_NEWT))
-	BINS	+= dahdi_tool
-endif
-ifeq	(1,$(PBX_HDLC))
-	BINS	+= sethdlc
-endif
 ASSIGNED_DATA_SCRIPTS:=\
 	dahdi_handle_device	\
 	dahdi_span_config	\
@@ -111,63 +87,19 @@ ASSIGNED_DATA_SCRIPTS:=\
 	handle_device.d/10-span-types	\
 	handle_device.d/20-span-assignments
 
-ASSIGNED_UTILS:=dahdi_span_assignments dahdi_span_types \
-	dahdi_waitfor_span_assignments
 ASSIGNED_CONF:=assigned-spans.conf.sample span-types.conf.sample
 
-TEST_BINS:=patgen pattest patlooptest hdlcstress hdlctest hdlcgen hdlcverify timertest dahdi_maint
 # All the man pages. Not just installed ones:
 GROFF_PAGES	:= $(wildcard doc/*.8 xpp/*.8)
 GROFF_HTML	:= $(GROFF_PAGES:%=%.html)
 
 GENERATED_DOCS	:= $(GROFF_HTML) README.html README.Astribank.html
 
-all: prereq programs
+all:
 
-libs: $(LTZ_SO) $(LTZ_A)
-
-programs: libs utils
-
-utils: $(BINS)
-
-tests: $(TEST_BINS)
-
-$(UTILS): %: %.o
-
-$(UTILS): version.o
-
-%.o: %.c
-	$(CC) $(CFLAGS) $(MAKE_DEPS) -c -o $@ $<
-
-%.lo: %.c
-	$(CC) $(CFLAGS) $(MAKE_DEPS) -c -o $@ $<
-
-%: %.o
-	$(CC) $(LDFLAGS) $^ $(LIBS) -o $@
-
-prereq: config.status
-
-dahdi_tool: CFLAGS+=$(NEWT_INCLUDE)
-dahdi_tool: LIBS+=$(NEWT_LIB)
-
-dahdi_speed: CFLAGS+=-O0
-
-$(LTZ_A): $(LTZ_A_OBJS)
-	ar rcs $@ $^
-	ranlib $@
-
-$(LTZ_SO): $(LTZ_SO_OBJS)
-	$(CC) $(CFLAGS) -shared -Wl,-soname,$(LTZ_SO).$(LTZ_SO_MAJOR_VER).$(LTZ_SO_MINOR_VER) -o $@ $^ -lm
-
-dahdi_cfg: $(LTZ_A)
-dahdi_cfg: LIBS+=-lm -lpthread
 dahdi_pcap:
 	$(CC) $(CFLAGS) dahdi_pcap.c -lpcap -o $@ $<
 	
-
-fxstest: $(LTZ_SO)
-fxstest: LIBS+=-lm
-fxotune: LIBS+=-lm
 
 tonezones.txt: zonedata.c
 	perl -ne 'next unless (/\.(country|description) = *"([^"]*)/); \
@@ -211,57 +143,22 @@ install: all install-programs
 
 install-programs: install-utils install-libs
 
-install-utils: utils
-ifneq (,$(BINS))
-	install -d $(DESTDIR)$(BIN_DIR)
-	install  $(BINS) $(DESTDIR)$(BIN_DIR)/
-endif
+install-utils:
 ifeq (,$(wildcard $(DESTDIR)$(CONFIG_FILE)))
 	$(INSTALL) -d $(DESTDIR)$(CONFIG_DIR)
 	$(INSTALL) -m 644 system.conf.sample $(DESTDIR)$(CONFIG_FILE)
 endif
 	install -d $(DESTDIR)$(DATA_DIR)
 	tar cf - -C hotplug $(ASSIGNED_DATA_SCRIPTS) | tar xf - -C $(DESTDIR)$(DATA_DIR)/
-	install $(ASSIGNED_UTILS) $(DESTDIR)/$(BIN_DIR)/
 	install -m 644 $(ASSIGNED_CONF) $(DESTDIR)/$(CONFIG_DIR)/
 	install -d $(DESTDIR)$(BASH_COMP_DIR)
 	install -m 644 dahdi-bash-completion $(DESTDIR)$(BASH_COMP_FILE)
 
-install-libs: libs
-	$(INSTALL) -d -m 755 $(DESTDIR)/$(LIB_DIR)
-	$(INSTALL) -m 755 $(LTZ_A) $(DESTDIR)$(LIB_DIR)/
-	$(INSTALL) -m 755 $(LTZ_SO) $(DESTDIR)$(LIB_DIR)/$(LTZ_SO).$(LTZ_SO_MAJOR_VER).$(LTZ_SO_MINOR_VER)
-ifeq (,$(DESTDIR))
-	if [ `id -u` = 0 ]; then \
-		/sbin/ldconfig || : ;\
-	fi
-endif
-	rm -f $(DESTDIR)$(LIB_DIR)/$(LTZ_SO)
-	$(LN) -sf $(LTZ_SO).$(LTZ_SO_MAJOR_VER).$(LTZ_SO_MINOR_VER) \
-		$(DESTDIR)$(LIB_DIR)/$(LTZ_SO).$(LTZ_SO_MAJOR_VER)
-	$(LN) -sf $(LTZ_SO).$(LTZ_SO_MAJOR_VER).$(LTZ_SO_MINOR_VER) \
-		$(DESTDIR)$(LIB_DIR)/$(LTZ_SO)
-	# Overwrite the 1.0 links out there.  dahdi-tools 2.0.0 installed
-	# 1.0 links but dahdi-tools changed them to 2.0 in order to explicitly
-	# break applications linked with zaptel.  But, this also meant that
-	# applications linked with libtonezone.so.1.0 broke when dahdi-tools
-	# 2.1.0 was installed.
-	$(LN) -sf $(LTZ_SO).$(LTZ_SO_MAJOR_VER).$(LTZ_SO_MINOR_VER) \
-		$(DESTDIR)$(LIB_DIR)/$(LTZ_SO).1.0
-	$(LN) -sf $(LTZ_SO).$(LTZ_SO_MAJOR_VER).$(LTZ_SO_MINOR_VER) \
-		$(DESTDIR)$(LIB_DIR)/$(LTZ_SO).1
+install-libs:
 ifneq (no,$(USE_SELINUX))
   ifeq (,$(DESTDIR))
 	/sbin/restorecon -v $(DESTDIR)$(LIB_DIR)/$(LTZ_SO)
   endif
-endif
-	$(INSTALL) -d -m 755 $(DESTDIR)/$(INC_DIR)
-	$(INSTALL) -m 644 tonezone.h $(DESTDIR)$(INC_DIR)/
-
-install-tests: tests
-ifneq (,$(TEST_BINS))
-	install -d $(DESTDIR)$(BIN_DIR)
-	install  $(TEST_BINS) $(DESTDIR)$(BIN_DIR)/
 endif
 
 config:
@@ -309,32 +206,12 @@ dist:
 	@./build_tools/make_dist "dahdi-tools" "$(TOOLSVERSION)"
 
 clean:
-	rm -f $(BINS) $(TEST_BINS)
-	rm -f *.o dahdi_cfg tzdriver sethdlc
-	rm -f $(LTZ_SO) $(LTZ_A) *.lo
-	rm -f libtonezone*
-	rm -f fxotune
+	rm -f *.o tzdriver
 	rm -f core
-	rm -f dahdi_cfg-shared fxstest
 	rm -rf $(GENERATED_DOCS) *.asciidoc tonezones.txt
 	rm -f dahdi_pcap
 
-distclean: dist-clean
-
-dist-clean: clean
-	rm -f makeopts
-	rm -f config.log config.status
-	rm -f .*.d
-
-config.status: configure
-	@CFLAGS="" ./configure
-	@echo "****"
-	@echo "**** The configure script was just executed, so 'make' needs to be"
-	@echo "**** restarted."
-	@echo "****"
-	@exit 1
-
-.PHONY: distclean dist-clean clean all install programs tests devel data config install-programs install-libs prereq dist
+.PHONY: clean all install devel data config install-programs install-libs dist
 
 FORCE:
 

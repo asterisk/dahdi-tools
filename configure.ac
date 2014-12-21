@@ -127,6 +127,8 @@ AST_C_DEFINE_CHECK([DAHDI23], [DAHDI_CONFIG_NTTE], [dahdi/user.h])
 AST_EXT_LIB_CHECK([NEWT], [newt], [newtBell], [newt.h])
 AST_EXT_LIB_CHECK([USB], [usb], [usb_init], [usb.h])
 
+AM_CONDITIONAL([PBX_NEWT], [test "$PBX_NEWT" = "1"])
+
 AC_CHECK_FUNCS([semtimedop])
 
 PBX_HDLC=0
@@ -166,6 +168,7 @@ if test "x${PBX_HDLC}" != "x1"; then
 fi
 
 AC_SUBST(PBX_HDLC)
+AM_CONDITIONAL([PBX_HDLC], [test "$PBX_HDLC" = "1"])
 
 AC_ARG_WITH(selinux,
 	[AS_HELP_STRING([--with-selinux],
