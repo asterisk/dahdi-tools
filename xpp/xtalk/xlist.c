@@ -1,7 +1,8 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include <xlist.h>
+#include <xtalk/xlist.h>
+#include <autoconfig.h>
 
 struct xlist_node *xlist_new(void *data)
 {
@@ -34,6 +35,17 @@ void xlist_destroy(struct xlist_node *list, xlist_destructor_t destructor)
 	}
 	memset(list, 0, sizeof(*list));
 	free(list);
+}
+
+void xlist_append_list(struct xlist_node *list1, struct xlist_node *list2)
+{
+	struct xlist_node *curr;
+
+	assert(list1);
+	assert(list2);
+
+	while ((curr = xlist_shift(list2)) != NULL)
+		xlist_append_item(list1, curr);
 }
 
 void xlist_append_item(struct xlist_node *list, struct xlist_node *item)

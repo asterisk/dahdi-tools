@@ -69,4 +69,10 @@ xpp/test_parse
 xpp/twinstar.8
 xpp/xpp_blink.8
 xpp/xpp_sync.8
+xpp/xtalk/xlist_test
+xpp/xtalk/xtalk_raw_test
+xpp/xtalk/xtalk_send
+xpp/xtalk/xtalk_test
+xpp/xtalk/xusb_test
+xpp/xtalk/xusb_test_bypath
 zonedata.lo

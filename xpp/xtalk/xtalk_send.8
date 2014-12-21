@@ -1,0 +1,49 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" (C) Copyright 2013 Oron Peled <oron@actcom.co.il>,
+.\"
+.TH XTALK_SEND 8 "March 14, 2013"
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+xtalk_send \- send arbitrary packets to XTALK devices
+.SH SYNOPSIS
+.B xtalk_send
+.RI [ options ] " hexnum" ...
+.br
+.SH DESCRIPTION
+This manual page documents briefly the \fBxtalk_send\fP command.
+.PP
+\fBxtalk_send\fP is a program that send arbitrary packets to Xorcom devices
+that use the XTALK protocol.
+.SH OPTIONS
+A summary of options is included below:
+.TP
+.B \-I <iface_num>
+Specify USB interface number (default 1).
+.TP
+.B \-t <timeout>
+Timeout from send until an answer is received (default 500).
+.TP
+.B \-Q
+Query protocol version. This is only valid for synchronous XTALK protocols.
+Usually, these protocols are bound to USB interface 1.
+.TP
+.B \-h
+Show summary of options.
+.TP
+.B \-v
+Increase output verbosity.
+.TP
+.B \-d <mask>
+Debug mask. Use 0xFF for everything.
+.SH AUTHOR
+Oron Peled <oron@actcom.co.il>

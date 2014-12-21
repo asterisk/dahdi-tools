@@ -372,6 +372,7 @@ AC_CONFIG_FILES([
 	hotplug/Makefile
 	ppp/Makefile
 	xpp/Makefile
+	xpp/xtalk/Makefile
 	xpp/oct612x/Makefile
 	xpp/perl_modules/Makefile
 	])

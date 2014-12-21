@@ -27,7 +27,8 @@
 #include <stdarg.h>
 #include <syslog.h>
 #include <execinfo.h>
-#include <debug.h>
+#include <xtalk/debug.h>
+#include <autoconfig.h>
 
 int	verbose = LOG_INFO;
 int	debug_mask;

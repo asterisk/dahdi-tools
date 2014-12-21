@@ -64,7 +64,7 @@ CLEANFILES		= $(perl_checks) $(perl_mans)
 
 if	PBX_USB
 
-SUBDIRS		+= oct612x
+SUBDIRS		+= oct612x xtalk
 
 if	LIBUSBX
 USB_CFLAGS		= $(LIBUSBX_CFLAGS)
