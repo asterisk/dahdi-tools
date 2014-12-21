@@ -5,10 +5,10 @@
 #
 #
 
-ifeq ($(strip $(foreach var,clean distclean dist-clean update,$(findstring $(var),$(MAKECMDGOALS)))),)
+ifeq ($(strip $(foreach var,clean distclean dist-clean,$(findstring $(var),$(MAKECMDGOALS)))),)
 endif
 
-ifeq ($(strip $(foreach var,clean distclean dist-clean update,$(findstring $(var),$(MAKECMDGOALS)))),)
+ifeq ($(strip $(foreach var,clean distclean dist-clean,$(findstring $(var),$(MAKECMDGOALS)))),)
  ifneq ($(wildcard makeopts),)
   include makeopts
  endif
@@ -325,20 +325,6 @@ endif
 		echo "DAHDI start. "; \
 	fi
 
-update:
-	@if [ -d .svn ]; then \
-		echo "Updating from Subversion..." ; \
-		svn update | tee update.out; \
-		rm -f .version; \
-		if [ `grep -c ^C update.out` -gt 0 ]; then \
-			echo ; echo "The following files have conflicts:" ; \
-			grep ^C update.out | cut -b4- ; \
-		fi ; \
-		rm -f update.out; \
-	else \
-		echo "Not under version control";  \
-	fi
-
 dist:
 	@./build_tools/make_dist "dahdi-tools" "$(TOOLSVERSION)"
 
@@ -374,7 +360,7 @@ config.status: configure
 	@echo "****"
 	@exit 1
 
-.PHONY: distclean dist-clean clean all install programs tests devel data config update install-programs install-libs install-utils-subdirs utils-subdirs prereq dist
+.PHONY: distclean dist-clean clean all install programs tests devel data config install-programs install-libs install-utils-subdirs utils-subdirs prereq dist
 
 FORCE:
 
