@@ -25,21 +25,42 @@ AM_CONDITIONAL([SILENT_RULES], [test "$AM_DEFAULT_VERBOSITY" = '0'])
 AC_COPYRIGHT("dahdi-tools")
 AC_REVISION($Revision$)
 
-ac_default_prefix=/usr
-if test ${sysconfdir} = '${prefix}/etc'; then
-   sysconfdir=/etc
-fi
-if test ${mandir} = '${prefix}/man'; then
-   mandir=/usr/share/man
-fi
+# Preserve old defaults if called without --prefix or --prefix=/usr
+#  prefix=/usr
+#  sysconfdir=/etc
 
-if test ${localstatedir} = '${prefix}/var'; then
-     localstatedir=/var
+ac_default_prefix=/usr
+if test "$prefix" = 'NONE' -o "$prefix" = '/usr'; then
+	if test ${sysconfdir} = '${prefix}/etc'; then
+	   sysconfdir=/etc
+	fi
+	if test ${mandir} = '${prefix}/man'; then
+	   mandir=/usr/share/man
+	fi
+
+	if test ${localstatedir} = '${prefix}/var'; then
+	     localstatedir=/var
+	fi
 fi
 AC_SUBST([dahditoolsdir], ['${datadir}/dahdi'])
 AC_SUBST([dahdiincludedir], ['${includedir}/dahdi'])
 
-AC_SUBST([udevrulesdir], '${sysconfdir}/udev/rules.d')
+# Where to install udev rules?
+#  * Our default is $sysconfdir/udev/rules.d:
+#    - This preserve legacy location.
+#    - It doesn't write into modern vendor supplied location (/lib/udev/rules.d)
+#    - It doesn't break "make distcheck" (where everything should be relative
+#      to prefix.
+#  * Packagers are encouraged to use --udevrules=/lib/udev/rules.d
+#
+m4_define([_UDEV_RULES_DIR_DEFAULT], [${sysconfdir}/udev/rules.d])dnl
+AC_ARG_WITH(udevrules,
+	[AS_HELP_STRING([--with-udevrules=PATH],
+		[Location of UDEV rules @<:@default=]_UDEV_RULES_DIR_DEFAULT[@:>@])],
+	[udevrulesdir=$withval],
+	[udevrulesdir=]'_UDEV_RULES_DIR_DEFAULT'
+)
+AC_SUBST([udevrulesdir], "$udevrulesdir")
 
 # specify output header file
 AC_CONFIG_HEADER(autoconfig.h)
@@ -94,9 +115,28 @@ AC_PATH_PROG([PERL], [perl])
 if test "$PERL" = ''; then
 	      AC_MSG_ERROR(perl is mandatory)
 fi
+# Where to install perl modules?
+#  * Packagers are encouraged to use the result of "perl -V:vendorlib"
+#  * Our default is:
+#    - The result of "perl -V:sitelib" for our default prefix (/usr)
+#    - The "$datadir/perl5" directory otherwise (e.g: during "make distcheck")
+#
 AC_MSG_CHECKING(for perl libdir)
-eval `"$PERL" -V:sitelib`
-AC_SUBST([perllibdir], [`echo "$sitelib"`])
+m4_define([_PERL_LIBDIR_DEFAULT], [${datadir}/perl5])dnl
+AC_ARG_WITH(perllib,
+	[AS_HELP_STRING([--with-perllib=PATH],
+		[Location of perl modules @<:@default=]_PERL_LIBDIR_DEFAULT[, or perl -V:sitelib@:>@])],
+	[perllibdir=$withval],
+	[
+		if test "$prefix" = 'NONE' -o "$prefix" = '/usr'; then
+			eval `"$PERL" -V:sitelib`
+			perllibdir="$sitelib"
+		else
+			perllibdir='_PERL_LIBDIR_DEFAULT'
+		fi
+	]
+)
+AC_SUBST([perllibdir], "$perllibdir")
 AC_MSG_RESULT([$perllibdir])
 AM_CONDITIONAL([PERL], [test "$perllibdir" != ''])
 

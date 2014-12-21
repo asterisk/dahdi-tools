@@ -1,3 +1,4 @@
+perllibdir		= @perllibdir@
 nobase_perllib_DATA	= \
 	Dahdi.pm \
 	Dahdi/Hardware.pm \
