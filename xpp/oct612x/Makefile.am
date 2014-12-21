@@ -1,3 +1,5 @@
+GLOBAL_CFLAGS	= -Wall -Werror
+
 OCTASIC_DEFINES	= \
 	-DPTR_TYPE=uint32_t	\
 	-DcOCT6100_INTERNAL_SUPER_ARRAY_SIZE=1024	\
@@ -84,6 +86,7 @@ noinst_HEADERS	= \
 		#
 
 liboctasic_la_CFLAGS	= \
+	$(GLOBAL_CFLAGS) \
 	$(OCTASIC_DEFINES) \
 	$(OCTASIC_CFLAGS)
 
