@@ -14,9 +14,6 @@ ifeq ($(strip $(foreach var,clean distclean dist-clean,$(findstring $(var),$(MAK
  endif
 endif
 
-SUBDIRS_UTILS_ALL:= ppp
-SUBDIRS_UTILS := xpp
-
 OPTFLAGS=-O2
 CFLAGS+=-I. $(OPTFLAGS) -g -fPIC -Wall -DBUILDING_TONEZONE #-DTONEZONE_DRIVER
 ifneq (,$(findstring ppc,$(UNAME_M)))
@@ -134,14 +131,9 @@ all: prereq programs
 
 libs: $(LTZ_SO) $(LTZ_A)
 
-utils-subdirs:
-	@for dir in $(SUBDIRS_UTILS); do \
-		$(MAKE) -C $$dir; \
-	done
-
 programs: libs utils
 
-utils: $(BINS) utils-subdirs
+utils: $(BINS)
 
 tests: $(TEST_BINS)
 
@@ -224,7 +216,7 @@ install: all install-programs
 
 install-programs: install-utils install-libs
 
-install-utils: utils install-utils-subdirs
+install-utils: utils
 ifneq (,$(BINS))
 	install -d $(DESTDIR)$(BIN_DIR)
 	install  $(BINS) $(DESTDIR)$(BIN_DIR)/
@@ -272,11 +264,6 @@ ifneq (no,$(USE_SELINUX))
 endif
 	$(INSTALL) -d -m 755 $(DESTDIR)/$(INC_DIR)
 	$(INSTALL) -m 644 tonezone.h $(DESTDIR)$(INC_DIR)/
-
-install-utils-subdirs:
-	@for dir in $(SUBDIRS_UTILS); do \
-		$(MAKE) -C $$dir install; \
-	done
 
 install-tests: tests
 ifneq (,$(TEST_BINS))
@@ -332,12 +319,6 @@ clean:
 	rm -f $(BINS) $(TEST_BINS)
 	rm -f *.o dahdi_cfg tzdriver sethdlc
 	rm -f $(LTZ_SO) $(LTZ_A) *.lo
-	@for dir in $(SUBDIRS_UTILS_ALL); do \
-		$(MAKE) -C $$dir clean; \
-	done
-	@for dir in $(SUBDIRS_UTILS); do \
-		$(MAKE) -C $$dir clean; \
-	done
 	rm -f libtonezone*
 	rm -f fxotune
 	rm -f core
@@ -360,7 +341,7 @@ config.status: configure
 	@echo "****"
 	@exit 1
 
-.PHONY: distclean dist-clean clean all install programs tests devel data config install-programs install-libs install-utils-subdirs utils-subdirs prereq dist
+.PHONY: distclean dist-clean clean all install programs tests devel data config install-programs install-libs prereq dist
 
 FORCE:
 

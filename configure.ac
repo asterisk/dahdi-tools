@@ -10,6 +10,17 @@ AC_INIT([dahdi-tools], short_version, [www.asterisk.org])
 
 # check existence of the package
 AC_CONFIG_SRCDIR([dahdi_cfg.c])
+AC_CONFIG_AUX_DIR([auxdir])
+AC_CONFIG_MACRO_DIR([m4])
+AM_INIT_AUTOMAKE([foreign subdir-objects])
+
+build_version=`build_tools/make_version . dahdi/tools`
+AC_SUBST([BUILD_VERSION], "$build_version")
+
+# enable nice build output on automake1.11
+m4_pattern_allow([AM_DEFAULT_VERBOSITY])
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])],[AM_DEFAULT_VERBOSITY=1])
+AM_CONDITIONAL([SILENT_RULES], [test "$AM_DEFAULT_VERBOSITY" = '0'])
 
 AC_COPYRIGHT("dahdi-tools")
 AC_REVISION($Revision$)
@@ -37,10 +48,15 @@ AC_CHECK_HEADERS([sys/soundcard.h linux/soundcard.h])
 AC_CHECK_TOOL([LD], [ld])
 
 # Checks for programs.
+AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_CPP
+AM_PROG_CC_C_O
 AC_PROG_INSTALL
 AC_PROG_LN_S
+AC_PROG_MAKE_SET
+AC_PROG_RANLIB
+AC_PROG_AWK
 AST_CHECK_GNU_MAKE
 
 test_obj=conftest.o
@@ -216,6 +232,9 @@ AC_SUBST([TOOLSVERSION], m4_esyscmd([build_tools/make_version . dahdi/tools]))
 AC_CONFIG_FILES([
 	makeopts
 	version.c
+	Makefile
+	ppp/Makefile
+	xpp/Makefile
 	])
 AC_OUTPUT
 

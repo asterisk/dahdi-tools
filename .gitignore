@@ -4,6 +4,9 @@
 .*.lo.d
 *.asciidoc
 *.html
+Makefile
+Makefile.in
+auxdir/
 build_tools/menuselect-deps
 aclocal.m4
 autom4te.cache/
@@ -36,6 +39,7 @@ patgen
 patlooptest
 pattest
 sethdlc
+stamp-h1
 timertest
 tonezone.lo
 tonezones.txt
