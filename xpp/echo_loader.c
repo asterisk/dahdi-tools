@@ -28,12 +28,21 @@
 #include <limits.h>
 #include <regex.h>
 #include <sys/time.h>
-#include "echo_loader.h"
-#include "debug.h"
+#include <unistd.h>
 #include <oct6100api/oct6100_api.h>
+#include <xtalk/debug.h>
+#include <xtalk/xusb.h>
+#include <astribank.h>
+#include "echo_loader.h"
 #include "parse_span_specs.h"
 
-#define DBG_MASK        	0x03
+#ifdef	__GNUC__
+#define	PACKED	__attribute__((packed))
+#else
+#define	PACKED
+#endif
+
+#define DBG_MASK        	0x10
 #define	TIMEOUT			1000
 #define ECHO_MAX_CHANS		128
 #define ECHO_RIN_STREAM		0
@@ -53,7 +62,7 @@ static float oct_fw_load_timeout = 2.0;
 struct echo_mod {
 	tPOCT6100_INSTANCE_API pApiInstance;
 	UINT32 ulEchoChanHndl[256];
-	struct astribank_device *astribank;
+	struct astribank *astribank;
 	int maxchans;
 };
 
@@ -100,9 +109,9 @@ static struct usb_buffer {
 } usb_buffer;
 
 
-static void usb_buffer_init(struct astribank_device *astribank, struct usb_buffer *ub)
+static void usb_buffer_init(struct astribank *astribank, struct usb_buffer *ub)
 {
-	ub->max_len = xusb_packet_size(astribank->xusb);
+	ub->max_len = xusb_packet_size(xusb_dev_of_astribank(astribank));
 	ub->curr = 0;
 	ub->min_send = INT_MAX;
 	ub->max_send = 0;
@@ -120,7 +129,7 @@ static long usb_buffer_usec(struct usb_buffer *ub)
 		(now.tv_usec - ub->start.tv_usec);
 }
 
-static void usb_buffer_showstatistics(struct astribank_device *astribank, struct usb_buffer *ub)
+static void usb_buffer_showstatistics(struct astribank *astribank, struct usb_buffer *ub)
 {
 	long	usec;
 
@@ -133,7 +142,7 @@ static void usb_buffer_showstatistics(struct astribank_device *astribank, struct
 		usec / 1000, usec / ub->num_sends);
 }
 
-static int usb_buffer_flush(struct astribank_device *astribank, struct usb_buffer *ub)
+static int usb_buffer_flush(struct astribank *astribank, struct usb_buffer *ub)
 {
 	int	ret;
 	long	t;
@@ -142,7 +151,7 @@ static int usb_buffer_flush(struct astribank_device *astribank, struct usb_buffe
 
 	if (ub->curr == 0)
 		return 0;
-	ret = xusb_send(astribank->xusb, ub->data, ub->curr, TIMEOUT);
+	ret = astribank_send(astribank, 0, ub->data, ub->curr, TIMEOUT);
 	if (ret < 0) {
 		AB_ERR(astribank, "xusb_send failed: %d\n", ret);
 		return ret;
@@ -175,7 +184,7 @@ static int usb_buffer_flush(struct astribank_device *astribank, struct usb_buffe
 	return ret;
 }
 
-static int usb_buffer_append(struct astribank_device *astribank, struct usb_buffer *ub,
+static int usb_buffer_append(struct astribank *astribank, struct usb_buffer *ub,
 	char *buf, int len)
 {
 	if (ub->curr + len >= ub->max_len) {
@@ -188,7 +197,7 @@ static int usb_buffer_append(struct astribank_device *astribank, struct usb_buff
 	return len;
 }
 
-static int usb_buffer_send(struct astribank_device *astribank, struct usb_buffer *ub,
+static int usb_buffer_send(struct astribank *astribank, struct usb_buffer *ub,
 	char *buf, int len, int timeout, int recv_answer)
 {
 	int	ret = 0;
@@ -209,7 +218,7 @@ static int usb_buffer_send(struct astribank_device *astribank, struct usb_buffer
 		ret = usb_buffer_flush(astribank, ub);
 		if (ret < 0)
 			return ret;
-		ret = xusb_recv(astribank->xusb, buf, PACKET_SIZE, TIMEOUT);
+		ret = astribank_recv(astribank, 0, buf, PACKET_SIZE, TIMEOUT);
 		if (ret <= 0) {
 			AB_ERR(astribank, "No USB packs to read: %s\n", strerror(-ret));
 			return -EINVAL;
@@ -239,7 +248,7 @@ static int usb_buffer_send(struct astribank_device *astribank, struct usb_buffer
 	return ret;
 }
 
-int spi_send(struct astribank_device *astribank, uint16_t addr, uint16_t data, int recv_answer, int ver)
+int spi_send(struct astribank *astribank, uint16_t addr, uint16_t data, int recv_answer, int ver)
 {
 	int				ret;
 	char				buf[PACKET_SIZE];
@@ -272,7 +281,7 @@ int spi_send(struct astribank_device *astribank, uint16_t addr, uint16_t data, i
 	return ret;
 }
 
-int test_send(struct astribank_device *astribank)
+int test_send(struct astribank *astribank)
 {
 	int                             ret;
 	char                            buf[PACKET_SIZE];
@@ -300,7 +309,7 @@ int test_send(struct astribank_device *astribank)
 	return ret;
 }
 
-int echo_send_data(struct astribank_device *astribank, const unsigned int addr, const unsigned int data)
+int echo_send_data(struct astribank *astribank, const unsigned int addr, const unsigned int data)
 {
 	int ret;
 /*	DBG("SEND: %04X -> [%04X]\n", data, addr);
@@ -330,7 +339,7 @@ failed:
 	return ret;
 }
 
-int echo_recv_data(struct astribank_device *astribank, const unsigned int addr)
+int echo_recv_data(struct astribank *astribank, const unsigned int addr)
 {
 	unsigned int data = 0x00;
 	int ret;
@@ -452,7 +461,7 @@ UINT32 Oct6100UserDriverWriteApi(tPOCT6100_WRITE_PARAMS f_pWriteParams)
 	const unsigned int 		addr 		= f_pWriteParams->ulWriteAddress;
 	const unsigned int 		data 		= f_pWriteParams->usWriteData;
 	const struct echo_mod		*echo_mod 	= (struct echo_mod *)(f_pWriteParams->pProcessContext);
-	struct astribank_device 	*astribank 	= echo_mod->astribank;
+	struct astribank 	*astribank 	= echo_mod->astribank;
 	int ret;
 
 	ret = echo_send_data(astribank, addr, data);
@@ -469,7 +478,7 @@ UINT32 Oct6100UserDriverWriteSmearApi(tPOCT6100_WRITE_SMEAR_PARAMS f_pSmearParam
 	unsigned int              	data;
 	unsigned int              	len;
 	const struct echo_mod           *echo_mod;
-	struct astribank_device   	*astribank;
+	struct astribank   	*astribank;
 	unsigned int 			i;
 
 	len = f_pSmearParams->ulWriteLength;
@@ -495,7 +504,7 @@ UINT32 Oct6100UserDriverWriteBurstApi(tPOCT6100_WRITE_BURST_PARAMS f_pBurstParam
 	unsigned int              	data;
 	unsigned int 			len 		= f_pBurstParams->ulWriteLength;
 	const struct echo_mod		*echo_mod 	= (struct echo_mod *)f_pBurstParams->pProcessContext;
-	struct astribank_device 	*astribank 	= echo_mod->astribank;
+	struct astribank 	*astribank 	= echo_mod->astribank;
 	unsigned int 			i;
 
 	for (i = 0; i < len; i++) {
@@ -516,7 +525,7 @@ UINT32 Oct6100UserDriverReadApi(tPOCT6100_READ_PARAMS f_pReadParams)
 {
 	const unsigned int              addr =  f_pReadParams->ulReadAddress;
 	const struct echo_mod		*echo_mod;
-	struct astribank_device 	*astribank;
+	struct astribank 	*astribank;
 	int ret;
 
 	echo_mod = (struct echo_mod *)f_pReadParams->pProcessContext;
@@ -535,7 +544,7 @@ UINT32 Oct6100UserDriverReadBurstApi(tPOCT6100_READ_BURST_PARAMS f_pBurstParams)
 	unsigned int              	addr;
 	unsigned int              	len;
 	const struct echo_mod		*echo_mod;
-	struct astribank_device 	*astribank;
+	struct astribank 	*astribank;
 	unsigned int 			i;
 
 	len = f_pBurstParams->ulReadLength;
@@ -555,13 +564,13 @@ UINT32 Oct6100UserDriverReadBurstApi(tPOCT6100_READ_BURST_PARAMS f_pBurstParams)
 	return cOCT6100_ERR_OK;
 }
 
-inline int get_ver(struct astribank_device *astribank)
+inline int get_ver(struct astribank *astribank)
 {
 	return spi_send(astribank, 0, 0, 1, 1);
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-UINT32 init_octasic(char *filename, struct astribank_device *astribank, struct span_specs *span_specs)
+UINT32 init_octasic(char *filename, struct astribank *astribank, struct span_specs *span_specs)
 {
 	int							cpld_ver;
 	struct echo_mod						*echo_mod;
@@ -838,7 +847,7 @@ UINT32 init_octasic(char *filename, struct astribank_device *astribank, struct s
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-int load_echo(struct astribank_device *astribank, char *filename, int default_is_alaw, const char *span_spec)
+int load_echo(struct astribank *astribank, char *filename, int default_is_alaw, const char *span_spec)
 {
 	int		ret;
 	UINT32		octasic_status;
@@ -868,7 +877,7 @@ int load_echo(struct astribank_device *astribank, char *filename, int default_is
 	return 0;
 }
 
-int echo_ver(struct astribank_device *astribank)
+int echo_ver(struct astribank *astribank)
 {
 	usb_buffer_init(astribank, &usb_buffer);
 	return get_ver(astribank);

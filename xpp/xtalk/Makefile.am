@@ -19,12 +19,7 @@ noinst_PROGRAMS		= xlist_test xusb_test xusb_test_bypath xtalk_test xtalk_raw_te
 sbin_PROGRAMS		= xtalk_send
 noinst_LTLIBRARIES	= libxtalk.la
 dist_noinst_HEADERS	= \
-	debug.h	\
-	xlist.h	\
-	xtalk.h	\
 	xtalk_base.h	\
-	xtalk_defs.h	\
-	xusb.h	\
 	xusb_common.h	\
 	include/xtalk/proto_raw.h	\
 	include/xtalk/api_defs.h	\

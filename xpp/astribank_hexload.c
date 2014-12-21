@@ -28,13 +28,14 @@
 #include <errno.h>
 #include <assert.h>
 #include <arpa/inet.h>
-#include <debug.h>
+#include <autoconfig.h>
+#include <xtalk/debug.h>
+#include <xtalk/xusb.h>
 #include "hexfile.h"
 #include "mpptalk.h"
+#include "astribank.h"
 #include "pic_loader.h"
 #include "echo_loader.h"
-#include "astribank_usb.h"
-#include "../autoconfig.h"
 
 #define	DBG_MASK	0x80
 #define	MAX_HEX_LINES	64000
@@ -61,7 +62,7 @@ static void usage()
 	exit(1);
 }
 
-int handle_hexline(struct astribank_device *astribank, struct hexline *hexline)
+int handle_hexline(struct mpp_device *mpp, struct hexline *hexline)
 {
 	uint16_t	len;
 	uint16_t	offset_dummy;
@@ -69,7 +70,7 @@ int handle_hexline(struct astribank_device *astribank, struct hexline *hexline)
 	int		ret;
 
 	assert(hexline);
-	assert(astribank);
+	assert(mpp);
 	if(hexline->d.content.header.tt != TT_DATA) {
 		DBG("Non data record type = %d\n", hexline->d.content.header.tt);
 		return 0;
@@ -77,7 +78,7 @@ int handle_hexline(struct astribank_device *astribank, struct hexline *hexline)
 	len = hexline->d.content.header.ll;
 	offset_dummy = hexline->d.content.header.offset;
 	data = hexline->d.content.tt_data.data;
-	if((ret = mpp_send_seg(astribank, data, offset_dummy, len)) < 0) {
+	if((ret = mpp_send_seg(mpp, data, offset_dummy, len)) < 0) {
 		ERR("Failed hexfile send line: %d\n", ret);
 		return -EINVAL;
 	}
@@ -100,7 +101,7 @@ static void print_parse_errors(int level, const char *msg, ...)
 	}
 }
 
-static int load_hexfile(struct astribank_device *astribank, const char *hexfile, enum dev_dest dest)
+static int load_hexfile(struct mpp_device *mpp, const char *hexfile, enum dev_dest dest)
 {
 	struct hexdata		*hexdata = NULL;
 	int			finished = 0;
@@ -108,19 +109,24 @@ static int load_hexfile(struct astribank_device *astribank, const char *hexfile,
 	unsigned		i;
 	char			star[] = "+\\+|+/+-";
 	const char		*devstr;
+	struct xusb_device *xusb_device;
+	struct xusb_iface *xusb_iface;
+
 
 	parse_hexfile_set_reporting(print_parse_errors);
 	if((hexdata  = parse_hexfile(hexfile, MAX_HEX_LINES)) == NULL) {
 		perror(hexfile);
 		return -errno;
 	}
-	devstr = xusb_devpath(astribank->xusb);
+	xusb_iface = xubs_iface_of_mpp(mpp);
+	xusb_device = xusb_deviceof(xusb_iface);
+	devstr = xusb_devpath(xusb_device);
 	INFO("%s [%s]: Loading %s Firmware: %s (version %s)\n",
 		devstr,
-		xusb_serial(astribank->xusb),
+		xusb_serial(xusb_device),
 		dev_dest2str(dest),
 		hexdata->fname, hexdata->version_info);
-	if((ret = mpp_send_start(astribank, dest, hexdata->version_info)) < 0) {
+	if((ret = mpp_send_start(mpp, dest, hexdata->version_info)) < 0) {
 		ERR("%s: Failed hexfile send start: %d\n", devstr, ret);
 		return ret;
 	}
@@ -142,7 +148,7 @@ static int load_hexfile(struct astribank_device *astribank, const char *hexfile,
 			finished = 1;
 			continue;
 		}
-		if((ret = handle_hexline(astribank, hexline)) < 0) {
+		if((ret = handle_hexline(mpp, hexline)) < 0) {
 			ERR("%s: Failed hexfile sending in lineno %d (ret=%d)\n", devstr, i, ret);;
 			return ret;
 		}
@@ -151,7 +157,7 @@ static int load_hexfile(struct astribank_device *astribank, const char *hexfile,
 		putchar('\n');
 		fflush(stdout);
 	}
-	if((ret = mpp_send_end(astribank)) < 0) {
+	if((ret = mpp_send_end(mpp)) < 0) {
 		ERR("%s: Failed hexfile send end: %d\n", devstr, ret);
 		return ret;
 	}
@@ -178,7 +184,6 @@ int main(int argc, char *argv[])
 	int			opt_sum = 0;
 	enum dev_dest		dest = DEST_NONE;
 	const char		options[] = "vd:D:EFOopAS:";
-	int			iface_num;
 	int			ret;
 
 	progname = argv[0];
@@ -247,7 +252,6 @@ int main(int argc, char *argv[])
 			" and -p options are mutually exclusive, if neither is used then -o should present\n");
 		usage();
 	}
-	iface_num = (opt_dest) ? 1 : 0;
 	if(!opt_pic && !opt_ecver) {
 		if(optind != argc - 1) {
 			ERR("Got %d hexfile names (Need exactly one hexfile)\n",
@@ -270,29 +274,43 @@ int main(int argc, char *argv[])
 		/*
 		 * MPP Interface
 		 */
-		struct astribank_device *astribank;
+		struct astribank *astribank;
+		struct mpp_device *mpp;
 
-		if((astribank = mpp_init(devpath, iface_num)) == NULL) {
+		astribank = astribank_new(devpath);
+		if(!astribank) {
 			ERR("%s: Opening astribank failed\n", devpath);
 			return 1;
 		}
-		//show_astribank_info(astribank);
-		if(load_hexfile(astribank, argv[optind], dest) < 0) {
+		mpp = astribank_mpp_open(astribank);
+		if(!mpp) {
+			ERR("%s: Opening astribank XPP interface failed\n", devpath);
+			return 1;
+		}
+		show_astribank_info(astribank);
+		if(load_hexfile(mpp, argv[optind], dest) < 0) {
 			ERR("%s: Loading firmware to %s failed\n", devpath, dev_dest2str(dest));
 			return 1;
 		}
-		astribank_close(astribank, 0);
+		astribank_destroy(astribank);
 	} else if(opt_pic || opt_echo || opt_ecver) {
 		/*
 		 * XPP Interface
 		 */
-		struct astribank_device *astribank;
+		struct astribank *astribank;
+		struct xusb_iface *xpp_iface;
 
-		if((astribank = astribank_open(devpath, iface_num)) == NULL) {
+		astribank = astribank_new(devpath);
+		if (!astribank) {
 			ERR("%s: Opening astribank failed\n", devpath);
 			return 1;
 		}
-		//show_astribank_info(astribank);
+		xpp_iface = astribank_xpp_open(astribank);
+		if(!xpp_iface) {
+			ERR("%s: Opening astribank XPP interface failed\n", devpath);
+			return 1;
+		}
+		show_astribank_info(astribank);
 #if HAVE_OCTASIC
 		if (opt_ecver) {
 			if((ret = echo_ver(astribank)) < 0) {
@@ -315,7 +333,7 @@ int main(int argc, char *argv[])
 			}
 #endif
 		}
-		astribank_close(astribank, 0);
+		astribank_destroy(astribank);
 	}
 	return 0;
 }

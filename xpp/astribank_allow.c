@@ -31,9 +31,9 @@
 #include <sys/types.h>
 #include <arpa/inet.h>
 #include <ctype.h>
-#include "mpp.h"
+#include <xtalk/debug.h>
 #include "mpptalk.h"
-#include <debug.h>
+#include "astribank.h"
 #include "astribank_license.h"
 
 static const char rcsid[] = "$Id$";
@@ -55,28 +55,11 @@ static void usage()
 	exit(1);
 }
 
-static int capabilities_burn(
-		struct astribank_device *astribank,
-		struct eeprom_table *eeprom_table,
-		struct capabilities *capabilities,
-		struct capkey *key)
-{
-	int	ret;
-
-	INFO("Burning capabilities\n");
-	ret = mpp_caps_set(astribank, eeprom_table, capabilities, key);
-	if(ret < 0) {
-		ERR("Capabilities burning failed: %d\n", ret);
-		return ret;
-	}
-	INFO("Done\n");
-	return 0;
-}
-
 int main(int argc, char *argv[])
 {
 	char			*devpath = NULL;
-	struct astribank_device *astribank;
+	struct astribank *astribank;
+	struct mpp_device *mpp;
 	struct eeprom_table	eeprom_table;
 	struct capabilities	caps;
 	struct capkey		key;
@@ -127,16 +110,19 @@ int main(int argc, char *argv[])
 		usage();
 	}
 	DBG("Startup %s\n", devpath);
-	if((astribank = mpp_init(devpath, 1)) == NULL) {
-		ERR("Failed initializing MPP\n");
+	astribank = astribank_new(devpath);
+	if(!astribank) {
+		ERR("Failed initializing Astribank\n");
 		return 1;
 	}
-	if(astribank->eeprom_type != EEPROM_TYPE_LARGE) {
+	mpp = astribank_mpp_open(astribank);
+	ret = mpp_eeprom_type(mpp);
+	if(ret != EEPROM_TYPE_LARGE) {
 		ERR("Cannot use this program with astribank EEPROM type %d (need %d)\n",
-			astribank->eeprom_type, EEPROM_TYPE_LARGE);
+			ret, EEPROM_TYPE_LARGE);
 		return 1;
 	}
-	ret = mpp_caps_get(astribank, &eeprom_table, &caps, &key);
+	ret = mpp_caps_get(mpp, &eeprom_table, &caps, &key);
 	if(ret < 0) {
 		ERR("Failed to get original capabilities: %d\n", ret);
 		return 1;
@@ -158,8 +144,13 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 		show_capabilities(&caps, stderr);
-		if (capabilities_burn(astribank, &eeprom_table, &caps, &key) < 0)
+		INFO("Burning capabilities\n");
+		ret = mpp_caps_set(mpp, &eeprom_table, &caps, &key);
+		if(ret < 0) {
+			ERR("Capabilities burning failed: %d\n", ret);
 			return 1;
+		}
+		INFO("Done\n");
 		if (file != stdin)
 			fclose(file);
 	} else {
@@ -180,6 +171,6 @@ int main(int argc, char *argv[])
 		if (file != stdout)
 			fclose(file);
 	}
-	mpp_exit(astribank);
+	astribank_destroy(astribank);
 	return 0;
 }

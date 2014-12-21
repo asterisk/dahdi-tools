@@ -1,7 +1,7 @@
 #ifndef	ASTRIBANK_ALLOW_H
 #define	ASTRIBANK_ALLOW_H
 
-#include "mpp.h"
+#include "mpptalk.h"
 
 enum license_markers {
 	LICENSE_MARKER_NONE = 0,

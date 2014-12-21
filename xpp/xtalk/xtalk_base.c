@@ -351,3 +351,8 @@ void xtalk_base_delete(struct xtalk_base *xtalk_base)
 	memset(xtalk_base, 0, sizeof(*xtalk_base));
 	free(xtalk_base);
 }
+
+struct xusb_iface *xusb_iface_of_xtalk_base(const struct xtalk_base *xtalk_base)
+{
+	return xtalk_base->transport_priv;
+}

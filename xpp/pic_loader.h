@@ -23,7 +23,7 @@
  */
 
 #include <stdint.h>
-#include "astribank_usb.h"
+#include "astribank.h"
 
 /*
  * Astribank PIC loading
@@ -39,8 +39,8 @@ enum pic_command {
 #define	PIC_PACK_LEN 	0x0B
 #define PIC_LINE_LEN	0x03
 
-int send_picline(struct astribank_device *astribank, uint8_t card_type,
+int send_picline(struct astribank *astribank, uint8_t card_type,
 		enum pic_command pcmd, int offs, uint8_t *data, int data_len);
-int load_pic(struct astribank_device *astribank, int numfiles, char *filelist[]);
+int load_pic(struct astribank *astribank, int numfiles, char *filelist[]);
 
 #endif	/* PIC_LOADER_H */

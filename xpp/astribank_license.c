@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-#include <debug.h>
+#include <xtalk/debug.h>
 #include "astribank_license.h"
 
 #define	ARRAY_SIZE(a)	(sizeof(a)/sizeof((a)[0]))

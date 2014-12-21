@@ -28,10 +28,10 @@
 #include <getopt.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
-#include "astribank_usb.h"
+#include <xtalk/debug.h>
+#include <xtalk/xusb.h>
 #include "mpptalk.h"
-#include <debug.h>
-#include <xusb.h>
+#include "astribank.h"
 
 #define	DBG_MASK	0x80
 /* if enabled, adds support for resetting pre-MPP USB firmware - if we 
@@ -76,90 +76,11 @@ static int reset_kind(const char *arg)
 	return -1;
 }
 
-
-static int show_hardware(struct astribank_device *astribank)
-{
-	int	ret;
-	struct eeprom_table	eeprom_table;
-	struct capabilities	capabilities;
-	struct extrainfo	extrainfo;
-
-	ret = mpp_caps_get(astribank, &eeprom_table, &capabilities, NULL);
-	if(ret < 0)
-		return ret;
-	show_eeprom(&eeprom_table, stdout);
-	show_astribank_status(astribank, stdout);
-	if(astribank->eeprom_type == EEPROM_TYPE_LARGE) {
-		show_capabilities(&capabilities, stdout);
-		if(STATUS_FPGA_LOADED(astribank->status)) {
-			uint8_t	unit;
-			uint8_t	card_status;
-			uint8_t	card_type;
-			uint8_t	fpga_configuration;
-			uint8_t	status;
-
-			for(unit = 0; unit < 5; unit++) {
-				ret = mpps_card_info(astribank, unit, &card_type, &card_status);
-				if(ret < 0)
-					return ret;
-				printf("CARD %d: type=%x.%x %s\n", unit,
-						((card_type >> 4) & 0xF), (card_type & 0xF),
-						((card_status & 0x1) ? "PIC" : "NOPIC"));
-			}
-			ret = mpps_stat(astribank, unit, &fpga_configuration, &status);
-			if (ret < 0)
-				return ret;
-			printf("FPGA: %-17s: %d\n", "Configuration num", fpga_configuration);
-			printf("FPGA: %-17s: %s\n", "Watchdog Timer",
-				(SER_STAT_WATCHDOG_READY(status)) ? "ready" : "expired");
-			printf("FPGA: %-17s: %s\n", "XPD Alive",
-				(SER_STAT_XPD_ALIVE(status)) ? "yes" : "no");
-		}
-		ret = mpp_extrainfo_get(astribank, &extrainfo);
-		if(ret < 0)
-			return ret;
-		show_extrainfo(&extrainfo, stdout);
-		if(CAP_EXTRA_TWINSTAR(&capabilities)) {
-			twinstar_show(astribank, stdout);
-		}
-	}
-	return 0;
-}
-
-#ifdef SUPPORT_OLD_RESET
-/* Try to reset a device using USB_FW.hex, up to Xorcom rev. 6885 */
-int old_reset(const char* devpath)
-{
-	struct astribank_device *astribank;
-	int ret;
-	struct {
-		uint8_t		op;
-	} PACKED header = {0x20}; /* PT_RESET */
-	char *buf = (char*) &header;
-
-	/* Note that the function re-opens the connection to the Astribank
-	 * as any reference to the previous connection was lost when mpp_open
-	 * returned NULL as the astribank reference. */
-	astribank = astribank_open(devpath, 1);
-	if (!astribank) {
-		DBG("Failed re-opening astribank device for old_reset\n");
-		return -ENODEV;
-	}
-	ret = xusb_send(astribank->xusb, buf, 1, 5000);
-
-	/* If we just had a reenumeration, we may get -ENODEV */
-	if(ret < 0 && ret != -ENODEV)
-			return ret;
-	/* We don't astribank_close(), as it has likely been
-	 * reenumerated by now. */
-	return 0;
-}	
-#endif /* SUPPORT_OLD_RESET */
-
 int main(int argc, char *argv[])
 {
 	char			*devpath = NULL;
-	struct astribank_device *astribank;
+	struct astribank *astribank;
+	struct mpp_device *mpp;
 	const char		options[] = "vd:D:nr:p:w:Q";
 	int			opt_renumerate = 0;
 	char			*opt_port = NULL;
@@ -218,20 +139,12 @@ int main(int argc, char *argv[])
 		usage();
 	}
 	DBG("Startup %s\n", devpath);
-	if((astribank = mpp_init(devpath, 1)) == NULL) {
-		ERR("Failed initializing MPP\n");
-#ifdef SUPPORT_OLD_RESET
-		DBG("opt_reset = %s\n", opt_reset);
-		if (opt_reset) {
-			DBG("Trying old reset method\n");
-			if ((ret = old_reset(devpath)) != 0) {
-				ERR("Old reset method failed as well: %d\n", ret);
-			}
-		}
-#endif /* SUPPORT_OLD_RESET */
-
+	astribank = astribank_new(devpath);
+	if(!astribank) {
+		ERR("Failed initializing Astribank\n");
 		return 1;
 	}
+	mpp = astribank_mpp_open(astribank);
 	/*
 	 * First process reset options. We want to be able
 	 * to reset minimal USB firmwares even if they don't
@@ -245,7 +158,7 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 		DBG("Reseting (%s)\n", opt_reset);
-		if((ret = mpp_reset(astribank, full_reset)) < 0) {
+		if((ret = mpp_reset(mpp, full_reset)) < 0) {
 			ERR("%s Reseting astribank failed: %d\n",
 				(full_reset) ? "Full" : "Half", ret);
 		}
@@ -253,10 +166,10 @@ int main(int argc, char *argv[])
 	}
 	show_astribank_info(astribank);
 	if(opt_query) {
-		show_hardware(astribank);
+		show_hardware(mpp);
 	} else if(opt_renumerate) {
 		DBG("Renumerate\n");
-		if((ret = mpp_renumerate(astribank)) < 0) {
+		if((ret = mpp_renumerate(mpp)) < 0) {
 			ERR("Renumerating astribank failed: %d\n", ret);
 		}
 	} else if(opt_watchdog) {
@@ -264,24 +177,24 @@ int main(int argc, char *argv[])
 
 		DBG("TWINSTAR: Setting watchdog %s-guard\n",
 			(watchdogstate) ? "on" : "off");
-		if((ret = mpp_tws_setwatchdog(astribank, watchdogstate)) < 0) {
+		if((ret = mpp_tws_setwatchdog(mpp, watchdogstate)) < 0) {
 			ERR("Failed to set watchdog to %d\n", watchdogstate);
 			return 1;
 		}
 	} else if(opt_port) {
 		int	new_portnum = strtoul(opt_port, NULL, 0);
-		int	tws_portnum = mpp_tws_portnum(astribank);
+		int	tws_portnum = mpp_tws_portnum(mpp);
 		char	*msg = (new_portnum == tws_portnum)
 					? " Same same, never mind..."
 					: "";
 
 		DBG("TWINSTAR: Setting portnum to %d.%s\n", new_portnum, msg);
-		if((ret = mpp_tws_setportnum(astribank, new_portnum)) < 0) {
+		if((ret = mpp_tws_setportnum(mpp, new_portnum)) < 0) {
 			ERR("Failed to set USB portnum to %d\n", new_portnum);
 			return 1;
 		}
 	}
 out:
-	mpp_exit(astribank);
+	astribank_destroy(astribank);
 	return 0;
 }

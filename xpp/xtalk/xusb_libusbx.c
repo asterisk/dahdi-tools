@@ -566,7 +566,7 @@ struct xusb_device *xusb_find_bypath(const char *path)
 			ERR("usb device without a device descriptor\n");
 			continue;
 		}
-		INFO("Found: %04x:%04x %s\n",
+		DBG("Found: %04x:%04x %s\n",
 			dev_desc.idVendor, dev_desc.idProduct, devpath_tail);
 		xusb_init_spec(spec, "<BYPATH>",
 			dev_desc.idVendor, dev_desc.idProduct);

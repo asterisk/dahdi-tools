@@ -8,7 +8,7 @@ man_MANS	=
 
 # FIXME: try to improve code, so we can use $(PEDANTIC)
 #PEDANTIC	= -ansi -pedantic -std=c99
-GLOBAL_CFLAGS	= -I$(srcdir) -I$(srcdir)/xtalk $(PEDANTIC)
+GLOBAL_CFLAGS	= -I$(srcdir) -I$(srcdir)/xtalk/include $(PEDANTIC) -Wall
 
 if DAHDI_DEVMODE
 GLOBAL_CFLAGS	+= \
@@ -81,24 +81,14 @@ endif
 noinst_LTLIBRARIES	= libastribank.la libecholoader.la libhexfile.la
 
 libastribank_la_SOURCES	= \
-		astribank_usb.c	\
-		astribank_usb.h	\
+		astribank.c	\
+		astribank.h	\
 		mpptalk.c	\
 		mpptalk.h	\
-		mpp.h	\
-		mpptalk_defs.h	\
-		xtalk/debug.c	\
-		xtalk/debug.h	\
-		xtalk/xlist.c	\
-		xtalk/xlist.h	\
-		xtalk/xtalk.c	\
-		xtalk/xtalk.h	\
-		xtalk/xtalk_defs.h	\
-		xtalk/xusb.c	\
-		xtalk/xusb.h	\
 		#
 
 libastribank_la_CFLAGS		= $(GLOBAL_CFLAGS)
+libastribank_la_LIBADD		= xtalk/libxtalk.la
 
 if USE_OCTASIC
 libecholoader_la_SOURCES	= \
