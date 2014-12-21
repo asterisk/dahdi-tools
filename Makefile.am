@@ -5,7 +5,7 @@ LEGACY_MAKE	= \
 		top_srcdir=$(top_srcdir) \
 		srcdir=$(srcdir)
 
-SUBDIRS	= xpp
+SUBDIRS	= xpp doc
 
 if PPPD
 SUBDIRS	+= ppp

@@ -24,11 +24,13 @@ echo "$version" > "$tmp_version_dir/.version"
 extra_dist='
 	autoconfig.h.in
 	configure
+	doc/Makefile
 	ppp/Makefile
 	Makefile
 	xpp/Makefile
 	xpp/oct612x/Makefile
 	xpp/perl_modules/Makefile
+	doc/Makefile.in
 	ppp/Makefile.in
 	Makefile.in
 	xpp/Makefile.in

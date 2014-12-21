@@ -256,6 +256,7 @@ AC_CONFIG_FILES([
 	makeopts
 	version.c
 	Makefile
+	doc/Makefile
 	ppp/Makefile
 	xpp/Makefile
 	xpp/oct612x/Makefile
