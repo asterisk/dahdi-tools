@@ -7,6 +7,10 @@ LEGACY_MAKE	= \
 
 SUBDIRS	= xpp
 
+if PPPD
+SUBDIRS	+= ppp
+endif
+
 all-local:
 	$(LEGACY_MAKE)  all
 

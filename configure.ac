@@ -209,6 +209,9 @@ case "$with_ppp" in
 	;;
 esac
 
+AC_SUBST(PPPD_VERSION)
+AM_CONDITIONAL([PPPD], [test "$PPPD_VERSION" != ''])
+
 if test "x${PBX_DAHDI}" != "x1"; then
    AC_MSG_NOTICE([***])
    AC_MSG_NOTICE([*** Building this package requires DAHDI support. *** ])
