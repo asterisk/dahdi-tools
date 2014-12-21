@@ -230,6 +230,14 @@ fi
 
 AC_SUBST(PPPD_VERSION)
 
+AM_CONDITIONAL([PBX_USB], [test "$PBX_USB" = "1"])
+
+# Taken from octasic-helper
+AC_SUBST([USE_OCTASIC], [yes])
+AM_CONDITIONAL([USE_OCTASIC], [test "$USE_OCTASIC" = 'yes'])
+octasic_dir='$(top_srcdir)/xpp/oct612x'
+AC_SUBST([OCTASIC_CFLAGS], ["-I$octasic_dir/include -I$octasic_dir/octdeviceapi -I$octasic_dir/octdeviceapi/oct6100api"])
+
 AC_SUBST([TOOLSVERSION], m4_esyscmd([build_tools/make_version . dahdi/tools]))
 
 AC_CONFIG_FILES([
@@ -238,6 +246,7 @@ AC_CONFIG_FILES([
 	Makefile
 	ppp/Makefile
 	xpp/Makefile
+	xpp/oct612x/Makefile
 	])
 AC_OUTPUT
 
