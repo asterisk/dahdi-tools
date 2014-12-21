@@ -5,7 +5,17 @@ LEGACY_MAKE	= \
 		top_srcdir=$(top_srcdir) \
 		srcdir=$(srcdir)
 
-CFLAGS	= -g -Wall $(DAHDI_INCLUDE)
+CFLAGS	= -g -Wall -O2 $(DAHDI_INCLUDE)
+if DAHDI_DEVMODE
+CFLAGS	+= \
+	-Werror \
+	-Wunused \
+	-Wundef \
+	$(DAHDI_DECLARATION_AFTER_STATEMENT) \
+	-Wmissing-format-attribute \
+	-Wformat-security \
+	#-Wformat=2
+endif
 
 SUBDIRS	= xpp doc
 

@@ -106,6 +106,7 @@ AC_ARG_ENABLE(dev-mode,
 	      *) AC_MSG_ERROR(bad value ${enableval} for --enable-dev-mode)  ;;
 	esac])
 AC_SUBST(DAHDI_DEVMODE)
+AM_CONDITIONAL([DAHDI_DEVMODE], [test "$DAHDI_DEVMODE" = 'yes'])
 
 AC_MSG_CHECKING(for -Wdeclaration-after-statement support)
 if $(${CC} -Wdeclaration-after-statement -S -o /dev/null -xc /dev/null > /dev/null 2>&1); then

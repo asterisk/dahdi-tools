@@ -3,9 +3,20 @@ all-local: $(perl_checks)
 
 SUBDIRS		=
 
+
 # FIXME: try to improve code, so we can use $(PEDANTIC)
 #PEDANTIC	= -ansi -pedantic -std=c99
 GLOBAL_CFLAGS	= -I$(srcdir) -I$(srcdir)/xtalk $(PEDANTIC)
+
+if DAHDI_DEVMODE
+GLOBAL_CFLAGS	+= \
+	-Werror \
+	-Wunused \
+	-Wundef \
+	-Wmissing-format-attribute \
+	-Wformat-security \
+	-Wformat=2
+endif
 
 if PERL
 SUBDIRS		+= perl_modules

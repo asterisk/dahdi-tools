@@ -84,7 +84,12 @@ int handle_hexline(struct astribank_device *astribank, struct hexline *hexline)
 	return 0;
 }
 
-void print_parse_errors(int level, const char *msg, ...)
+
+#ifdef	__GNUC__
+static void print_parse_errors(int level, const char *msg, ...) __attribute__((format(printf,2,3)));
+#endif
+
+static void print_parse_errors(int level, const char *msg, ...)
 {
 	va_list ap;
 

@@ -40,7 +40,7 @@
 #define RANDOM "/dev/urandom"			/* Not genuinely random */
 /* #define RANDOM "/dev/random" */		/* Quite genuinely random */
 
-int myread(int fd, char *buf, int len)
+int myread(int fd, unsigned char *buf, int len)
 {
 	int sofar;
 	int res;

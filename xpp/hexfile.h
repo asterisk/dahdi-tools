@@ -72,7 +72,11 @@ struct hexdata {
 
 __BEGIN_DECLS
 
-typedef void (*parse_hexfile_report_func_t)(int level, const char *msg, ...);
+typedef void (*parse_hexfile_report_func_t)(int level, const char *msg, ...)
+#ifdef	__GNUC__
+	__attribute__((format(printf,2,3)));
+#endif
+	;
 
 parse_hexfile_report_func_t parse_hexfile_set_reporting(parse_hexfile_report_func_t rf);
 void free_hexdata(struct hexdata *hexdata);

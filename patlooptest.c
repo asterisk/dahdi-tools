@@ -168,6 +168,7 @@ int main(int argc, char *argv[])
 	int opt;
 	int oldstyle_cmdline = 1;
 	unsigned int event_count = 0;
+	time_t start_time = 0;
 
 	/* Parse the command line arguments */
 	while((opt = getopt(argc, argv, "b:s:t:r:v?h")) != -1) {
@@ -218,8 +219,6 @@ int main(int argc, char *argv[])
 	if (oldstyle_cmdline && argc > optind +1) {
 		timeout = strtoul(argv[optind+1], NULL, 10);
 	}
-	
-	time_t start_time = 0;
 
 	fd = channel_open(device, &bs);
 	if (fd < 0)

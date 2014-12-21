@@ -107,13 +107,12 @@ static struct fasthdlc_state fs;
 
 void send_packet(unsigned char *buf, int len)
 {
-	int res;
 	int x;
 	unsigned char outbuf[BLOCK_SIZE];
 	int pos=0;
 	unsigned int fcs = PPP_INITFCS;
 	if (hdlcmode)
-		res = write(fd, buf, len + 2);
+		write(fd, buf, len + 2);
 	else {
 		for (x=0;x<len;x++) {
 			if (fasthdlc_tx_load(&fs, buf[x]))
