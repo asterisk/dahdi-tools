@@ -194,7 +194,7 @@ AC_ARG_WITH([libusb],
 
 # LIBUSBX tests
 have_libusbx=
-AS_IF([test "$with_libusbx" = "yes"],
+AS_IF([test "$with_libusbx" != "no"],
 	[PKG_CHECK_MODULES([LIBUSBX], [libusb-1.0],
 		[AC_CHECK_LIB([usb-1.0], [libusb_error_name],
 			[
