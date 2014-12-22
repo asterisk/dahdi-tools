@@ -1,5 +1,11 @@
 VISIBILITY_DEFS		= -DXTALK_DLL -DXTALK_DLL_EXPORTS
-COMMON_CFLAGS		= -Wall -Wno-unknown-pragmas -Werror $(VISIBILITY_DEFS) $(CFLAG_VISIBILITY)
+COMMON_CFLAGS		= \
+		-Wall \
+		-Wno-unknown-pragmas \
+		-Werror \
+		$(VISIBILITY_DEFS) \
+		$(CFLAG_VISIBILITY)
+
 AM_CFLAGS		= $(COMMON_CFLAGS)
 
 
@@ -35,7 +41,13 @@ dist_noinst_HEADERS	= \
 
 man_MANS		= xtalk_send.8
 
-libxtalk_la_CFLAGS	= $(COMMON_CFLAGS) -I$(srcdir)/include -I$(srcdir) $(USB_CFLAGS)
+libxtalk_la_CFLAGS	= \
+		$(COMMON_CFLAGS) \
+		-I$(srcdir)/include \
+		-I$(srcdir) \
+		$(USB_CFLAGS) \
+		-DXTALK_OPTIONS_FILE=\"/etc/dahdi/xpp.conf\"
+
 libxtalk_la_LDFLAGS	= #
 libxtalk_la_LIBADD	= $(USB_LIBS)
 libxtalk_la_SOURCES	= \

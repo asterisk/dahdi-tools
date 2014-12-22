@@ -1,5 +1,6 @@
 #define	_GNU_SOURCE	/* for memrchr() */
 #include <assert.h>
+#include <ctype.h>
 #include <errno.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -360,16 +361,66 @@ int xtalk_option_use_clear_halt(void)
 	return use_clear_halt;
 }
 
+static void chomp(char *buf)
+{
+	char *p;
+	int len;
+
+	if (!buf)
+		return;
+	len = strlen(buf);
+	for (p = buf + len - 1; p >= buf && isspace(*p); p--)
+		*p = '\0';
+}
+
+static const char *OPTION_VAR = "XTALK_OPTIONS";
+
+/* Caller should free the returned string if it is not NULL */
+static char *read_options(const char *fname)
+{
+	FILE *fp;
+	char buf[BUFSIZ];
+	char *p;
+	char *ret_buf;
+
+	fp = fopen(fname, "r");
+	if (!fp) {
+		DBG("Failed opening '$fname': %s\n", strerror(errno));
+		return NULL;
+	}
+	while (fgets(buf, sizeof(buf), fp) != NULL) {
+		chomp(buf);
+		if (buf[0] == '\0' || buf[0] == '#')
+			continue;
+		if (strncmp(buf, OPTION_VAR, strlen(OPTION_VAR)) != 0)
+			continue;
+		/* fprintf(stderr, "INPUT> '%s'\n", p); */
+		p = buf + strlen(OPTION_VAR);
+		while (*p && (isspace(*p) || *p == '='))
+			p++;
+		ret_buf = malloc(sizeof(buf));
+		strcpy(ret_buf, p); /* Cannot overflow */
+		return ret_buf;
+	}
+	fclose(fp);
+	return NULL;
+}
+
 int xtalk_parse_options(void)
 {
 	char *xtalk_options;
 	char *saveptr;
 	char *token;
 	int ret;
+	int free_options = 0;
 
 	xtalk_options = getenv("XTALK_OPTIONS");
-	if (!xtalk_options)
-		return 0;
+	if (!xtalk_options) {
+		xtalk_options = read_options(XTALK_OPTIONS_FILE);
+		if (!xtalk_options)
+			return 0;
+		free_options = 1;
+	}
 	token = strtok_r(xtalk_options, " \t", &saveptr);
 	while (token) {
 		ret = xtalk_one_option(token);
@@ -377,5 +428,7 @@ int xtalk_parse_options(void)
 			return ret;
 		token = strtok_r(NULL, " \t", &saveptr);
 	}
+	if (free_options)
+		free(xtalk_options);
 	return 0;
 }
