@@ -148,11 +148,15 @@ cat /sys/bus/astribanks/devices/*/waitfor_xpds 2> /dev/null || :
 
 # Wait for device to stabilize and XPD's to finish initalizations
 echo 1>&2 "Astribanks initializing spans"
-if [ "$XPP_HOTPLUG_DAHDI" = yes ]; then
-	if [ "$CALLED_FROM_ATRIBANK_HOOK" = '' ]; then
+if [ "$XPP_HOTPLUG_DAHDI" = yes -a "$CALLED_FROM_ATRIBANK_HOOK" = '' -a \
+		"$ASTERISK_SUPPORTS_DAHDI_HOTPLUG" != 'yes'  ]; then
+	if [ -f /etc/dahdi/xpp_order ]; then
 		# Now we can wait until the hotplug run would remove the semaphore
 		echo -n 1>&2 "Other DAHDI initializations... "
 		astribank_is_starting -v -w 1>&2
+	else
+		echo 1>&2 "WARNING: No ASTERISK_SUPPORTS_DAHDI_HOTPLUG" \
+			" and no /etc/dahdi/xpp_order"
 	fi
 fi
 # All Astribanks initialized -- remove semaphore
