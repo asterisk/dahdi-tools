@@ -319,8 +319,9 @@ load_fw_device() {
 					if [ "$pri_spec_wildcard" != '' ]; then
 						debug "ECHO($dev_short): Found definitions for wildcard -- $pri_spec_wildcard"
 					fi
-					pri_spec=`echo "$pri_spec_wildcard $pri_spec" | tr -s ' \t\n' ','`
-					if [ "$pri_spec" != '' ]; then
+					pri_spec_params=""
+					if [ "$pri_spec$pri_spec_wildcard" != '' ]; then
+						pri_spec=`echo "$pri_spec_wildcard $pri_spec" | tr -s ' \t\n' ','`
 						pri_spec_params="-S $pri_spec"
 						debug "ECHO($dev_short): pri_spec_params='$pri_spec_params'"
 					fi
