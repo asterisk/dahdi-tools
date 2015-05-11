@@ -85,6 +85,8 @@ libastribank_la_SOURCES	= \
 		astribank.h	\
 		mpptalk.c	\
 		mpptalk.h	\
+		astribank_license.c	\
+		astribank_license.h	\
 		#
 
 libastribank_la_CFLAGS		= $(GLOBAL_CFLAGS)
@@ -134,12 +136,6 @@ astribank_hexload_LDADD		= \
 		libecholoader.la	\
 		oct612x/liboctasic.la	\
 		#
-
-astribank_allow_SOURCES		= \
-			astribank_allow.c	\
-			astribank_license.c	\
-			astribank_license.h	\
-			#
 
 astribank_allow_CFLAGS		= $(GLOBAL_CFLAGS)
 astribank_allow_LDFLAGS		= $(USB_LIBS)
