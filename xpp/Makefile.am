@@ -20,6 +20,14 @@ GLOBAL_CFLAGS	+= \
 	-Wformat=2
 endif
 
+man_pages	= \
+		astribank_tool.8 \
+		astribank_hexload.8 \
+		astribank_allow.8 \
+		astribank_is_starting.8
+
+man_MANS	+= $(man_pages)
+
 if PERL
 SUBDIRS		+= perl_modules
 
@@ -141,13 +149,6 @@ astribank_allow_CFLAGS		= $(GLOBAL_CFLAGS)
 astribank_allow_LDFLAGS		= $(USB_LIBS)
 astribank_allow_LDADD		= libastribank.la
 
-man_pages	= \
-		astribank_tool.8 \
-		astribank_hexload.8 \
-		astribank_allow.8 \
-		astribank_is_starting.8
-
-man_MANS	+= $(man_pages)
 endif
 
 EXTRA_DIST	= \
