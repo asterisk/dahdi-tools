@@ -86,6 +86,16 @@ AC_SUBST(DOWNLOAD)
 
 AC_LANG(C)
 
+AC_PATH_PROG([PERL], [perl])
+if test "$PERL" = ''; then
+	      AC_MSG_ERROR(perl is mandatory)
+fi
+AC_MSG_CHECKING(for perl libdir)
+eval `"$PERL" -V:sitelib`
+AC_SUBST([perllibdir], [`echo "$sitelib"`])
+AC_MSG_RESULT([$perllibdir])
+AM_CONDITIONAL([PERL], [test "$perllibdir" != ''])
+
 AC_ARG_ENABLE(dev-mode,
 	[  --enable-dev-mode    Turn on developer mode],
 	[case "${enableval}" in
@@ -247,6 +257,7 @@ AC_CONFIG_FILES([
 	ppp/Makefile
 	xpp/Makefile
 	xpp/oct612x/Makefile
+	xpp/perl_modules/Makefile
 	])
 AC_OUTPUT
 

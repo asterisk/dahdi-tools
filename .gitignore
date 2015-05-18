@@ -51,6 +51,7 @@ timertest
 tonezone.lo
 tonezones.txt
 version.c
+xpp/*.check
 xpp/.depend
 xpp/.octasic.depend
 xpp/.perlcheck

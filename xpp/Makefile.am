@@ -4,7 +4,7 @@ LEGACY_MAKE	= \
 		top_srcdir=$(top_srcdir) \
 		srcdir=$(srcdir)
 
-all-local:
+all-local: $(perl_checks)
 	$(LEGACY_MAKE)  all
 
 clean-local:
@@ -20,6 +20,44 @@ maintainer-clean:
 SUBDIRS		=
 
 GLOBAL_CFLAGS	= -I$(srcdir) -I$(srcdir)/xtalk
+
+if PERL
+SUBDIRS		+= perl_modules
+
+%.8: %
+	@if file "$^" | cut -d: -f2 | grep -q perl; then \
+		if pod2man --section 8 $^ > $@; then \
+			echo "  GEN      $@"; \
+		else \
+			rm -f "$@"; \
+		fi \
+	fi
+
+%.check: %
+	@echo "  CHECK    $^"; \
+	if ! perl -I./perl_modules -c $^ 2>/dev/null; then \
+		perl -I./perl_modules -c $^; \
+	fi
+	@touch $@
+
+perl_scripts	=	\
+		dahdi_registration	\
+		xpp_sync	\
+		lsdahdi		\
+		xpp_blink	\
+		dahdi_genconf	\
+		dahdi_hardware	\
+		twinstar	\
+		#
+
+perl_checks	= $(perl_scripts:%=%.check)
+perl_mans	= $(perl_scripts:%=%.8)
+
+endif
+
+dist_sbin_SCRIPTS	= $(perl_scripts)
+man_MANS		= $(perl_mans)
+CLEANFILES		= $(perl_checks) $(perl_mans)
 
 if	PBX_USB
 
@@ -65,9 +103,11 @@ astribank_allow_CFLAGS		= $(GLOBAL_CFLAGS)
 astribank_allow_LDFLAGS		= $(USB_LIB)
 astribank_allow_LDADD		= libastribank.la
 
-man_MANS	= \
+man_pages	= \
 		astribank_tool.8 \
 		astribank_hexload.8 \
 		astribank_allow.8 \
 		astribank_is_starting.8
+
+man_MANS	+= $(man_pages)
 endif

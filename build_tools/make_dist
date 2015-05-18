@@ -28,10 +28,12 @@ extra_dist='
 	Makefile
 	xpp/Makefile
 	xpp/oct612x/Makefile
+	xpp/perl_modules/Makefile
 	ppp/Makefile.in
 	Makefile.in
 	xpp/Makefile.in
 	xpp/oct612x/Makefile.in
+	xpp/perl_modules/Makefile.in
 	auxdir/compile
 	auxdir/config.guess
 	auxdir/config.sub

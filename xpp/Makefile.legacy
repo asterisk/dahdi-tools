@@ -19,75 +19,25 @@ INSTALL_DATA	= $(INSTALL) -m 644
 # In 1.4 those are provided by autoconf through makeopts
 prefix		?= /usr
 datadir		?= $(prefix)/share
-mandir		?= $(datadir)/man
 sysconfdir	?= $(prefix)/etc
 udevrulesdir	?= $(sysconfdir)/udev/rules.d
 INSTALL		?= install
 
 INSTALL_DATA	= $(INSTALL) -m 644
 
-SBINDIR		= $(prefix)/sbin
 DATADIR		= $(datadir)/dahdi
-MANDIR		= $(mandir)/man8
-PERLLIBDIR	:= $(shell eval `perl -V:sitelib`; echo "$$sitelib")
-PERL_DIRS	:= $(shell cd perl_modules; find * -name '[A-Z]*' -type d| xargs)
-PERL_MODS_PAT	:= *.pm $(PERL_DIRS:%=%/*.pm)
-PERL_MODS	:= $(shell cd perl_modules; echo $(PERL_MODS_PAT))
 
 # Variables that should be defined above, but need sane defaults:
 # FIXME: Are those values really sane?
 HOSTCC		?= $(CC)
 
-%.8: %
-	pod2man --section 8 $^ > $@ || $(RM) $@
-PERL_SCRIPTS	=	\
-		dahdi_registration	\
-		xpp_sync	\
-		lsdahdi		\
-		xpp_blink	\
-		dahdi_genconf	\
-		dahdi_hardware	\
-		twinstar	\
-		#
-
-PERL_MANS	= $(PERL_SCRIPTS:%=%.8)
-
-TARGETS	= .perlcheck
-
-ifneq	(,$(PERLLIBDIR))
-PROG_INSTALL	+= $(PERL_SCRIPTS)
-TARGETS		+= $(PERL_MANS)
-endif
-
-all: $(TARGETS)
-
-docs: $(PERL_MANS)
+all:
 
 install: all
-	$(INSTALL) -d $(DESTDIR)$(SBINDIR)
-	$(INSTALL) $(PROG_INSTALL) $(DESTDIR)$(SBINDIR)/
 	$(INSTALL) -d $(DESTDIR)$(DATADIR)
 	$(INSTALL) xpp_fxloader astribank_hook $(DESTDIR)$(DATADIR)/
 	$(INSTALL) waitfor_xpds $(DESTDIR)$(DATADIR)/
 	$(INSTALL) -d $(DESTDIR)$(udevrulesdir)
 	$(INSTALL_DATA) xpp.rules $(DESTDIR)$(udevrulesdir)/
-	$(INSTALL) -d $(DESTDIR)$(MANDIR)
-	$(INSTALL_DATA) $(PERL_MANS) $(DESTDIR)$(MANDIR)/
-ifneq	(,$(PERLLIBDIR))
-	$(INSTALL) -d $(DESTDIR)$(PERLLIBDIR)
-	for i in $(PERL_DIRS); \
-	do \
-		$(INSTALL) -d "$(DESTDIR)$(PERLLIBDIR)/$$i"; \
-	done
-	for i in $(PERL_MODS); \
-	do \
-		$(INSTALL_DATA) "perl_modules/$$i" "$(DESTDIR)$(PERLLIBDIR)/$$i"; \
-	done
-endif
-
-.perlcheck: $(PERL_SCRIPTS)
-	for i in $^; do perl -I./perl_modules -c $$i || exit 1; done
-	touch $@
 
 clean:
-	$(RM) $(TARGETS)
