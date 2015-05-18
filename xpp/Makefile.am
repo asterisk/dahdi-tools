@@ -1,25 +1,11 @@
 
-LEGACY_MAKE	= \
-	 $(MAKE) -f $(srcdir)/Makefile.legacy \
-		top_srcdir=$(top_srcdir) \
-		srcdir=$(srcdir)
-
 all-local: $(perl_checks)
-	$(LEGACY_MAKE)  all
-
-clean-local:
-	$(LEGACY_MAKE)  clean
-
-install-exec-hook:
-	$(LEGACY_MAKE)  install
-
-# Cannot allow this yet
-distclean:
-maintainer-clean:
 
 SUBDIRS		=
 
-GLOBAL_CFLAGS	= -I$(srcdir) -I$(srcdir)/xtalk
+# FIXME: try to improve code, so we can use $(PEDANTIC)
+#PEDANTIC	= -ansi -pedantic -std=c99
+GLOBAL_CFLAGS	= -I$(srcdir) -I$(srcdir)/xtalk $(PEDANTIC)
 
 if PERL
 SUBDIRS		+= perl_modules
