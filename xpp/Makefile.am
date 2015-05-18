@@ -55,6 +55,8 @@ perl_mans	= $(perl_scripts:%=%.8)
 
 endif
 
+pkgdatadir	= @datadir@/dahdi
+pkgdata_SCRIPTS	= xpp_fxloader astribank_hook waitfor_xpds
 udevrulesdir	= @udevrulesdir@
 udevrules_DATA	= xpp.rules
 

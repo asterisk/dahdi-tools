@@ -1,8 +1,5 @@
 PEDANTIC	= -ansi -pedantic -std=c99
 
-INSTALL		= install
-INSTALL_DATA	= install -m 644
-
 #
 # Ugly hack to find kernel directories before/after the split
 # to kernel/user-space.
@@ -14,18 +11,6 @@ DAHDI_KERNELDIR	=
 
 -include $(DAHDI_TOOLSDIR)/makeopts
 
-INSTALL_DATA	= $(INSTALL) -m 644
-
-# In 1.4 those are provided by autoconf through makeopts
-prefix		?= /usr
-datadir		?= $(prefix)/share
-sysconfdir	?= $(prefix)/etc
-INSTALL		?= install
-
-INSTALL_DATA	= $(INSTALL) -m 644
-
-DATADIR		= $(datadir)/dahdi
-
 # Variables that should be defined above, but need sane defaults:
 # FIXME: Are those values really sane?
 HOSTCC		?= $(CC)
@@ -33,8 +18,5 @@ HOSTCC		?= $(CC)
 all:
 
 install: all
-	$(INSTALL) -d $(DESTDIR)$(DATADIR)
-	$(INSTALL) xpp_fxloader astribank_hook $(DESTDIR)$(DATADIR)/
-	$(INSTALL) waitfor_xpds $(DESTDIR)$(DATADIR)/
 
 clean:
