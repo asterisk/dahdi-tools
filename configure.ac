@@ -6,7 +6,7 @@ m4_define([short_version],
           m4_bpatsubst(m4_esyscmd([build_tools/make_version . dahdi/tools]),
                        [\([0-9.]*\)\(\w\|\W\)*],
                        [\1]))
-AC_INIT(dahdi, short_version, www.asterisk.org)
+AC_INIT([dahdi-tools], short_version, [www.asterisk.org])
 
 # check existence of the package
 AC_CONFIG_SRCDIR([dahdi_cfg.c])
