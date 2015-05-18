@@ -46,42 +46,15 @@ ifneq (,$(INITRD_DIR))
   COPY_INITD	:= install -D dahdi.init $(INIT_TARGET)
 endif
 
-RCCONF_FILE	= /etc/dahdi/init.conf
-MODULES_FILE	= /etc/dahdi/modules
-GENCONF_FILE	= /etc/dahdi/genconf_parameters
-MODPROBE_FILE	= /etc/modprobe.d/dahdi.conf
-BLACKLIST_FILE	= /etc/modprobe.d/dahdi.blacklist.conf
-BASH_COMP_DIR	= /etc/bash_completion.d
-BASH_COMP_FILE	= $(BASH_COMP_DIR)/dahdi
-
 NETSCR_DIR	:= $(firstword $(wildcard $(DESTDIR)/etc/sysconfig/network-scripts ))
 ifneq (,$(NETSCR_DIR))
   NETSCR_TARGET	:= $(NETSCR_DIR)/ifup-hdlc
   COPY_NETSCR	:= install -D ifup-hdlc $(NETSCR_TARGET)
 endif
 
-TOOLSVERSION=$(shell build_tools/make_version . dahdi/tools)
-
 # sbindir, libdir, includedir and mandir are defined in makeopts
 # (from configure).
 LIB_DIR:=$(libdir)
-DATA_DIR:=${datadir}/dahdi
-CONFIG_DIR:=$(sysconfdir)/dahdi
-CONFIG_FILE:=$(CONFIG_DIR)/system.conf
-UDEVRULES_DIR:=$(sysconfdir)/udev/rules.d
-
-
-ASSIGNED_DATA_SCRIPTS:=\
-	dahdi_handle_device	\
-	dahdi_span_config	\
-	dahdi_auto_assign_compat	\
-	span_config.d/10-dahdi-cfg	\
-	span_config.d/20-fxotune	\
-	span_config.d/50-asterisk	\
-	handle_device.d/10-span-types	\
-	handle_device.d/20-span-assignments
-
-ASSIGNED_CONF:=assigned-spans.conf.sample span-types.conf.sample
 
 # All the man pages. Not just installed ones:
 GROFF_PAGES	:= $(wildcard doc/*.8 xpp/*.8)
@@ -131,18 +104,7 @@ install: all install-programs
 	@echo "###"
 	@echo "###################################################"
 
-install-programs: install-utils install-libs
-
-install-utils:
-ifeq (,$(wildcard $(DESTDIR)$(CONFIG_FILE)))
-	$(INSTALL) -d $(DESTDIR)$(CONFIG_DIR)
-	$(INSTALL) -m 644 system.conf.sample $(DESTDIR)$(CONFIG_FILE)
-endif
-	install -d $(DESTDIR)$(DATA_DIR)
-	tar cf - -C hotplug $(ASSIGNED_DATA_SCRIPTS) | tar xf - -C $(DESTDIR)$(DATA_DIR)/
-	install -m 644 $(ASSIGNED_CONF) $(DESTDIR)/$(CONFIG_DIR)/
-	install -d $(DESTDIR)$(BASH_COMP_DIR)
-	install -m 644 dahdi-bash-completion $(DESTDIR)$(BASH_COMP_FILE)
+install-programs: install-libs
 
 install-libs:
 ifneq (no,$(USE_SELINUX))
@@ -155,23 +117,6 @@ config:
 ifneq (,$(COPY_INITD))
 	$(COPY_INITD)
 endif
-ifeq (,$(wildcard $(DESTDIR)$(RCCONF_FILE)))
-	$(INSTALL) -D -m 644 init.conf.sample $(DESTDIR)$(RCCONF_FILE)
-endif
-ifeq (,$(wildcard $(DESTDIR)$(MODULES_FILE)))
-	$(INSTALL) -D -m 644 modules.sample $(DESTDIR)$(MODULES_FILE)
-endif
-ifeq (,$(wildcard $(DESTDIR)$(GENCONF_FILE)))
-	$(INSTALL) -D -m 644 xpp/genconf_parameters $(DESTDIR)$(GENCONF_FILE)
-endif
-ifeq (,$(wildcard $(DESTDIR)$(MODPROBE_FILE)))
-	$(INSTALL) -D -m 644 modprobe.conf.sample $(DESTDIR)$(MODPROBE_FILE)
-endif
-ifeq (,$(wildcard $(DESTDIR)$(BLACKLIST_FILE)))
-	$(INSTALL) -D -m 644 blacklist.sample $(DESTDIR)$(BLACKLIST_FILE)
-endif
-	$(INSTALL) -d $(DESTDIR)$(UDEVRULES_DIR)
-	$(INSTALL) -D -m 644 dahdi.rules $(DESTDIR)$(UDEVRULES_DIR)/
 ifneq (,$(COPY_NETSCR))
 	$(COPY_NETSCR)
 endif
@@ -192,18 +137,11 @@ endif
 		echo "DAHDI start. "; \
 	fi
 
-dist:
-	@./build_tools/make_dist "dahdi-tools" "$(TOOLSVERSION)"
-
 clean:
 	rm -f *.o tzdriver
 	rm -f core
 	rm -rf $(GENERATED_DOCS) *.asciidoc tonezones.txt
 
-.PHONY: clean all install devel data config install-programs install-libs dist
+.PHONY: clean all install devel data config install-programs install-libs
 
 FORCE:
-
-ifneq ($(wildcard .*.d),)
-   include .*.d
-endif

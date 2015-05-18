@@ -52,8 +52,7 @@ perl_mans	= $(perl_scripts:%=%.8)
 
 endif
 
-pkgdatadir	= @datadir@/dahdi
-pkgdata_SCRIPTS	= xpp_fxloader astribank_hook waitfor_xpds
+dist_pkgdata_SCRIPTS	= xpp_fxloader astribank_hook waitfor_xpds
 udevrulesdir	= @udevrulesdir@
 udevrules_DATA	= xpp.rules
 
@@ -65,22 +64,43 @@ if	PBX_USB
 
 SUBDIRS		+= oct612x
 
-noinst_LTLIBRARIES	= libastribank.la libecholoader.la
+noinst_LTLIBRARIES	= libastribank.la libecholoader.la libhexfile.la
+
 libastribank_la_SOURCES	= \
-		xtalk/xusb.c \
-		xtalk/xlist.c \
-		xtalk/debug.c \
-		xtalk/xtalk.c \
-		mpptalk.c \
-		astribank_usb.c
+		astribank_usb.c	\
+		astribank_usb.h	\
+		mpptalk.c	\
+		mpptalk.h	\
+		mpp.h	\
+		mpptalk_defs.h	\
+		xtalk/debug.c	\
+		xtalk/debug.h	\
+		xtalk/xlist.c	\
+		xtalk/xlist.h	\
+		xtalk/xtalk.c	\
+		xtalk/xtalk.h	\
+		xtalk/xtalk_defs.h	\
+		xtalk/xusb.c	\
+		xtalk/xusb.h	\
+		#
+
 libastribank_la_CFLAGS		= $(GLOBAL_CFLAGS)
 
 if USE_OCTASIC
 libecholoader_la_SOURCES	= \
 		parse_span_specs.c \
-		echo_loader.c
+		parse_span_specs.h	\
+		echo_loader.c	\
+		echo_loader.h	\
+		#
+
 libecholoader_la_CFLAGS		= $(GLOBAL_CFLAGS) $(OCTASIC_CFLAGS)
 endif
+
+libhexfile_la_SOURCES	= \
+		hexfile.c	\
+		hexfile.h	\
+		#
 
 sbin_PROGRAMS	= \
 		astribank_tool \
@@ -88,19 +108,35 @@ sbin_PROGRAMS	= \
 		astribank_allow \
 		astribank_is_starting
 
-check_PROGRAMS	= test_parse
+check_PROGRAMS		= test_parse
+test_parse_LDADD	= libhexfile.la
 
 astribank_tool_SOURCES		= astribank_tool.c
 astribank_tool_CFLAGS		= $(GLOBAL_CFLAGS)
 astribank_tool_LDFLAGS		= $(USB_LIB)
 astribank_tool_LDADD		= libastribank.la
 
-astribank_hexload_SOURCES	= astribank_hexload.c hexfile.c pic_loader.c
+astribank_hexload_SOURCES	= \
+			astribank_hexload.c	\
+			pic_loader.c	\
+			pic_loader.h	\
+			#
+
 astribank_hexload_CFLAGS	= $(GLOBAL_CFLAGS) $(OCTASIC_CFLAGS)
 astribank_hexload_LDFLAGS	= $(USB_LIB)
-astribank_hexload_LDADD		= libastribank.la libecholoader.la oct612x/liboctasic.la
+astribank_hexload_LDADD		= \
+		libhexfile.la	\
+		libastribank.la	\
+		libecholoader.la	\
+		oct612x/liboctasic.la	\
+		#
 
-astribank_allow_SOURCES		= astribank_allow.c astribank_license.c
+astribank_allow_SOURCES		= \
+			astribank_allow.c	\
+			astribank_license.c	\
+			astribank_license.h	\
+			#
+
 astribank_allow_CFLAGS		= $(GLOBAL_CFLAGS)
 astribank_allow_LDFLAGS		= $(USB_LIB)
 astribank_allow_LDADD		= libastribank.la
@@ -113,3 +149,18 @@ man_pages	= \
 
 man_MANS	+= $(man_pages)
 endif
+
+EXTRA_DIST	= \
+	$(man_pages)	\
+	$(udevrules_DATA)	\
+	README.Astribank	\
+	astribank_upgrade	\
+	dahdi.cgi	\
+	dahdi_drivers	\
+	genconf_parameters	\
+	twinstar_hook	\
+	twinstar_setup	\
+	xpp_modprobe	\
+	xpp_timing	\
+	#
+

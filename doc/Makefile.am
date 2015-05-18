@@ -15,3 +15,5 @@ noinst_MANS	= \
 	fxstest.8 \
 	patgen.8 \
 	pattest.8
+
+EXTRA_DIST	= $(man_MANS) $(noinst_MANS)

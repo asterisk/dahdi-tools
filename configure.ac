@@ -269,6 +269,7 @@ AC_CONFIG_FILES([
 	version.c
 	Makefile
 	doc/Makefile
+	hotplug/Makefile
 	ppp/Makefile
 	xpp/Makefile
 	xpp/oct612x/Makefile

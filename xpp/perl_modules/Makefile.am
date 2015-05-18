@@ -22,3 +22,5 @@ nobase_perllib_DATA	= \
 	Dahdi/Config/Gen.pm \
 	Dahdi/Hardware/USB.pm \
 	Dahdi/Hardware/PCI.pm
+
+EXTRA_DIST	= $(nobase_perllib_DATA)
