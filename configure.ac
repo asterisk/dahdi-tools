@@ -121,14 +121,22 @@ AC_SUBST(DAHDI_DECLARATION_AFTER_STATEMENT)
 AST_EXT_LIB_SETUP([DAHDI], [DAHDI], [dahdi])
 AST_EXT_LIB_SETUP([NEWT], [newt], [newt])
 AST_EXT_LIB_SETUP([USB], [usb], [usb])
+AST_EXT_LIB_SETUP([PCAP], [pcap], [pcap])
 
 AST_C_DEFINE_CHECK([DAHDI], [DAHDI_CODE], [dahdi/user.h])
 DAHDI23_DIR="${DAHDI_DIR}"
 AST_C_DEFINE_CHECK([DAHDI23], [DAHDI_CONFIG_NTTE], [dahdi/user.h])
 AST_EXT_LIB_CHECK([NEWT], [newt], [newtBell], [newt.h])
 AST_EXT_LIB_CHECK([USB], [usb], [usb_init], [usb.h])
+AST_EXT_LIB_CHECK([PCAP], [pcap], [pcap_compile], [pcap.h])
+
+saved_CPPFLAGS="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS $DAHDI_INCLUDE"
+AC_CHECK_DECL([DAHDI_TXMIRROR], [DAHDI_TXMIRROR=1], [DAHDI_TXMIRROR=0], [#include <dahdi/user.h>])
+CPPFLAGS="$saved_CPPFLAGS"
 
 AM_CONDITIONAL([PBX_NEWT], [test "$PBX_NEWT" = "1"])
+AM_CONDITIONAL([PBX_PCAP], [test "$PBX_PCAP" = "1" -a "$DAHDI_TXMIRROR" = "1"])
 
 AC_CHECK_FUNCS([semtimedop])
 

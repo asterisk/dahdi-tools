@@ -68,6 +68,11 @@ pkginclude_HEADERS	= tonezone.h
 libtonezone_la_CFLAGS	= $(CFLAGS) -I$(srcdir) -DBUILDING_TONEZONE
 libtonezone_la_LDFLAGS	= -version-info "$(LTZ_CURRENT):$(LTZ_REVISION):$(LTZ_AGE)"
 
+if PBX_PCAP
+noinst_PROGRAMS		+= dahdi_pcap
+dahdi_pcap_LDADD	= -lpcap
+endif
+
 patlooptest_LDADD	= libtonezone.la -lm
 fxstest_LDADD		= libtonezone.la -lm
 fxotune_LDADD		= -lm

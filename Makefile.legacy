@@ -91,10 +91,6 @@ GENERATED_DOCS	:= $(GROFF_HTML) README.html README.Astribank.html
 
 all:
 
-dahdi_pcap:
-	$(CC) $(CFLAGS) dahdi_pcap.c -lpcap -o $@ $<
-	
-
 tonezones.txt: zonedata.c
 	perl -ne 'next unless (/\.(country|description) = *"([^"]*)/); \
 		print (($$1 eq "country")? "* $$2\t":"$$2\n");' $<  \
@@ -203,7 +199,6 @@ clean:
 	rm -f *.o tzdriver
 	rm -f core
 	rm -rf $(GENERATED_DOCS) *.asciidoc tonezones.txt
-	rm -f dahdi_pcap
 
 .PHONY: clean all install devel data config install-programs install-libs dist
 
