@@ -55,6 +55,9 @@ perl_mans	= $(perl_scripts:%=%.8)
 
 endif
 
+udevrulesdir	= @udevrulesdir@
+udevrules_DATA	= xpp.rules
+
 dist_sbin_SCRIPTS	= $(perl_scripts)
 man_MANS		= $(perl_mans)
 CLEANFILES		= $(perl_checks) $(perl_mans)

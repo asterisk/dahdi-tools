@@ -37,6 +37,8 @@ if test ${localstatedir} = '${prefix}/var'; then
      localstatedir=/var
 fi
 
+AC_SUBST([udevrulesdir], '${sysconfdir}/udev/rules.d')
+
 # specify output header file
 AC_CONFIG_HEADER(autoconfig.h)
 

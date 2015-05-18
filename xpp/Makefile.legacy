@@ -20,7 +20,6 @@ INSTALL_DATA	= $(INSTALL) -m 644
 prefix		?= /usr
 datadir		?= $(prefix)/share
 sysconfdir	?= $(prefix)/etc
-udevrulesdir	?= $(sysconfdir)/udev/rules.d
 INSTALL		?= install
 
 INSTALL_DATA	= $(INSTALL) -m 644
@@ -37,7 +36,5 @@ install: all
 	$(INSTALL) -d $(DESTDIR)$(DATADIR)
 	$(INSTALL) xpp_fxloader astribank_hook $(DESTDIR)$(DATADIR)/
 	$(INSTALL) waitfor_xpds $(DESTDIR)$(DATADIR)/
-	$(INSTALL) -d $(DESTDIR)$(udevrulesdir)
-	$(INSTALL_DATA) xpp.rules $(DESTDIR)$(udevrulesdir)/
 
 clean:
