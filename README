@@ -15,8 +15,6 @@ dahdi-linux before building dahdi-tools.
 Build System
 ~~~~~~~~~~~~
 GCC and friends. Generally you will need to install the package gcc.
-There may be cases where you will need a specific version of gcc to build
-kernel modules.
 
 
 Extra Libraries
@@ -24,9 +22,11 @@ Extra Libraries
 Some libraries are needed for extra utilities that are provided with
 DAHDI.
 
-- libusb is needed for building fpga_load, needed for firmware loading of
-  the Xorcom Astribank.
+- libusb is needed for building astribank_hexload, needed for firmware
+  loading of the Xorcom Astribank.
 - libnewt is needed to build the optional but useful utility dahdi_tool.
+- libpcap is needed for building dahdi_pcap.
+- pppd is needed to build the dahdi pppd plugin.
 
 
 Installation
@@ -36,8 +36,8 @@ Note: If using `sudo` to build/install, you may need to add /sbin to your PATH.
 ./configure
 make
 make install
-# To install init scripts and config files:
-#make config
+# To install some extra configuration files:
+#make install-config
 ----------------------------------
 
 
@@ -49,18 +49,11 @@ There are some make targets that are provided to build or install just
 parts of DAHDI:
 
 . Build targets:
-  - make: Build DAHDI user-space programs and libraries. partial
-    targets of it:
-    * make 'utilname': builds 'utilname' alone (e.g: `make dahdi_diag`)
-    * make utils: Build just the programs.
-    * make libs: Build libtonezone.
-    * make tests: Build testing binaries.
+  - make: Build DAHDI user-space programs and libraries.
+  - make docs: Generate some extra documentation files.
 . Install targets:
-  - make install: Install everything. Sub-targets of it:
-    * make install-utils: Installs most things.
-    * make install-libs: Installs libtonezone.
-  - make config: install configuration files (overriding existing ones).
-  - make install-test: Install testing binaries.
+  - make install: Install everything
+  - make install-config: install configuration files
 
 
 Installation to a Subtree
@@ -76,8 +69,8 @@ This can be useful for any partial install target from the list above.
 
 Options For ./configure
 ^^^^^^^^^^^^^^^^^^^^^^^
-The configure script executes various tests and based on them generates
-makeopts. You can pass it --with options and variable settings, for
+The configure script executes various tests and the build will depend on
+their result. You can pass it --with options and variable settings, for
 instance:
 
   ./configure --without-ncurses CC="gcc-4.10"
@@ -116,6 +109,29 @@ will have to be enabled manually in system.conf.
 The configuration file of the dahdi init.d script is
 /etc/dahdi/init.conf . That file is used to override defaults that are 
 set at the beginning of the init.d script.
+
+/etc/dahdi/assigned-spans.conf
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Assigns span number and initial channel number for spans in each device.
+Just like system.conf it may be generated with dahdi_genconf:
+
+  dahdi_span_assignments auto
+  dahdi_genconf
+
+It may also be edited manually to allow reserving span and channel
+numbers for specific devices.
+
+/etc/dahdi/span-types.conf
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Theoretically, this file is similar to assigned-spans.conf. It allows
+setting the type (E1/T1) of a "PRI" span. This cannot be configured
+anywhere else: it needs to be done before the span is assigned as it
+changes the number of channels the span has.
+
+In practice most systems don't mix E1 and T1 and thus this file will
+typically have at most a single wild-card line setting all cards to be
+either E1 or T1.
+
 
 Reference Configuration
 ~~~~~~~~~~~~~~~~~~~~~~~
