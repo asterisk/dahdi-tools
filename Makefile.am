@@ -71,7 +71,7 @@ libtonezone_la_SOURCES	= \
 	zonedata.c \
 	tonezone.c \
 	version.c
-pkginclude_HEADERS	= tonezone.h
+dahdiinclude_HEADERS	= tonezone.h
 libtonezone_la_CFLAGS	= $(CFLAGS) -I$(srcdir) -DBUILDING_TONEZONE
 libtonezone_la_LDFLAGS	= -version-info "$(LTZ_CURRENT):$(LTZ_REVISION):$(LTZ_AGE)"
 

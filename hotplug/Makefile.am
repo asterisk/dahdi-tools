@@ -1,5 +1,5 @@
 
-nobase_dist_pkgdata_SCRIPTS	= \
+nobase_dist_dahditools_SCRIPTS	= \
 	dahdi_handle_device	\
 	dahdi_span_config	\
 	dahdi_auto_assign_compat	\

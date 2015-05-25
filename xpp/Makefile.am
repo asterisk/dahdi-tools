@@ -52,7 +52,7 @@ perl_mans	= $(perl_scripts:%=%.8)
 
 endif
 
-dist_pkgdata_SCRIPTS	= xpp_fxloader astribank_hook waitfor_xpds
+dist_dahditools_SCRIPTS	= xpp_fxloader astribank_hook waitfor_xpds
 udevrulesdir	= @udevrulesdir@
 udevrules_DATA	= xpp.rules
 

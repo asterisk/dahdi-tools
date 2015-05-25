@@ -36,6 +36,8 @@ fi
 if test ${localstatedir} = '${prefix}/var'; then
      localstatedir=/var
 fi
+AC_SUBST([dahditoolsdir], ['${datadir}/dahdi'])
+AC_SUBST([dahdiincludedir], ['${includedir}/dahdi'])
 
 AC_SUBST([udevrulesdir], '${sysconfdir}/udev/rules.d')
 
