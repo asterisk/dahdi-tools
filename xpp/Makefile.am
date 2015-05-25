@@ -3,6 +3,8 @@ all-local: $(perl_checks)
 
 SUBDIRS		=
 
+man_MANS	=
+
 
 # FIXME: try to improve code, so we can use $(PEDANTIC)
 #PEDANTIC	= -ansi -pedantic -std=c99
@@ -57,7 +59,7 @@ udevrulesdir	= @udevrulesdir@
 udevrules_DATA	= xpp.rules
 
 dist_sbin_SCRIPTS	= $(perl_scripts)
-man_MANS		= $(perl_mans)
+man_MANS		+= $(perl_mans)
 CLEANFILES		= $(perl_checks) $(perl_mans)
 
 if	PBX_USB
