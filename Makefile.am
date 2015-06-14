@@ -108,7 +108,7 @@ clean-local:
 install-exec-hook:
 	$(LEGACY_MAKE) install
 	@echo "Compatibility symlinks (should be removed in the future)"
-	ln -s libtonezone.so.2.0.0 $(DESTDIR)$(libdir)/libtonezone.so.2.0
+	ln -sf libtonezone.so.2.0.0 $(DESTDIR)$(libdir)/libtonezone.so.2.0
 
 bashcompdir	= $(sysconfdir)/bash_completion.d
 
