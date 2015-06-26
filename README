@@ -16,6 +16,9 @@ Build System
 ~~~~~~~~~~~~
 GCC and friends. Generally you will need to install the package gcc.
 
+Autotools (autoconf, automake and libtool) are needed if you clone from
+Git.
+
 
 Extra Libraries
 ~~~~~~~~~~~~~~~
@@ -33,6 +36,9 @@ Installation
 ~~~~~~~~~~~~
 Note: If using `sudo` to build/install, you may need to add /sbin to your PATH.
 ----------------------------------
+# Only if you cloned from git:
+autoreconf -i
+
 ./configure
 make
 make install
