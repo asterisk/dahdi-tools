@@ -89,6 +89,10 @@ waitfor_ab_initialization() {
 	done
 }
 
+clean_lines() {
+	sed -e 's/#.*//' -e 'y/\t/ /' -e 's/^ *//' -e 's/ *$//' -e '$s/$/\n/' "$1"
+}
+
 # Any hardware?
 if ! dahdi_hardware="`which dahdi_hardware 2>/dev/null`"; then
 	echo >&2 "$0: Missing dahdi_hardware"
@@ -150,13 +154,19 @@ cat /sys/bus/astribanks/devices/*/waitfor_xpds 2> /dev/null || :
 echo 1>&2 "Astribanks initializing spans"
 if [ "$XPP_HOTPLUG_DAHDI" = yes -a "$CALLED_FROM_ATRIBANK_HOOK" = '' -a \
 		"$ASTERISK_SUPPORTS_DAHDI_HOTPLUG" != 'yes'  ]; then
-	if [ -f /etc/dahdi/xpp_order ]; then
-		# Now we can wait until the hotplug run would remove the semaphore
-		echo -n 1>&2 "Other DAHDI initializations... "
-		astribank_is_starting -v -w 1>&2
-	else
+	if [ ! -f /etc/dahdi/xpp_order ]; then
 		echo 1>&2 "WARNING: No ASTERISK_SUPPORTS_DAHDI_HOTPLUG" \
 			" and no /etc/dahdi/xpp_order"
+	else
+		count=`clean_lines /etc/dahdi/xpp_order | wc -l`
+		if [ "$count" -le 0 ]; then
+			echo 1>&2 "WARNING: No ASTERISK_SUPPORTS_DAHDI_HOTPLUG" \
+				" and empty /etc/dahdi/xpp_order"
+		else
+			# Now we can wait until the hotplug run would remove the semaphore
+			echo -n 1>&2 "Other DAHDI initializations... "
+			astribank_is_starting -v -w 1>&2
+		fi
 	fi
 fi
 # All Astribanks initialized -- remove semaphore
