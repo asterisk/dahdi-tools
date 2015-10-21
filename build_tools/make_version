@@ -68,6 +68,8 @@ elif [ -d ${1}/.git ]; then
             # options.
             VERSION=GIT-`git rev-parse --short --verify HEAD`${MODIFIED}
         fi
+	VERSION=${VERSION##*/}    # Remove leading slashes: upsteram/2.10.2
+	VERSION=${VERSION#[1-9]%} # Remove 1% from tag (tag from Debian epoch)
         echo ${VERSION}
     else
         PARTS=`LANG=C git log --pretty=full | grep -F "git-svn-id:" | head -1 | awk '{print $2;}' | sed -e s:^.*/svn/$2/:: | sed -e 's:/: :g' | sed -e 's/@.*$//g'`
