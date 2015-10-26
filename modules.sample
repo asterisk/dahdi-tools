@@ -53,6 +53,10 @@ wcfxo
 wctdm
 
 # Digium B410P: 4 NT/TE BRI ports
+# Digium B433P: 4 NT/TE BRI ports pci-e 
+# Digium B434P: 4 NT/TE BRI ports
+# Digium B233P: 2 NT/TE BRI ports pci-e 
+# Digium B234P: 2 NT/TE BRI ports
 wcb4xxp
 
 # Digium TC400B: G729 / G723 Transcoding Engine

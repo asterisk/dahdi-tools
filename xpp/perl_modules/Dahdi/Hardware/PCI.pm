@@ -109,6 +109,10 @@ my %pci_ids = (
 
 	# from wcb4xxp
 	'd161:b410'		=> { DRIVER => 'wcb4xxp', DESCRIPTION => 'Digium Wildcard B410P' },
+	'd161:8014'		=> { DRIVER => 'wcb4xxp', DESCRIPTION => 'Digium Wildcard B433' },
+	'd161:8015'		=> { DRIVER => 'wcb4xxp', DESCRIPTION => 'Digium Wildcard B434' },
+	'd161:8016'		=> { DRIVER => 'wcb4xxp', DESCRIPTION => 'Digium Wildcard B233' },
+	'd161:8017'		=> { DRIVER => 'wcb4xxp', DESCRIPTION => 'Digium Wildcard B234' },
 
 	# from tor2
 	'10b5:9030'		=> { DRIVER => 'tor2', DESCRIPTION => 'PLX 9030' },
