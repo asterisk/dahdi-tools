@@ -90,11 +90,9 @@ static struct dahdi_lineconfig lc[DAHDI_MAX_SPANS];
 
 static struct dahdi_chanconfig cc[DAHDI_MAX_CHANNELS];
 
-static int current_span = 0;
 static int only_span = 0;
 static int restrict_channels = 0;
 static int selected_channels[DAHDI_MAX_CHANNELS];
-static int chan2span[DAHDI_MAX_CHANNELS];
 static int declared_spans[DAHDI_MAX_SPANS];
 
 static struct dahdi_attach_echocan ae[DAHDI_MAX_CHANNELS];
@@ -333,20 +331,9 @@ static char *trim(char *buf)
 
 static int skip_channel(int x)
 {
-	int	spanno = chan2span[x];
-
 	if (restrict_channels) {
 		if (!selected_channels[x])
 			return 1;
-		/* sanity check */
-		if (only_span) {
-			if (spanno != 0 && only_span != spanno) {
-				fprintf(stderr,
-					"Only span %d. Skip selected channel %d from span %d\n",
-					only_span, x, spanno);
-				return 1;
-			}
-		}
 	} else {
 		if (only_span && !declared_spans[only_span]) {
 			fprintf(stderr,
@@ -354,8 +341,6 @@ static int skip_channel(int x)
 				only_span);
 			exit(1);
 		}
-		if (only_span && only_span != spanno)
-			return 1;
 	}
 	return 0;
 }
@@ -442,7 +427,6 @@ int spanconfig(char *keyword, char *args)
 		error("Span number should be a valid span number, not '%s'\n", realargs[0]);
 		return -1;
 	}
-	current_span = span;
 	declared_spans[span] = 1;
 	res = sscanf(realargs[1], "%d", &timing);
 	if ((res != 1) || (timing < 0) || (timing > MAX_TIMING)) {
@@ -615,7 +599,6 @@ static int chanconfig(char *keyword, char *args)
 	int master=0;
 	int dacschan = 0;
 	char *idle;
-	int is_digital;
 	bzero(chans, sizeof(chans));
 	strtok(args, ":");
 	idle = strtok(NULL, ":");
@@ -627,7 +610,6 @@ static int chanconfig(char *keyword, char *args)
 	if (res <= 0)
 		return -1;
 	for (x=1;x<DAHDI_MAX_CHANNELS;x++) {
-		is_digital = 0;
 		if (chans[x]) {
 			if (slineno[x]) {
 				error("Channel %d already configured as '%s' at line %d\n", x, sig[x], slineno[x]);
@@ -673,7 +655,6 @@ static int chanconfig(char *keyword, char *args)
 					return -1;
 				cc[x].sigtype = DAHDI_SIG_CAS;
 				sig[x] = sigtype_to_str(cc[x].sigtype);
-				is_digital = 1;
 			} else if (!strcasecmp(keyword, "dacs")) {
 				/* Setup channel for monitor */
 				cc[x].idlebits = dacschan;
@@ -684,7 +665,6 @@ static int chanconfig(char *keyword, char *args)
 				cc[dacschan].sigtype = DAHDI_SIG_DACS;
 				sig[x] = sigtype_to_str(cc[dacschan].sigtype);
 				dacschan++;
-				is_digital = 1;
 			} else if (!strcasecmp(keyword, "dacsrbs")) {
 				/* Setup channel for monitor */
 				cc[x].idlebits = dacschan;
@@ -694,7 +674,6 @@ static int chanconfig(char *keyword, char *args)
 				cc[dacschan].idlebits = x;
 				cc[dacschan].sigtype = DAHDI_SIG_DACS_RBS;
 				sig[x] = sigtype_to_str(cc[dacschan].sigtype);
-				is_digital = 1;
 				dacschan++;
 			} else if (!strcasecmp(keyword, "unused")) {
 				cc[x].sigtype = 0;
@@ -702,7 +681,6 @@ static int chanconfig(char *keyword, char *args)
 			} else if (!strcasecmp(keyword, "indclear") || !strcasecmp(keyword, "bchan")) {
 				cc[x].sigtype = DAHDI_SIG_CLEAR;
 				sig[x] = sigtype_to_str(cc[x].sigtype);
-				is_digital = 1;
 			} else if (!strcasecmp(keyword, "clear")) {
 				sig[x] = sigtype_to_str(DAHDI_SIG_CLEAR);
 				if (master) {
@@ -712,7 +690,6 @@ static int chanconfig(char *keyword, char *args)
 					cc[x].sigtype = DAHDI_SIG_CLEAR;
 					master = x;
 				}
-				is_digital = 1;
 			} else if (!strcasecmp(keyword, "rawhdlc")) {
 				sig[x] = sigtype_to_str(DAHDI_SIG_HDLCRAW);
 				if (master) {
@@ -722,7 +699,6 @@ static int chanconfig(char *keyword, char *args)
 					cc[x].sigtype = DAHDI_SIG_HDLCRAW;
 					master = x;
 				}
-				is_digital = 1;
 			} else if (!strcasecmp(keyword, "nethdlc")) {
 				sig[x] = sigtype_to_str(DAHDI_SIG_HDLCNET);
 				memset(cc[x].netdev_name, 0, sizeof(cc[x].netdev_name));
@@ -736,7 +712,6 @@ static int chanconfig(char *keyword, char *args)
 					}
 					master = x;
 				}
-				is_digital = 1;
 			} else if (!strcasecmp(keyword, "fcshdlc")) {
 				sig[x] = sigtype_to_str(DAHDI_SIG_HDLCFCS);
 				if (master) {
@@ -746,19 +721,15 @@ static int chanconfig(char *keyword, char *args)
 					cc[x].sigtype = DAHDI_SIG_HDLCFCS;
 					master = x;
 				}
-				is_digital = 1;
 			} else if (!strcasecmp(keyword, "dchan")) {
 				sig[x] = "D-channel";
 				cc[x].sigtype = DAHDI_SIG_HDLCFCS;
-				is_digital = 1;
 			} else if (!strcasecmp(keyword, "hardhdlc")) {
 				sig[x] = "Hardware assisted D-channel";
 				cc[x].sigtype = DAHDI_SIG_HARDHDLC;
-				is_digital = 1;
 			} else if (!strcasecmp(keyword, "mtp2")) {
 				sig[x] = "MTP2";
 				cc[x].sigtype = DAHDI_SIG_MTP2;
-				is_digital = 1;
 			} else {
 				fprintf(stderr, "Huh? (%s)\n", keyword);
 			}
@@ -770,11 +741,6 @@ static int chanconfig(char *keyword, char *args)
 					fprintf(stderr, "WARNING: idlebits are not valid on %s channels.\n", sig[x]);
 				}
 			}
-
-			if (is_digital) 
-				chan2span[x] = current_span;
-			else
-				current_span = 0;
 		}
 	}
 	return 0;
@@ -1617,6 +1583,10 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "%s\n", dahdi_tools_version);
 	}
 
+	if (!restrict_channels && only_span) {
+		error("-S requires -C\n");
+		goto finish;
+	}
 	if (!restrict_channels && !only_span) {
 		bool all_assigned = wait_for_all_spans_assigned(5);
 

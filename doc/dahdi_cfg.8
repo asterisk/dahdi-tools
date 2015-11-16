@@ -41,10 +41,8 @@ Only shutdown spans.
 
 .B \-S \fISPAN
 .RS
-Only apply changes to span no. \fISPAN\fR. For a digital span (with
-a 'span=' line in the configuration file) this will do. For an analog
-span you'll have to explicitly tell dahdi_cfg the range of channels,
-using \-C .
+Only apply changes to span no. \fISPAN\fR. You also need to specify the
+range of channels in the span explicitly with \-C.
 .RE
 
 .B \-f
