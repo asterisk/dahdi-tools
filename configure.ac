@@ -199,7 +199,6 @@ AS_IF([test "$with_libusbx" != "no"],
 		[AC_CHECK_LIB([usb-1.0], [libusb_error_name],
 			[
 				have_libusbx="yes"
-				AC_SUBST([PKG_CONFIG_LIBUSB], [libusb-1.0])
 				AC_DEFINE([HAVE_LIBUSBX], [1], [Define to 1 if you have <libusb.h>.])
 				AC_SUBST([PBX_USB], [1])
 			], [
@@ -225,7 +224,6 @@ AS_IF([test "$with_libusb" != "no"],
 			PKG_CHECK_MODULES([LIBUSB], [libusb],
 				[
 					have_libusb="yes"
-					AC_SUBST([PKG_CONFIG_LIBUSB], [libusb])
 					AC_SUBST([PBX_USB], [1])
 				]
 				[AC_DEFINE([HAVE_LIBUSB], [1], [Define to 1 if you have <usb.h>.])],
