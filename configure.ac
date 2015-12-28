@@ -68,8 +68,6 @@ AC_CONFIG_HEADER(autoconfig.h)
 # This needs to be before any macros that use the C compiler
 AC_GNU_SOURCE
 
-AC_CHECK_HEADERS([sys/soundcard.h linux/soundcard.h])
-
 AC_CHECK_TOOL([LD], [ld])
 
 # Checks for programs.
@@ -160,6 +158,22 @@ else
 fi
 AC_SUBST(DAHDI_DECLARATION_AFTER_STATEMENT)
 
+# Checks for header files.
+AC_CHECK_HEADERS([sys/soundcard.h linux/soundcard.h])
+AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h netinet/in.h stdint.h stdlib.h string.h sys/ioctl.h sys/param.h sys/socket.h sys/time.h syslog.h unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_C_INLINE
+AC_TYPE_SIZE_T
+AC_TYPE_SSIZE_T
+AC_TYPE_UINT16_T
+AC_TYPE_UINT32_T
+AC_TYPE_UINT8_T
+
+# Checks for libraries.
+AC_CHECK_LIB([m], [cos])
+AC_CHECK_LIB([pthread], [pthread_create])
+
 AST_EXT_LIB_SETUP([DAHDI], [DAHDI], [dahdi])
 AST_EXT_LIB_SETUP([NEWT], [newt], [newt])
 AST_EXT_LIB_SETUP([USB], [usb], [usb])
@@ -181,6 +195,9 @@ AM_CONDITIONAL([PBX_NEWT], [test "$PBX_NEWT" = "1"])
 AM_CONDITIONAL([PBX_PCAP], [test "$PBX_PCAP" = "1" -a "$DAHDI_TXMIRROR" = "1"])
 
 AC_CHECK_FUNCS([semtimedop])
+AC_CHECK_FUNCS([alarm bzero gettimeofday memset pow regcomp select socket strcasecmp strchr strdup strerror strrchr strstr strtol strtoul])
+AC_FUNC_ERROR_AT_LINE
+AC_FUNC_MALLOC
 
 # What the user asked for? libusb/libusbx
 AC_ARG_WITH([libusbx],

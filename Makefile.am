@@ -74,14 +74,15 @@ libtonezone_la_SOURCES	= \
 dahdiinclude_HEADERS	= tonezone.h
 libtonezone_la_CFLAGS	= $(CFLAGS) -I$(srcdir) -DBUILDING_TONEZONE
 libtonezone_la_LDFLAGS	= -version-info "$(LTZ_CURRENT):$(LTZ_REVISION):$(LTZ_AGE)"
+libtonezone_la_LIBADD	= -lm
 
 if PBX_PCAP
 noinst_PROGRAMS		+= dahdi_pcap
 dahdi_pcap_LDADD	= -lpcap
 endif
 
-patlooptest_LDADD	= libtonezone.la -lm
-fxstest_LDADD		= libtonezone.la -lm
+patlooptest_LDADD	= libtonezone.la
+fxstest_LDADD		= libtonezone.la
 fxotune_LDADD		= -lm
 dahdi_speed_CFLAGS	= -O2
 
@@ -93,7 +94,7 @@ dahdi_tool_CFLAGS	= $(CFLAGS) $(NEWT_INCLUDE)
 dahdi_tool_LDADD	= $(NEWT_LIB)
 endif
 
-dahdi_cfg_LDFLAGS	= -lm -lpthread
+dahdi_cfg_LDFLAGS	= -lpthread
 dahdi_cfg_LDADD		= libtonezone.la
 
 udevrulesdir	= @udevrulesdir@
