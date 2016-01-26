@@ -28,8 +28,6 @@
 #include <ctype.h>
 #include "hexfile.h"
 
-static const char rcsid[] = "$Id$";
-
 static parse_hexfile_report_func_t	report_func = NULL;
 
 parse_hexfile_report_func_t parse_hexfile_set_reporting(parse_hexfile_report_func_t rf)

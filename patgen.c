@@ -45,7 +45,6 @@
 #define BLOCK_SIZE 2041
 #define DEVICE	  "/dev/dahdi/channel"
 
-static const char	rcsid[] = "$Id$";
 char			*prog_name;
 
 static void usage(void)
@@ -53,7 +52,6 @@ static void usage(void)
 	fprintf(stderr, "Usage: %s <dahdi_chan>\n", prog_name);
 	fprintf(stderr, "   e.g.: %s /dev/dahdi/55\n", prog_name);
 	fprintf(stderr, "         %s 455\n", prog_name);
-	fprintf(stderr, "%s version %s\n", prog_name, rcsid);
 	exit(1);
 }
 
