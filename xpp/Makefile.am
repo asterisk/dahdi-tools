@@ -24,7 +24,7 @@ if PERL
 SUBDIRS		+= perl_modules
 
 %.8: %
-	@if file "$^" | cut -d: -f2 | grep -q perl; then \
+	@if file "$^" | cut -d: -f2 | grep -q -iw perl; then \
 		if pod2man --section 8 $^ > $@; then \
 			echo "  GEN      $@"; \
 		else \
