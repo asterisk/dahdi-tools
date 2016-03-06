@@ -5,7 +5,7 @@ LEGACY_MAKE	= \
 		top_srcdir=$(top_srcdir) \
 		srcdir=$(srcdir)
 
-CFLAGS	= -g -Wall -O2 $(DAHDI_INCLUDE)
+CFLAGS	+= -g -Wall -O2 $(DAHDI_INCLUDE)
 if DAHDI_DEVMODE
 CFLAGS	+= \
 	-Werror \
