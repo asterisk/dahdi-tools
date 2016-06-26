@@ -215,7 +215,7 @@ int xusb_filter_bypath(const struct xusb_device *xusb_device, void *data)
 	assert(path != NULL);
 	p = path_tail(path);
 	if (strcmp(xusb_device->devpath_tail, p) != 0) {
-		DBG("%s: device path missmatch (!= '%s')\n",
+		DBG("%s: device path mismatch (!= '%s')\n",
 			xusb_device->devpath_tail, p);
 		return 0;
 	}

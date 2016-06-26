@@ -443,7 +443,7 @@ fpga_firmware_all_devices() {
 reset_fpga() {
 	devices=`filter_devs 'e4e4/11[3456][124]/*'`
 	totaldevs=`numdevs 'e4e4/11[3456][124]/*'`
-	echo >&2 -- "Reseting devices [$totaldevs devices]"
+	echo >&2 -- "Resetting devices [$totaldevs devices]"
 	echo "$devices" | grep -v '^$' | while read id_str dev
 	do
 		(

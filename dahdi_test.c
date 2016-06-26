@@ -64,7 +64,7 @@ void hup_handler(int sig)
 	printf("\n--- Results after %d passes ---\n", pass);
 	printf("Best: %.3f%% -- Worst: %.3f%% -- Average: %f%%\n",
 			best, worst, pass ? total/pass : 100.00);
-	printf("Cummulative Accuracy (not per pass): %0.3f\n",
+	printf("Cumulative Accuracy (not per pass): %0.3f\n",
 	       pass ? accuracy : 0.0);
 	exit(0);
 }

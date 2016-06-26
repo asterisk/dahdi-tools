@@ -72,7 +72,7 @@ static int reset_kind(const char *arg)
 		if(strcasecmp(reset_kinds[i].name, arg) == 0)
 			return reset_kinds[i].type_code;
 	}
-	ERR("Uknown reset kind '%s'\n", arg);
+	ERR("Unknown reset kind '%s'\n", arg);
 	return -1;
 }
 
@@ -157,9 +157,9 @@ int main(int argc, char *argv[])
 			ERR("Bad reset kind '%s'\n", opt_reset);
 			return 1;
 		}
-		DBG("Reseting (%s)\n", opt_reset);
+		DBG("Resetting (%s)\n", opt_reset);
 		if((ret = mpp_reset(mpp, full_reset)) < 0) {
-			ERR("%s Reseting astribank failed: %d\n",
+			ERR("%s Resetting astribank failed: %d\n",
 				(full_reset) ? "Full" : "Half", ret);
 		}
 		goto out;

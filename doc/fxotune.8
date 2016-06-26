@@ -33,7 +33,7 @@ is generated in the current directory.
 fxotune just reads the settings from fxotune.conf into the FXO modules.
 
 You are advised to run fxotune on all FXO ports you have that support 
-it and that are connected. Note that the tunning is affected by e.g.
+it and that are connected. Note that the tuning is affected by e.g.
 the physical parameters of the connection, and thus if it has been 
 radically changed, you may need to re-run fxotune.
 
@@ -44,7 +44,7 @@ cards and clones) do not have the hardware to support such tuning.
 The tuning process needs a clear line to do the tuning.  In order to do
 that, it runs in cycles of the following: sets the line off-hook, dials
 a dial string (which should set the PSTN provider waiting for the next
-digit), and then starts tuning. It has a limited ammount of time for
+digit), and then starts tuning. It has a limited amount of time for
 tuning before the PSTN gives up and gives a busy tone. So after a while
 it hangs up and starts a new cycle.
 
@@ -180,7 +180,7 @@ so if you stop it half-way, you may get a half-configured system. If you
 have already tuned your FXO channels and wish to test-run fxotune again, 
 you are advised to backup /etc/fxotune.conf .
 
-The default for \-m is 18 seconds. This asusmes that you get a clear line 
+The default for \-m is 18 seconds. This assumes that you get a clear line 
 for at least 18 seconds. It is advised that you test that timeout earlier
 by connecting a phone to the FXO line, dialing 4 (or whatever dial string 
 you put with \-n) and see how much time of silence you have.

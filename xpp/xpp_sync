@@ -64,7 +64,7 @@ sub do_select(@) {
 	foreach my $xpd (@_) {
 		my $xbus = $xpd->xbus;
 		my $busnum = $xbus->name;
-		die "Uknown bus name" unless $busnum;
+		die "Unknown bus name" unless $busnum;
 		$busnum =~ s/XBUS-//;
 		die "bad bus name" unless $busnum =~ /^\d+$/;
 		#printf "Setting sync: %-10s (%s)\n", $xpd->fqn, $xpd->type;

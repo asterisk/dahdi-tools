@@ -183,7 +183,7 @@ int process_command(
 	}
 	DBG("REPLY OP: 0x%X [%s]\n", reply->header.op, reply_desc->name);
 	if (reply->header.op == XTALK_ACK) {
-		int	status = CMD_FIELD(reply, XTALK, ACK, stat);
+		uint8_t status = CMD_FIELD(reply, XTALK, ACK, stat);
 
 		if (expected) {
 			ERR("Expected OP=0x%02X: Got ACK(%d): %s\n",
