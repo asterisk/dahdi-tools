@@ -21,8 +21,7 @@ USB_NAME		= libusb
 endif
 endif
 
-noinst_PROGRAMS		= xlist_test xusb_test xusb_test_bypath xtalk_test xtalk_raw_test
-sbin_PROGRAMS		= xtalk_send
+noinst_PROGRAMS		= xlist_test xusb_test xusb_test_bypath xtalk_test xtalk_raw_test xtalk_send
 noinst_LTLIBRARIES	= libxtalk.la
 dist_noinst_HEADERS	= \
 	xtalk_base.h	\
@@ -38,8 +37,6 @@ dist_noinst_HEADERS	= \
 	include/xtalk/firmware_defs.h	\
 	include/xtalk/xtalk_iface.h	\
 	#
-
-man_MANS		= xtalk_send.8
 
 libxtalk_la_CFLAGS	= \
 		$(COMMON_CFLAGS) \
