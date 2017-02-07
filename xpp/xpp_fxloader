@@ -349,7 +349,7 @@ load_fw_device() {
 				echo "WARNING: ECHO burning was skipped (no capabilities)"
 			fi
 		fi
-		pic_files=`echo "$FIRMWARE_DIR"/PIC_TYPE_[1-4].hex`
+		pic_files=`echo "$FIRMWARE_DIR"/PIC_TYPE_[1-46].hex`
 		debug "PIC burning into $dev: begin $pic_files"
 		run_astribank_hexload -D "$dev" -p $pic_files
 		debug "PIC burning into $dev: end $pic_files"
