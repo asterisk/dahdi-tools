@@ -1257,8 +1257,8 @@ Astribanks Synchronization Source
 If there is more than one Astribank on the system, all the Astribanks
 keep their clock in sync. Optionally the Astribanks can synchronize
 their clock to the master DAHDI device (in case it is a different DAHDI
-device). Normally you just use the default init.d script or run
-explicitly:
+device). Normally it would be run automatically from the udev hooks
+run on device plug (handle_device), but you can also run it explicitly:
 
   xpp_sync auto
 

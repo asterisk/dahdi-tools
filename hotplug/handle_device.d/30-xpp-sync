@@ -1,0 +1,18 @@
+#! /bin/sh
+
+# Run xpp_sync whenever an Astribank is connected.
+
+# May be set in /etc/dahdi/init.conf
+XPP_SYNC=${XPP_SYNC:-auto}
+
+case "$ACTION" in
+add) ;;
+*) exit 0 ;;
+esac
+
+case "${DEVPATH##*/}" in
+astribanks:*) ;;
+*) exit 0 ;;
+esac
+
+xpp_sync "$XPP_SYNC"
