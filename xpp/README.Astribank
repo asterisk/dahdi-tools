@@ -47,9 +47,9 @@ Apart from the standard DAHDI build requirements, you also need:
 
 * *libusb development headers* to build the Astribank firmware tools
   (astribank_tool, astribank_hexload, astribank_allow).
-  This is typically the package libusb-dev on Debian (and derivatives
-  like Ubuntu) or libusb-devel on RedHat (and derivatives like
-  CentOS/Trixbox).
+  This is typically the package libusb-1.0-0-dev on Debian (and
+  derivatives such as Ubuntu) or libusbx-devel on RedHat (and derivatives
+  such as CentOS).
 * *Echo Canceller Module firmware*: If you have an Astribank with an
   echo canceller module, see the following section.
 
