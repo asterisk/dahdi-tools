@@ -1488,6 +1488,9 @@ other side.
 current. That is: which ones are connected to an active FXS on the
 other side.
 
+===== /sys/bus/astribanks/devices/xbus-NN/NN:M:P/hwid
+Prints <module type>.<module subtype>. Both are small numbers.
+
 ===== /sys/bus/astribanks/devices/xbus-NN/NN:M:P/offhook
 Shows ports that are (1) or are not (0) off-hook. When a channel is
 not off-hook. For BRI and E1/T1 the value is 1 if the span is in use.
