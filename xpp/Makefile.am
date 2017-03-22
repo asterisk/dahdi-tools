@@ -62,6 +62,9 @@ dist_sbin_SCRIPTS	= $(perl_scripts)
 man_MANS		+= $(perl_mans)
 CLEANFILES		= $(perl_checks) $(perl_mans)
 
+dracutconfdir = @prefix@/lib/dracut/dracut.conf.d
+dracutconf_DATA = 50-dahdi.conf
+
 if	PBX_USB
 
 SUBDIRS		+= oct612x xtalk
