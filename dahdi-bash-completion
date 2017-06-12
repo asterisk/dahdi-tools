@@ -48,7 +48,7 @@ __dahdi_span_types() {
 	has_cmd=0
 	for (( i=0; i < COMP_CWORD; i++)); do
 		case "${COMP_WORDS[$i]}" in
-		dumpconfig | list | set)
+		dumpconfig | list | set | compare)
 			has_cmd=1
 			break
 			;;
@@ -69,7 +69,7 @@ __dahdi_span_types() {
 					grep -l '[EJT]1' /sys/devices/pci0000:00/0000:00:10.4/usb1/1-1/xbus-00/*/spantype 2>/dev/null | sed -e 's|/spantype||') )
 			else
 				COMPREPLY=( ${COMPREPLY[@]} $(compgen -W \
-					'dumpconfig list set' -- $cur) )
+					'dumpconfig list set compare' -- $cur) )
 			fi
 			;;
 		esac

@@ -69,6 +69,7 @@ usage() {
 	echo >&2 "Usage: $0 [options] action [devpath ...]"
 	echo >&2 "       action:"
 	echo >&2 "         set        - set spans to E1/T1 according to /etc/dahdi/span-types.conf"
+	echo >&2 "         compare    - show config values that differ from system"
 	echo >&2 "         list       - human-readable list of all spans"
 	echo >&2 "         dumpconfig - dump current state in /etc/dahdi/span-types.conf format"
 	echo >&2 ""
@@ -87,6 +88,8 @@ if [ $? != 0 ]; then
 	echo >&2 "Bad options"
 	usage
 fi
+
+compare=false
 
 # Note the quotes around `$TEMP': they are essential!
 eval set -- "$TEMP"
@@ -321,13 +324,26 @@ handle_span() {
 					echo >&2 "Set $devname span $spanno = $val"
 				fi
 				if [ "$dry_run" != 'true' ]; then
-					echo "$spanno:$val" > "$attr_file"
+					if [ "$compare" = 'true' ]; then
+						config="$spanno:$val"
+						system=`grep "$spanno:" "$attr_file"`
+						if [ "$config" != "$system" ]; then
+
+							active_val=`echo $system | cut -d: -f2`
+							echo "$devname $spanno     $val     $active_val" >>"$compare_results_file"
+						fi
+					else
+						echo "$spanno:$val" > "$attr_file"
+					fi
 				fi
 			fi
 		done
 }
 
 set_all_devices() {
+	span_differs='false'
+	SPANS_DIFFER='false'
+
 	if [ ! -f "$DAHDISPANTYPESCONF" ]; then
 		echo >&2 "$0: Missing configuration '$DAHDISPANTYPESCONF'"
 		exit 1
@@ -348,6 +364,16 @@ set_all_devices() {
 			esac
 		done
 	done
+	if [ "$compare" = 'true' ]; then
+		if [ -s "$compare_results_file" ]; then
+			echo "# Device           Unit  Config Active"
+			cat "$compare_results_file"
+			rm -f "$compare_results_file"
+			exit 5
+		fi
+		rm -f "$compare_results_file"
+		exit 0
+	fi
 }
 
 case "$action" in
@@ -358,6 +384,11 @@ dumpconfig)
 	dump_config
 	;;
 set)
+	set_all_devices
+	;;
+compare)
+	compare=true
+	compare_results_file=`mktemp`
 	set_all_devices
 	;;
 *)

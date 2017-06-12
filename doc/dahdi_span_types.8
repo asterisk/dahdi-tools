@@ -4,7 +4,7 @@
 dahdi_span_types \- set line modes of DAHDI spans before assignment
 .SH SYNOPSIS
 
-.B dahdi_span_types [\fIoptions\fB] <list|dumpconfig|set> \fB[\fIdevpath \fB...]
+.B dahdi_span_types [\fIoptions\fB] <list|dumpconfig|compare|set> \fB[\fIdevpath \fB...]
 
 .SH DESCRIPTION
 The span type (the line mode: E1/T1/J1) must be set to a span before
@@ -56,6 +56,16 @@ to override the "wildcard".
 Reads settings from \fBspan\-types.conf\fR and applies them to the
 device(s) specified in the command line (or all devices, if none
 specified).
+.RE
+
+.B compare
+.RS
+Compare the settings on the system to those in the configuration file.
+For each line that applies to a device on the system, print it if the
+value to be set and the active value on the system differ.
+
+The exit status is 0 if there is no difference and non-zero if a
+difference was detected.
 .RE
 
 .B list
