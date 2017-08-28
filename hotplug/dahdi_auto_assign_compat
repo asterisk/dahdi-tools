@@ -22,4 +22,9 @@ devices_by_registration_time | \
 	done
 
 # Now handle Astribanks
-LC_ALL=C dahdi_registration -Rv on
+unmatched="`dahdi_span_assignments unmatched`"
+if [ -n "$unmatched" ]; then
+	# Only if astribanks are not matched in span-assignments.conf
+	# TODO: have dahdi_registration run only on "$unmatched"
+	LC_ALL=C dahdi_registration -Rv on
+fi
