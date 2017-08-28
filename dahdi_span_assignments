@@ -66,6 +66,8 @@ usage() {
 	echo >&2 "         add        - assign spans, according to /etc/dahdi/assigned-spans.conf"
 	echo >&2 "         remove     - unassign spans"
 	echo >&2 "         list       - human-readable list of all spans"
+	echo >&2 "         matched    - found spans matched in configuration"
+	echo >&2 "         unmatched  - found spans not matched in configuration"
 	echo >&2 "         dumpconfig - dump current state as new configuration"
 	echo >&2 ""
 	echo >&2 "       options:"
@@ -109,7 +111,7 @@ while true ; do
 		break
 		;;
 	*)
-		echo "Internal error!"
+		echo >&2 "Internal error!"
 		exit 1
 		;;
 	esac
@@ -215,10 +217,10 @@ unassign_all_spans() {
 			sort | while read spandir; do
 			local_spanno=`cat "$spandir/local_spanno"`
 			if [ "$dry_run" = true ]; then
-				echo "(dry-run) unassign $device $local_spanno"
+				echo >&2 "(dry-run) unassign $device $local_spanno"
 				continue
 			fi
-			echo "unassign $device $local_spanno"
+			echo >&2 "unassign $device $local_spanno"
 			if ! echo "$local_spanno" > "$device/unassign_span"; then
 				echo >&2 "$0: failed unassigning '$local_spanno' in '$device'"
 			fi
@@ -245,12 +247,12 @@ assign_device_spans() {
 		if [ -d "$span" ]; then
 			span_local_spanno=`cat "$span/local_spanno"`
 			if [ "$span_local_spanno" != "$local_spanno" ]; then
-				echo "WARNING: $span_local_spanno != $local_spanno"
+				echo >&2 "WARNING: $span_local_spanno != $local_spanno"
 			fi
-			echo "$device [$local_spanno] already assigned to span $spanno. Skipping..."
+			echo >&2 "$device [$local_spanno] already assigned to span $spanno. Skipping..."
 			continue
 		fi
-		echo "assign $device: $s"
+		echo >&2 "assign $device: $s"
 		if ! echo "$s" > "$device/assign_span"; then
 			echo >&2 "$0: failed assigning '$s' to '$device'"
 		fi
@@ -267,21 +269,21 @@ match_device() {
 		# We use case to enable shell-style globbing in configuration
 		case "$hardware_id" in
 		$id)
-			[ "$verbose" = true ] && echo "match by hwid ($id ~ $hardware_id): $spanspecs"
+			[ "$verbose" = true ] && echo >&2 "match by hwid ($id ~ $hardware_id): $spanspecs"
 			assign_device_spans "$device"
 			;;
 		esac
 		# We use case to enable shell-style globbing in configuration
 		case "$location" in
 		$id)
-			[ "$verbose" = true ] && echo "match by location ($id ~ $location): $spanspecs"
+			[ "$verbose" = true ] && echo >&2 "match by location ($id ~ $location): $spanspecs"
 			assign_device_spans "$device"
 			;;
 		esac
 		# We use case to enable shell-style globbing in configuration
 		case "$devpath" in
 		$id)
-			[ "$verbose" = true ] && echo "match by devpath ($id ~ $devpath): $spanspecs"
+			[ "$verbose" = true ] && echo >&2 "match by devpath ($id ~ $devpath): $spanspecs"
 			assign_device_spans "$device"
 			;;
 		esac
@@ -293,7 +295,7 @@ assign_devices() {
 		echo >&2 "$0: Missing '$DAHDISASSIGNEDSPANSCONF'"
 		exit 1
 	fi
-	echo "using '$DAHDISASSIGNEDSPANSCONF'"
+	echo >&2 "using '$DAHDISASSIGNEDSPANSCONF'"
 	for device in $DEVICES
 	do
 		match_device "$device"
@@ -303,10 +305,68 @@ assign_devices() {
 auto_assign_devices() {
 	for device in $DEVICES
 	do
-		echo "auto-assign $device"
+		echo >&2 "auto-assign $device"
 		if [ "$dry_run" != true ]; then
 			echo 1 > "$device/auto_assign"
 		fi
+	done
+}
+
+dev_match_conf() {
+	local devpath="$1"
+	local location="$2"
+	local hardware_id="$3"
+	local local_spanno="$4"
+	filter_conf | while read id spanspecs
+	do
+		spanno=`echo "$spanspecs" | cut -d: -f1`
+		match_dev=no
+		# We use case to enable shell-style globbing in configuration
+		case "$hardware_id" in
+		$id)
+			match_dev=yes
+			;;
+		esac
+		# We use case to enable shell-style globbing in configuration
+		case "$location" in
+		$id)
+			match_dev=yes
+			;;
+		esac
+		# We use case to enable shell-style globbing in configuration
+		case "$devpath" in
+		$id)
+			match_dev=yes
+			;;
+		esac
+		if [ "$match_dev" = 'yes' -a "$local_spanno" = "$spanno" ]; then
+			#printf "%-8s (%s) %-14s %s %s\n" "$local_spanno" "$spanno" "[$hardware_id]" "$location" "$devpath"
+			echo "[$hardware_id]:$local_spanno"
+		fi
+	done
+}
+
+list_devices() {
+	wanted="$1"
+	if [ ! -f "$DAHDISASSIGNEDSPANSCONF" ]; then
+		echo >&2 "$0: Missing '$DAHDISASSIGNEDSPANSCONF'"
+		exit 1
+	fi
+	echo >&2 "using '$DAHDISASSIGNEDSPANSCONF'"
+	for device in $DEVICES
+	do
+		devpath=`cd "$device" && pwd -P`
+		location='@'`attr_clean "$device/location"`
+		hardware_id=`attr_clean "$device/hardware_id"`
+		for local_spanno in `cut -d: -f1 "$device/spantype"`
+		do
+			found=`dev_match_conf "$devpath" "$location" "$hardware_id" "$local_spanno"`
+			if [ "$wanted" = "unmatched" ]; then
+				[ -z "$found" ] && echo "[$hardware_id]:$local_spanno"
+			else
+				[ -z "$found" ] || echo "[$hardware_id]:$local_spanno"
+			fi
+		done
 	done
 }
 
@@ -325,6 +385,12 @@ list)
 	;;
 dumpconfig)
 	dump_config
+	;;
+matched)
+	list_devices "matched"
+	;;
+unmatched)
+	list_devices "unmatched"
 	;;
 *)
 	echo >&2 "Bad action='$action'"
