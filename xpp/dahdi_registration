@@ -109,9 +109,15 @@ foreach my $xbus (Dahdi::Xpp::xbuses($sorter)) {
 			system @cmd;
 			warn "Failed '@cmd' (status=$?)\n" if $?;
 		}
+	}
+}
+if (defined($on) && $on) {
+	if ($opts{'R'} || ! $default_auto_assign) {
 		# wait for UDEV to do its stuff
 		system "dahdi_waitfor_span_assignments assigned";
 	}
+}
+foreach my $xbus (Dahdi::Xpp::xbuses($sorter)) {
 	foreach my $xpd (Dahdi::Xpp::Xpd::telephony_devs($xbus->xpds())) {
 		my $spanno = $xpd->xpd_getattr('span');
 		myprintf "\t%-10s: ", $xpd->fqn;
