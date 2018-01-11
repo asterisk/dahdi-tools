@@ -12,6 +12,7 @@
 .libs
 .dirstamp
 .version
+/.pc
 Makefile
 Makefile.in
 auxdir/
