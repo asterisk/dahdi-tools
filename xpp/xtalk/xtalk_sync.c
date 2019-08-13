@@ -60,7 +60,7 @@ union XTALK_PDATA(XTALK) {
 	MEMBER(XTALK, ACK);
 	MEMBER(XTALK, PROTO_GET);
 	MEMBER(XTALK, PROTO_GET_REPLY);
-} PACKED members;
+} PACKED;
 
 const struct xtalk_protocol	xtalk_sync_proto = {
 	.name	= "XTALK-SYNC",
