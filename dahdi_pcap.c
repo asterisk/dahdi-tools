@@ -163,7 +163,7 @@ int log_packet(struct chan_fds * fd, char is_read, pcap_dumper_t * dump)
 			
 			lapd->sll_pkttype = 3;
 			lapd->sll_hatype = 0;
-			lapd->sll_halen = res;
+			lapd->sll_halen = htons(8);
 	//                lapd->sll_addr = ???
 			lapd->sll_protocol[0] = 0x00;
 			lapd->sll_protocol[1] = 0x30;
