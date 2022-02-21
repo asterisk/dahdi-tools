@@ -41,6 +41,7 @@
 #include <sys/ioctl.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <linux/if_packet.h>
 
 #define BLOCK_SIZE 512
 #define MAX_CHAN 16
@@ -161,7 +162,7 @@ int log_packet(struct chan_fds * fd, char is_read, pcap_dumper_t * dump)
 			hdr.caplen = res+sizeof(struct lapd_sll_hdr)-2;
 			hdr.len = res+sizeof(struct lapd_sll_hdr)-2;
 			
-			lapd->sll_pkttype = 3;
+			lapd->sll_pkttype = htons(is_read ? PACKET_HOST : PACKET_OUTGOING);
 			lapd->sll_hatype = 0;
 			lapd->sll_halen = htons(8);
 	//                lapd->sll_addr = ???
