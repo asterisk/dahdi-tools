@@ -48,7 +48,7 @@ CMD_DEF(XTALK, ACK,
 
 union XTALK_PDATA(XTALK) {
 	MEMBER(XTALK, ACK);
-} PACKED members;
+} PACKED;
 
 const struct xtalk_protocol	xtalk_raw_proto = {
 	.name	= "XTALK-RAW",
