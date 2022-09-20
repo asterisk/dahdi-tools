@@ -41,6 +41,7 @@
 #include <sys/ioctl.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <linux/if_packet.h>
 
 #define BLOCK_SIZE 512
 #define MAX_CHAN 16
@@ -100,7 +101,7 @@ int make_mirror(long type, int chan)
 	return fd;
 }
 
-int log_packet(struct chan_fds * fd, char is_read, pcap_dumper_t * dump)
+int log_packet(struct chan_fds * fd, char is_read, int we_are_network, pcap_dumper_t * dump)
 {
 	unsigned char buf[BLOCK_SIZE * 4];
 	int res = 0;
@@ -161,10 +162,10 @@ int log_packet(struct chan_fds * fd, char is_read, pcap_dumper_t * dump)
 			hdr.caplen = res+sizeof(struct lapd_sll_hdr)-2;
 			hdr.len = res+sizeof(struct lapd_sll_hdr)-2;
 			
-			lapd->sll_pkttype = 3;
+			lapd->sll_pkttype = htons(is_read ? PACKET_HOST : PACKET_OUTGOING);
 			lapd->sll_hatype = 0;
-			lapd->sll_halen = res;
-	//                lapd->sll_addr = ???
+			lapd->sll_halen = htons(8);
+			lapd->sll_addr[0] = we_are_network;
 			lapd->sll_protocol[0] = 0x00;
 			lapd->sll_protocol[1] = 0x30;
 
@@ -197,10 +198,11 @@ void usage()
 	printf("Usage: dahdi_pcap [OPTIONS]\n");
 	printf("Capture packets from DAHDI channels to pcap file\n\n");
 	printf("Options:\n");
-	printf("  -p, --proto=[mtp2|lapd] The protocol to capture, default mtp2\n");
-	printf("  -c, --chan=<channels>   Comma separated list of channels to capture from, max %d. Mandatory\n", MAX_CHAN);
-	printf("  -f, --file=<filename>   The pcap file to capture to. Mandatory\n");
-	printf("  -h, --help              Display this text\n");
+	printf("  -p, --proto=[mtp2|lapd]   The protocol to capture, default mtp2\n");
+	printf("  -c, --chan=<channels>     Comma separated list of channels to capture from, max %d. Mandatory\n", MAX_CHAN);
+	printf("  -r, --role=[network|user] Is the local side the network or user side in ISDN?\n");
+	printf("  -f, --file=<filename>     The pcap file to capture to. Mandatory\n");
+	printf("  -h, --help                Display this text\n");
 }
 
 int main(int argc, char **argv)
@@ -210,6 +212,7 @@ int main(int argc, char **argv)
 	int num_chans = 0;
 	int max_fd = 0;
 	int proto = DLT_MTP2_WITH_PHDR;
+	int we_are_network = 0;
 
 	int i;
 	int packetcount;
@@ -220,12 +223,13 @@ int main(int argc, char **argv)
 		static struct option long_options[] = {
 			{"proto", required_argument, 0, 'p'},
 			{"chan", required_argument, 0, 'c'},
+			{"role", required_argument, 0, 'r'},
 			{"file", required_argument, 0, 'f'},
 			{"help", 0, 0, 'h'},
 			{0, 0, 0, 0}
 		};
 
-		c = getopt_long(argc, argv, "p:c:f:?",
+		c = getopt_long(argc, argv, "p:c:r:f:?",
 			  long_options, &option_index);
 		if (c == -1)
 			break;
@@ -267,6 +271,16 @@ int main(int argc, char **argv)
 					num_chans++;
 				}
 				max_fd++;
+				break;
+			case 'r':
+				if (!strcasecmp("network", optarg))
+					we_are_network = 1;
+				else if (!strcasecmp("user", optarg))
+					we_are_network  = 0;
+				else {
+					fprintf(stderr, "Role must be user or network!\n");
+					exit(1);
+				}
 				break;
 			case 'f':
 				// File to capture to
@@ -317,11 +331,11 @@ int main(int argc, char **argv)
 		{
 			if(FD_ISSET(chans[i].rfd, &rd_set))
 			{
-				packetcount += log_packet(&chans[i], 1, dump);
+				packetcount += log_packet(&chans[i], 1, we_are_network, dump);
 			}
 			if(FD_ISSET(chans[i].tfd, &rd_set))
 			{
-				packetcount += log_packet(&chans[i], 0, dump);
+				packetcount += log_packet(&chans[i], 0, we_are_network, dump);
 			}
 		}
 		printf("Packets captured: %d\r", packetcount);
