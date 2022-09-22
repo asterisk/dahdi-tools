@@ -475,8 +475,8 @@ struct xusb_device *xusb_find_bypath(const char *path)
 {
 	struct usb_bus *bus;
 	struct usb_device *dev;
-	char devpath_tail[PATH_MAX];
 	struct xusb_spec *spec;
+	char devpath_tail[2*(PATH_MAX+2)] = { '\0' };
 
 	DBG("path='%s'\n", path);
 	spec = calloc(sizeof(*spec), 1);
@@ -497,7 +497,7 @@ struct xusb_device *xusb_find_bypath(const char *path)
 				dev->filename,
 				dev_desc->idVendor,
 				dev_desc->idProduct);
-			snprintf(devpath_tail, PATH_MAX, "%3s/%3s",
+			snprintf(devpath_tail, sizeof(devpath_tail), "%.3s/%.3s",
 				dev->bus->dirname, dev->filename);
 			if (!match_devpath(path, devpath_tail))
 				continue;
