@@ -28,8 +28,8 @@ sub usage {
 	warn "Usage: $0 [options] <generators>\n";
 	warn "          Options:\n";
 	warn "            --line-mode=<E1|T1|J1>   - Also generate span-types.conf with default line mode\n";
-	warn "            -F|--freepbx             - Modify configuration for Freepbx (skip FXS channels)\n";
-	warn "            -v|--verbose             - Be versbose, show generated files\n";
+	warn "            -F|--freepbx             - Modify configuration for FreePBX (skip FXS channels)\n";
+	warn "            -v|--verbose             - Be verbose, show generated files\n";
 	warn "            -V|--version             - Show version and exit\n";
 	warn "            -h|--help                - Show this message\n";
 	exit 1;
@@ -201,7 +201,7 @@ Verbose -- sets the C<'verbose'> option for all generators.
 
 =item -F --freepbx
 
-Freepbx -- sets the C<'freepbx'> option for all generators.
+FreePBX -- sets the C<'freepbx'> option for all generators.
 Currently, chandahdi is affected.
 
 =item --line-mode=I<mode>
