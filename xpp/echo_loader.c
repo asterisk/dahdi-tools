@@ -409,7 +409,7 @@ UINT32 Oct6100UserGetTime(tPOCT6100_GET_TIME f_pTime)
 	struct timeval tv;
 	unsigned long long total_usecs;
 	unsigned int mask = ~0;
-	
+
 	gettimeofday(&tv, 0);
 	total_usecs = (((unsigned long long)(tv.tv_sec)) * 1000000) +
 				  (((unsigned long long)(tv.tv_usec)));
@@ -564,7 +564,7 @@ UINT32 Oct6100UserDriverReadBurstApi(tPOCT6100_READ_BURST_PARAMS f_pBurstParams)
 	return cOCT6100_ERR_OK;
 }
 
-inline int get_ver(struct astribank *astribank)
+static inline int get_ver(struct astribank *astribank)
 {
 	return spi_send(astribank, 0, 0, 1, 1);
 }
@@ -647,7 +647,7 @@ UINT32 init_octasic(char *filename, struct astribank *astribank, struct span_spe
 	/* General parameters */
 	OpenChip.fEnableChannelRecording 		= TRUE;
 
-	/* Chip ID.*/	
+	/* Chip ID.*/
 	OpenChip.ulUserChipId 				= 1;
 
 	/* Set the max number of accesses to 1024 to speed things up */
@@ -775,7 +775,7 @@ UINT32 init_octasic(char *filename, struct astribank *astribank, struct span_spe
 		ChannelOpen.VqeConfig.fRinDcOffsetRemoval	= TRUE;
 		ChannelOpen.VqeConfig.fSinDcOffsetRemoval	= TRUE;
 
-		ChannelOpen.VqeConfig.ulComfortNoiseMode	= cOCT6100_COMFORT_NOISE_NORMAL;	
+		ChannelOpen.VqeConfig.ulComfortNoiseMode	= cOCT6100_COMFORT_NOISE_NORMAL;
 		/*        cOCT6100_COMFORT_NOISE_NORMAL
 			  cOCT6100_COMFORT_NOISE_EXTENDED,
 			  cOCT6100_COMFORT_NOISE_OFF,
@@ -824,7 +824,7 @@ UINT32 init_octasic(char *filename, struct astribank *astribank, struct span_spe
 		ChannelOpen.VqeConfig.fRinDcOffsetRemoval	= TRUE;
 		ChannelOpen.VqeConfig.fSinDcOffsetRemoval	= TRUE;
 
-		ChannelOpen.VqeConfig.ulComfortNoiseMode	= cOCT6100_COMFORT_NOISE_NORMAL;	
+		ChannelOpen.VqeConfig.ulComfortNoiseMode	= cOCT6100_COMFORT_NOISE_NORMAL;
 		/*        cOCT6100_COMFORT_NOISE_NORMAL
 			  cOCT6100_COMFORT_NOISE_EXTENDED,
 			  cOCT6100_COMFORT_NOISE_OFF,
