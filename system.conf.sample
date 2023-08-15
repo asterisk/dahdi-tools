@@ -78,7 +78,7 @@
 # driver specific address (like a MAC for eth), <numchans> is the number
 # of channels, and <timing> is a timing priority, like for a normal span.
 # use "0" to not use this as a timing source, or prioritize them as
-# primary, secondard, etc.  Note that you MUST have a REAL DAHDI device
+# primary, secondary, etc.  Note that you MUST have a REAL DAHDI device
 # if you are not using external timing.
 #
 #   dynamic=eth,eth0/00:02:b3:35:43:9c,24,0
@@ -257,13 +257,13 @@ defaultzone=us
 #
 # Specify the receive freq, the tag (use 0 if none), and the transmit code.
 # The tag may be used by applications to determine classification of tones.
-# The tones are to be specified in order of presedence, most important first.
+# The tones are to be specified in order of precedence, most important first.
 # Currently, 15 tones may be specified..
 #
 #ctcss=1318,1,1318
 #ctcss=1862,1,1862
 #
-# The following parameters may be omitted if their default value is acceptible
+# The following parameters may be omitted if their default value is acceptable
 #
 # Set the receive debounce time in milliseconds:
 #debouncetime=123
@@ -286,7 +286,7 @@ defaultzone=us
 # channels they apply to
 #channels=1-4
 #
-# Overiding PCM encoding
+# Overriding PCM encoding
 # ++++++++++++++++++++++
 # Usually the channel driver sets the encoding of the PCM for the
 # channel (mulaw / alaw. That is: g711u or g711a). However there are
