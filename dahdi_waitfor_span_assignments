@@ -28,7 +28,11 @@ devbase='/sys/bus/dahdi_devices/devices'
 
 spans_of() {
 	dev="$1"
-	wc -l < "$dev/spantype"
+	sp_file="dahdi_spantype"
+	if [ ! -f "$dev/$sp_file" ]; then
+		sp_file="spantype"
+	fi
+	wc -l < "$dev/$sp_file"
 }
 
 assigned_spans_of() {
