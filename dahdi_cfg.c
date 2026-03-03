@@ -142,7 +142,7 @@ static const char *laws[] = {
 
 static bool _are_all_spans_assigned(const char *device_path)
 {
-	char attribute[1024];
+	char attribute[1036];
 	int res;
 	FILE *fp;
 	int span_count;
