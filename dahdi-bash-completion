@@ -66,7 +66,7 @@ __dahdi_span_types() {
 			if [ "$has_cmd" = 1 ]; then
 				# FIXME: check if devices are settable?
 				COMPREPLY=( ${COMPREPLY[@]} $( \
-					grep -l '[EJT]1' /sys/devices/pci0000:00/0000:00:10.4/usb1/1-1/xbus-00/*/spantype 2>/dev/null | sed -e 's|/spantype||') )
+					grep -l '[EJT]1' /sys/devices/pci0000:00/0000:00:10.4/usb1/1-1/xbus-00/*/dahdi_spantype 2>/dev/null | sed -e 's|/dahdi_spantype||') )
 			else
 				COMPREPLY=( ${COMPREPLY[@]} $(compgen -W \
 					'dumpconfig list set compare' -- $cur) )

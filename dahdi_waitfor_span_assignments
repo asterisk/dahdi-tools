@@ -28,6 +28,7 @@ devbase='/sys/bus/dahdi_devices/devices'
 
 spans_of() {
 	dev="$1"
+
 	sp_file="dahdi_spantype"
 	if [ ! -f "$dev/$sp_file" ]; then
 		sp_file="spantype"
