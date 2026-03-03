@@ -172,6 +172,15 @@ attr_clean() {
 	cat "$1" 2>/dev/null | tr -d '\n' | tr '!' '/' | tr -c 'a-zA-Z0-9/:.-' '_'
 }
 
+get_device_spantype_file() {
+	device=$1
+	sp_file="dahdi_spantype"
+	if [ ! -f "$device/$sp_file" ]; then
+		sp_file="spantype"
+	fi
+	echo "$device/$sp_file"
+}
+
 show_spantypes() {
 	echo "# PRI span types (E1/T1/J1)"
 	for device in $DEVICES
@@ -179,7 +188,8 @@ show_spantypes() {
 		devpath=`cd "$device" && pwd -P`
 		location='@'`attr_clean "$device/location"`
 		hardware_id=`attr_clean "$device/hardware_id"`
-		cat "$device/spantype" | while read st; do
+		sp_file=`get_device_spantype_file "$device"`
+		cat "$sp_file" | while read st; do
 			case "$st" in
 			*:[ETJ]1)
 				printf "%-10s %-20s %-30s %s\n" \
@@ -192,7 +202,7 @@ show_spantypes() {
 }
 
 list_pri_spantypes() {
-	find $DEVICES -follow -maxdepth 1 -name spantype | \
+	find $DEVICES -follow -maxdepth 1 -name spantype -or -name dahdi_spantype | \
 		xargs cat | \
 		sed -n '/:[ETJ]1$/s/^.*://p' | \
 		sort -u | \
@@ -255,7 +265,8 @@ dump_config() {
 			id="$devpath"
 		fi
 		echo "# Device: [$hardware_id] @$location $devpath"
-		cat "$device/spantype" | while read st; do
+		sp_file=`get_device_spantype_file "$device"`
+		cat "$sp_file" | while read st; do
 			case "$st" in
 			*:[ETJ]1)
 				if [ "$num_spantypes" -eq 1 ]; then
@@ -281,7 +292,8 @@ filter_conf() {
 handle_span() {
 	device="$1"
 	spantype="$2"
-	attr_file="$device/spantype"
+	sp_file=`get_device_spantype_file "$device"`
+	attr_file="$sp_file"
 	devpath=`cd "$device" && pwd -P`
 	devname=`echo "$device" | sed "s,$devbase/,,"`
 	location='@'`attr_clean "$device/location"`
@@ -351,7 +363,8 @@ set_all_devices() {
 	for device in $DEVICES
 	do
 		devname=`echo "$device" | sed "s,$devbase/,,"`
-		cat "$device/spantype" | while read spantype; do
+		sp_file=`get_device_spantype_file "$device"`
+		cat "$sp_file" | while read spantype; do
 			case "$spantype" in
 			*:[ETJ]1)
 				handle_span "$device" "$spantype"
